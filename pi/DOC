@@ -1,0 +1,1 @@
+PI (Platform Integration) contains classes and hooks which needs to be implemented by the supporting platform. Some optional implementations also exists.

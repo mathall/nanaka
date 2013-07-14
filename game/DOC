@@ -1,0 +1,1 @@
+Game is the badly named subsystem for Entities to allow attaching of GameObjects. After a GameObject has been attached to an Entity's GameEM (GameEntityModule), the GameObject will receive update events once evey step through the entity simulation.

@@ -1,0 +1,1 @@
+Physics is the physical subsystem for Entities. Physical properties such as velocity may be set on the PhysicsEM (PhysicsEntityModule) which will be used during integration, and CollisionShapes may be added which will be used during collision detection and response. If the Entity is involved in a collision, the game may be informed of that by registering a CollisionListener.

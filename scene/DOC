@@ -1,0 +1,1 @@
+Scene is the graphical/visual subsystem for Entities. SceneEMs (SceneEntityModules) may have any number of attachments on which the SceneEMMgr (SceneEntityModuleManager) will perform tasks such as animating and drawing. A scene may be drawn at any time from any Camera, possibly multiple times per frame if the game so desires.

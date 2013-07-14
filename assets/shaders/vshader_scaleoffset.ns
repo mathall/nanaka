@@ -1,0 +1,14 @@
+{
+	"source": "nanaka/shaders/vshader_scaleoffset.glsl",
+	"uniforms": [
+		"model",
+		"view",
+		"proj",
+		"texcoordsScale",
+		"texcoordsOffset",
+	],
+	"attributes": [
+		"position",
+		"texcoord",
+	],
+}

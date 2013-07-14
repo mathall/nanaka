@@ -1,0 +1,5 @@
+You may acquire an Asset from the ResourceManager through which you may access the Resource for as long as it's valid. To identify the Resource you want you need to supply the ResourceManager with a ResourceKey which uniquely identifies the Resource. If the ResourceKey requires more than a file path, it may be supplemented with ResourceParameters.
+
+Although the ReousceManager is the owner of every Resource, each Resource is tied to a ResourceHandle which ownership is shared among all Assets holding that Resource. This means the Asset may be freely copied around, and when the last Asset for a certain Resource destructs, the ResourceHandle for that Resource will destruct and instruct the ResourceManager to unload that Resource.
+
+For the ResourceManager to load a Resource, first a ResourceLoader need to be registered on the ResourceManager. Given a ResourceKey, the ResourceLoader must be able to answer if it can load the requested Resource, and then do so. To make a new type of Resource, Resource and ResourceLoader must be implemented. ResourceParameters may also be implemented if necessary to uniquely identify the Resource.

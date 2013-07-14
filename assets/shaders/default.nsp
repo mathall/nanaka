@@ -1,0 +1,4 @@
+{
+	"VShader": "nanaka/shaders/vshader.ns",
+	"FShader": "nanaka/shaders/fshader.ns",
+}

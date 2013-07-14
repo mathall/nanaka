@@ -1,0 +1,19 @@
+{
+  'sources': [
+    '../utils/GlobalClock.cpp',
+    '../utils/GlobalClock.h',
+    '../utils/ObjectPool.h',
+    '../utils/Monitor.cpp',
+    '../utils/Monitor.h',
+    '../utils/Random.h',
+    '../utils/Sem.cpp',
+    '../utils/Sem.h',
+    '../utils/TemporaryChange.h',
+    '../utils/Thread.h',
+    '../utils/Time.cpp',
+    '../utils/Time.h',
+    '../utils/UUID.cpp',
+    '../utils/UUID.h',
+    '../utils/YOLO.h',
+  ],
+}

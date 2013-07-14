@@ -1,0 +1,1 @@
+InputEvents are passed from the platform thread and gathered on the InputHandler. Nanaka may then at a suitable time process the InputEvents gathered so far and dispatch them on the InputListeners.

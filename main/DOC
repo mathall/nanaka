@@ -1,0 +1,3 @@
+Main is where it's all tied together. The Application, running on the platform thread, is responsible for creating Nanaka and supplying it with platform events. Meanwhile, Nanaka is running on its own thread, the main thread, where it chucks through the frames one by one.
+
+The game must have a class inheriting IGame through which Nanaka can communicate with it, and in turn the game may communicate with Nanaka through INanaka. The game can then proceed to setup the GUI and the entities used by the game. Separate game worlds, where entities between worlds do not affect each other, may then be created by using the World class.

@@ -1,0 +1,8 @@
+{
+	"source": "nanaka/shaders/fshader_nocolor.glsl",
+	"uniforms": [
+		"tex",
+	],
+	"attributes": [
+	],
+}

@@ -1,0 +1,7 @@
+A tree of Widgets is the basic structure of a GUI layout. There are various kinds of Widgets which may be added onto each other to form this tree, each with a specific function. To affect the final layout of the tree, LayoutProperties and LayoutMethod may be set on the Widgets. Every Widget is responsible for the layout of its children, and the Widget's LayoutMethod is used to determine how it will do so. The LayoutAlgorithm will then look at the children's LayoutProperties when deciding their final placements.
+
+Different Views may be created, each with a different Widget layout. The GUI can then jump between different Views for different activities. The Widgets of an active View may still be modified, however, and layout will be done accordingly if necessary.
+
+All input events will be passed through the active View and affected Widgets. The Widgets may then call on their registered listeners, which is how the game eventually will be informed of input events.
+
+For Widgets requiring text to be drawn, a Font need to be registered on the GUI.

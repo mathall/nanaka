@@ -1,0 +1,20 @@
+{
+  'sources': [
+    '../physics/Collision.cpp',
+    '../physics/Collision.h',
+    '../physics/CollisionBox.h',
+    '../physics/CollisionListener.h',
+    '../physics/CollisionManager.cpp',
+    '../physics/CollisionManager.h',
+    '../physics/CollisionShape.h',
+    '../physics/CollisionSkin.cpp',
+    '../physics/CollisionSkin.h',
+    '../physics/CollisionSphere.h',
+    '../physics/Impact.cpp',
+    '../physics/Impact.h',
+    '../physics/PhysicsEM.cpp',
+    '../physics/PhysicsEM.h',
+    '../physics/PhysicsEMMgr.cpp',
+    '../physics/PhysicsEMMgr.h',
+  ],
+}

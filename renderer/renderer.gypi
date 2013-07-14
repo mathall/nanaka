@@ -1,0 +1,20 @@
+{
+  'sources': [
+    '../renderer/FrameBuffer.cpp',
+    '../renderer/FrameBuffer.h',
+    '../renderer/GLResource.h',
+    '../renderer/GLResourceManager.cpp',
+    '../renderer/GLResourceManager.h',
+    '../renderer/Projection.cpp',
+    '../renderer/Projection.h',
+    '../renderer/RenderContext.h',
+    '../renderer/RenderElement.h',
+    '../renderer/Renderer.cpp',
+    '../renderer/Renderer.h',
+    '../renderer/RenderList.h',
+    '../renderer/RenderPipeline.cpp',
+    '../renderer/RenderPipeline.h',
+    '../renderer/RenderTarget.cpp',
+    '../renderer/RenderTarget.h',
+  ],
+}

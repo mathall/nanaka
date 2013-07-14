@@ -1,0 +1,1 @@
+Graphics contain mainly higher level objects for drawing using the renderer. Generally these objects have a resource managed by the resource manager, a loader for this resource, and an instance for using the resource. (e.g. TextureResource, TextureLoader and Texture)

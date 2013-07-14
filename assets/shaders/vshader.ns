@@ -1,0 +1,12 @@
+{
+	"source": "nanaka/shaders/vshader.glsl",
+	"uniforms": [
+		"model",
+		"view",
+		"proj",
+	],
+	"attributes": [
+		"position",
+		"texcoord",
+	],
+}

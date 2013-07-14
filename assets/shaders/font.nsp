@@ -1,0 +1,4 @@
+{
+	"VShader": "nanaka/shaders/vshader_scaleoffset.ns",
+	"FShader": "nanaka/shaders/fshader_nocolor.ns",
+}
