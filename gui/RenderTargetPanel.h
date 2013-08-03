@@ -79,7 +79,7 @@ inline float RenderTargetPanel::GetAspectRatio() const
 
 inline Rect RenderTargetPanel::GetRect() const
 {
-	return Rect(m_position, m_size);
+	return Rect(Vec2f(0.0f, 0.0f), m_size);
 }
 
 inline bool RenderTargetPanel::IsActive() const
