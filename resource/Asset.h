@@ -31,11 +31,6 @@
 class Resource;
 class ResourceHandle;
 
-/**
- * Because the ResourceManager may at any time prune or just fail to load the
- * Resource, the Asset needs to be checked if it's valid every time it's being
- * used.
- */
 template<typename R>
 class Asset final
 {
