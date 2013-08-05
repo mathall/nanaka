@@ -59,7 +59,7 @@ Other prerequisites are:
 
 * GYP
 * ninja (optional)
-* gcc 4.7 or clang 3.2
+* gcc >=4.7 or clang >=3.2
 
 Projects using Nanaka
 ---------------------
