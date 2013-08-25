@@ -27,6 +27,18 @@
 
 #include "resource/ResourceManager.h"
 
+struct AttributeDescription
+{
+	AttributeIdentifier m_identifier;
+	GLuint m_num;
+};
+
+static const std::vector<AttributeDescription> s_attributeDescriptions =
+	{
+		{PositionAttributeIdentifier, 3},
+		{TexcoordAttributeIdentifier, 2},
+	};
+
 Model::Model(std::string modelFilePath)
 	: m_modelAsset(g_resourceManager->Acquire<ModelResource>(modelFilePath))
 	, m_material()
@@ -49,16 +61,17 @@ void Model::PrepRender(RenderElement& RE) const
 
 	RE.m_modelTransform = Mat44::MakeTransform(m_position, m_rotation, m_scale);
 
-	for (const auto& optAttribute : s_optionalAttributes)
+	for (const auto& attributeDsc : s_attributeDescriptions)
 	{
-		if (m_material.GetShaderProgram().HasAttribute(optAttribute.m_name))
+		if (m_material.GetShaderProgram().HasAttribute(
+			attributeDsc.m_identifier))
 		{
 			Attribute attribute;
 			attribute.m_location =
 				m_material.GetShaderProgram().GetAttributeLocation(
-					optAttribute.m_name);
-			attribute.m_buffer = GetAttributeBuffer(optAttribute.m_name);
-			attribute.m_num = optAttribute.m_num;
+					attributeDsc.m_identifier);
+			attribute.m_buffer = GetAttributeBuffer(attributeDsc.m_identifier);
+			attribute.m_num = attributeDsc.m_num;
 			RE.m_attributes.push_back(attribute);
 		}
 	}
@@ -69,17 +82,19 @@ void Model::PrepRender(RenderElement& RE) const
 	m_material.PrepRender(RE);
 }
 
-GLuint Model::GetAttributeBuffer(const std::string& name) const
+GLuint Model::GetAttributeBuffer(AttributeIdentifier identifier) const
 {
 	GLuint ret = 0;
 
-	if (name.compare("position") == 0)
+	switch (identifier)
 	{
+	case PositionAttributeIdentifier:
 		ret = m_modelAsset.GetResource()->GetPosVBO();
-	}
-	else if (name.compare("texcoord") == 0)
-	{
+		break;
+
+	case TexcoordAttributeIdentifier:
 		ret = m_modelAsset.GetResource()->GetTexVBO();
+		break;
 	}
 
 	return ret;

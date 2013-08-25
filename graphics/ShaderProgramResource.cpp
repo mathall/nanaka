@@ -32,29 +32,33 @@ void ShaderProgramGLResource::Build()
 	glAttachShader(m_program, m_fragmentShader.GetResource()->GetShaderHandle());
 	glLinkProgram(m_program);
 
-	for (auto attribute : m_vertexShader.GetResource()->GetAttributes())
+	for (auto attributeName : m_vertexShader.GetResource()->GetAttributeNames())
 	{
-		GLint attribLoc = glGetAttribLocation(m_program, attribute.c_str());
-		m_attributes.insert(std::make_pair(attribute, attribLoc));
+		GLint attribLoc = glGetAttribLocation(m_program, attributeName.c_str());
+		m_attributes.insert(std::make_pair(
+			s_attributeNameIdentifierLookup.find(attributeName)->second,
+			attribLoc));
 	}
 
-	for (auto uniform : m_vertexShader.GetResource()->GetUniforms())
+	for (auto uniformName : m_vertexShader.GetResource()->GetUniformNames())
 	{
-		GLint uniLoc = glGetUniformLocation(m_program, uniform.c_str());
-		m_vUniforms.insert(std::make_pair(uniform, uniLoc));
+		GLint uniLoc = glGetUniformLocation(m_program, uniformName.c_str());
+		m_vUniforms.insert(std::make_pair(
+			s_uniformNameIdentifierLookup.find(uniformName)->second, uniLoc));
 	}
 
-	for (auto uniform : m_fragmentShader.GetResource()->GetUniforms())
+	for (auto uniformName : m_fragmentShader.GetResource()->GetUniformNames())
 	{
-		GLint uniLoc = glGetUniformLocation(m_program, uniform.c_str());
-		m_fUniforms.insert(std::make_pair(uniform, uniLoc));
+		GLint uniLoc = glGetUniformLocation(m_program, uniformName.c_str());
+		m_fUniforms.insert(std::make_pair(
+			s_uniformNameIdentifierLookup.find(uniformName)->second, uniLoc));
 	}
 }
 
 GLint ShaderProgramResource::GetAttributeLocation(
-	const std::string& attribute) const
+	AttributeIdentifier identifier) const
 {
-	auto attributeIt = m_GLResource->m_attributes.find(attribute);
+	auto attributeIt = m_GLResource->m_attributes.find(identifier);
 	if (attributeIt != m_GLResource->m_attributes.end())
 	{
 		return attributeIt->second;
@@ -66,16 +70,16 @@ GLint ShaderProgramResource::GetAttributeLocation(
 }
 
 GLint ShaderProgramResource::GetUniformLocation(
-	const std::string& uniform) const
+	UniformIdentifier identifier) const
 {
-	auto uniformIt = m_GLResource->m_fUniforms.find(uniform);
+	auto uniformIt = m_GLResource->m_fUniforms.find(identifier);
 	if (uniformIt != m_GLResource->m_fUniforms.end())
 	{
 		return uniformIt->second;
 	}
 	else
 	{
-		uniformIt = m_GLResource->m_vUniforms.find(uniform);
+		uniformIt = m_GLResource->m_vUniforms.find(identifier);
 		if (uniformIt != m_GLResource->m_vUniforms.end())
 		{
 			return uniformIt->second;

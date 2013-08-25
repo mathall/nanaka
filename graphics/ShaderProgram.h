@@ -39,10 +39,10 @@ public:
 	explicit ShaderProgram(Asset<ShaderProgramResource> shaderProgram);
 
 	GLuint GetShaderProgramHandle() const;
-	bool HasAttribute(const std::string& attribute) const;
-	GLint GetAttributeLocation(const std::string& attribute) const;
-	bool HasUniform(const std::string& uniform) const;
-	GLint GetUniformLocation(const std::string& uniform) const;
+	bool HasAttribute(AttributeIdentifier identifier) const;
+	GLint GetAttributeLocation(AttributeIdentifier identifier) const;
+	bool HasUniform(UniformIdentifier identifier) const;
+	GLint GetUniformLocation(UniformIdentifier identifier) const;
 
 private:
 
@@ -66,31 +66,31 @@ inline GLuint ShaderProgram::GetShaderProgramHandle() const
 		m_shaderProgramAsset.GetResource()->GetShaderProgramHandle() : 0;
 }
 
-inline bool ShaderProgram::HasAttribute(const std::string& attribute) const
+inline bool ShaderProgram::HasAttribute(AttributeIdentifier identifier) const
 {
 	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->HasAttribute(attribute) : false;
+		m_shaderProgramAsset.GetResource()->HasAttribute(identifier) : false;
 }
 
 inline GLint ShaderProgram::GetAttributeLocation(
-	const std::string& attribute) const
+	AttributeIdentifier identifier) const
 {
 	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->GetAttributeLocation(attribute) :
+		m_shaderProgramAsset.GetResource()->GetAttributeLocation(identifier) :
 		-1;
 }
 
-inline bool ShaderProgram::HasUniform(const std::string& uniform) const
+inline bool ShaderProgram::HasUniform(UniformIdentifier identifier) const
 {
 	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->HasUniform(uniform) : false;
+		m_shaderProgramAsset.GetResource()->HasUniform(identifier) : false;
 }
 
 inline GLint ShaderProgram::GetUniformLocation(
-	const std::string& uniform) const
+	UniformIdentifier identifier) const
 {
 	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->GetUniformLocation(uniform) : -1;
+		m_shaderProgramAsset.GetResource()->GetUniformLocation(identifier) : -1;
 }
 
 #endif // NANAKA_GRAPHICS_SHADERPROGRAM_H

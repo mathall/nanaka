@@ -51,9 +51,9 @@ public:
 	Asset<ShaderResource> m_vertexShader;
 	Asset<ShaderResource> m_fragmentShader;
 	GLuint m_program;
-	std::unordered_map<std::string, GLint> m_attributes;
-	std::unordered_map<std::string, GLint> m_vUniforms;
-	std::unordered_map<std::string, GLint> m_fUniforms;
+	std::unordered_map<AttributeIdentifier, GLint> m_attributes;
+	std::unordered_map<UniformIdentifier, GLint> m_vUniforms;
+	std::unordered_map<UniformIdentifier, GLint> m_fUniforms;
 };
 
 inline ShaderProgramGLResource::ShaderProgramGLResource(
@@ -81,10 +81,10 @@ public:
 	ShaderProgramResource& operator=(const ShaderProgramResource&) = delete;
 
 	GLuint GetShaderProgramHandle() const;
-	bool HasAttribute(const std::string& attribute) const;
-	GLint GetAttributeLocation(const std::string& attribute) const;
-	bool HasUniform(const std::string& uniform) const;
-	GLint GetUniformLocation(const std::string& uniform) const;
+	bool HasAttribute(AttributeIdentifier identifier) const;
+	GLint GetAttributeLocation(AttributeIdentifier identifier) const;
+	bool HasUniform(UniformIdentifier identifier) const;
+	GLint GetUniformLocation(UniformIdentifier identifier) const;
 
 private:
 
@@ -109,17 +109,18 @@ inline GLuint ShaderProgramResource::GetShaderProgramHandle() const
 }
 
 inline bool ShaderProgramResource::HasAttribute(
-	const std::string& attribute) const
+	AttributeIdentifier identifier) const
 {
-	return m_GLResource->m_attributes.find(attribute)
+	return m_GLResource->m_attributes.find(identifier)
 		!= m_GLResource->m_attributes.end();
 }
 
-inline bool ShaderProgramResource::HasUniform(const std::string& uniform) const
+inline bool ShaderProgramResource::HasUniform(
+	UniformIdentifier identifier) const
 {
-	return m_GLResource->m_fUniforms.find(uniform)
+	return m_GLResource->m_fUniforms.find(identifier)
 		!= m_GLResource->m_fUniforms.end()
-		|| m_GLResource->m_vUniforms.find(uniform)
+		|| m_GLResource->m_vUniforms.find(identifier)
 		!= m_GLResource->m_vUniforms.end();
 }
 

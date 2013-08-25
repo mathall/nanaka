@@ -25,8 +25,27 @@
 
 #include "graphics/Material.h"
 
+#include <cassert>
+
 #include "renderer/RenderElement.h"
 #include "resource/ResourceManager.h"
+
+struct UniformDescription
+{
+	UniformIdentifier m_identifier;
+	UniformType m_type;
+};
+
+static const std::vector<UniformDescription> s_uniformDescriptions =
+	{
+		{ModelUniformIdentifier, ModelUniformType},
+		{ViewUniformIdentifier, ViewUniformType},
+		{ProjUniformIdentifier, ProjUniformType},
+		{TexUniformIdentifier, TexUniformType},
+		{ColorUniformIdentifier, Vec4UniformType},
+		{TexcoordsScaleUniformIdentifier, Vec2UniformType},
+		{TexcoordsOffsetUniformIdentifier, Vec2UniformType},
+	};
 
 Material::Material(std::string filePath)
 	: m_materialAsset(g_resourceManager->Acquire<MaterialResource>(filePath))
@@ -63,39 +82,47 @@ void Material::PrepRender(RenderElement& RE) const
 
 	RE.m_shaderProgram = m_shaderProgram.GetShaderProgramHandle();
 
-	for (const auto& optUniform : s_optionalUniforms)
+	for (const auto& uniformDsc : s_uniformDescriptions)
 	{
-		if (m_shaderProgram.HasUniform(optUniform.m_name))
+		if (m_shaderProgram.HasUniform(uniformDsc.m_identifier))
 		{
 			Uniform uniform;
 			uniform.m_location =
-				m_shaderProgram.GetUniformLocation(optUniform.m_name);
-			uniform.m_type = optUniform.m_type;
-			uniform.m_value = GetUniformValue(optUniform.m_name);
+				m_shaderProgram.GetUniformLocation(uniformDsc.m_identifier);
+			uniform.m_type = uniformDsc.m_type;
+			uniform.m_value = GetUniformValue(uniformDsc.m_identifier);
 			RE.m_uniforms.push_back(uniform);
 		}
 	}
 }
 
-UniformValue Material::GetUniformValue(const std::string& name) const
+UniformValue Material::GetUniformValue(UniformIdentifier identifier) const
 {
 	UniformValue ret;
 
-	if (name.compare("color") == 0)
+	switch (identifier)
 	{
-		ret.m_vec4 = m_color;
-	}
-	else if (name.compare("texcoordsScale") == 0)
-	{
-		ret.m_vec2 = m_texcoordsScale;
-	}
-	else if (name.compare("texcoordsOffset") == 0)
-	{
-		ret.m_vec2 = m_texcoordsOffset;
-	}
-	else if (name.compare("tex") == 0)
-	{
+	case ModelUniformIdentifier:
+	case ViewUniformIdentifier:
+	case ProjUniformIdentifier:
+		assert("Unpermitted uniforms in material description.");
+		break;
+
+	case TexUniformIdentifier:
 		ret.m_tex = {m_texture.GetTextureHandle(), 0};
+		break;
+
+	case ColorUniformIdentifier:
+		ret.m_vec4 = m_color;
+		break;
+
+	case TexcoordsScaleUniformIdentifier:
+		ret.m_vec2 = m_texcoordsScale;
+		break;
+
+	case TexcoordsOffsetUniformIdentifier:
+		ret.m_vec2 = m_texcoordsOffset;
+		break;
 	}
 
 	return ret;

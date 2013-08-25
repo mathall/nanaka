@@ -27,12 +27,78 @@
 #define NANAKA_GRAPHICS_SHADERRESOURCE_H
 
 #include <functional>
+#include <unordered_map>
 #include <vector>
 
 #include "renderer/GLResource.h"
 #include "renderer/Renderer.h"
 #include "resource/Resource.h"
 #include "resource/ResourceParameters.h"
+
+enum AttributeIdentifier
+{
+	PositionAttributeIdentifier,
+	TexcoordAttributeIdentifier,
+};
+
+static const std::unordered_map<std::string, AttributeIdentifier>
+s_attributeNameIdentifierLookup =
+	{
+		{"position", PositionAttributeIdentifier},
+		{"texcoord", TexcoordAttributeIdentifier},
+	};
+
+enum UniformIdentifier
+{
+	ModelUniformIdentifier,
+	ViewUniformIdentifier,
+	ProjUniformIdentifier,
+	TexUniformIdentifier,
+	ColorUniformIdentifier,
+	TexcoordsScaleUniformIdentifier,
+	TexcoordsOffsetUniformIdentifier,
+};
+
+static const std::unordered_map<std::string, UniformIdentifier>
+s_uniformNameIdentifierLookup =
+	{
+		{"model", ModelUniformIdentifier},
+		{"view", ViewUniformIdentifier},
+		{"proj", ProjUniformIdentifier},
+		{"tex", TexUniformIdentifier},
+		{"color", ColorUniformIdentifier},
+		{"texcoordsScale", TexcoordsScaleUniformIdentifier},
+		{"texcoordsOffset", TexcoordsOffsetUniformIdentifier},
+	};
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmismatched-tags"
+#endif // defined(__clang__)
+
+namespace std {
+template<>
+struct hash<UniformIdentifier> {
+public:
+	size_t operator()(const UniformIdentifier& identifier) const
+	{
+		return std::hash<int>()(identifier);
+	}
+};
+
+template<>
+struct hash<AttributeIdentifier> {
+public:
+	size_t operator()(const AttributeIdentifier& identifier) const
+	{
+		return std::hash<int>()(identifier);
+	}
+};
+} // namespace std
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)
 
 class ShaderResourceParameters final : public ResourceParameters
 {
@@ -99,16 +165,18 @@ public:
 	ShaderResource& operator=(const ShaderResource&) = delete;
 
 	GLuint GetShaderHandle() const;
-	const std::vector<std::string> GetUniforms() const;
-	const std::vector<std::string> GetAttributes() const;
+	const std::vector<std::string>& GetUniformNames() const;
+	const std::vector<std::string>& GetAttributeNames() const;
 
 private:
 
 	// shared_ptr because GLResources may be queued up on the GLResourceManager.
 	std::shared_ptr<ShaderGLResource> m_GLResource;
 
-	std::vector<std::string> m_uniforms;
-	std::vector<std::string> m_attributes;
+	std::vector<std::string> m_uniformNames;
+	std::vector<UniformIdentifier> m_uniformIdentifiers;
+	std::vector<std::string> m_attributeNames;
+	std::vector<AttributeIdentifier> m_attributeIdentifiers;
 };
 
 inline ShaderResource::ShaderResource(
@@ -116,9 +184,21 @@ inline ShaderResource::ShaderResource(
 	std::vector<std::string> uniforms,
 	std::vector<std::string> attributes)
 	: m_GLResource(GLResource)
-	, m_uniforms(uniforms)
-	, m_attributes(attributes)
+	, m_uniformNames(uniforms)
+	, m_attributeNames(attributes)
 {
+	for (auto& uniformName : m_uniformNames)
+	{
+		m_uniformIdentifiers.push_back(
+			s_uniformNameIdentifierLookup.find(uniformName)->second);
+	}
+
+	for (auto& attributeName : m_attributeNames)
+	{
+		m_attributeIdentifiers.push_back(
+			s_attributeNameIdentifierLookup.find(attributeName)->second);
+	}
+
 	g_renderer->QueueGLResourceForBuild(m_GLResource);
 }
 
@@ -132,14 +212,14 @@ inline GLuint ShaderResource::GetShaderHandle() const
 	return m_GLResource->m_shaderHandle;
 }
 
-inline const std::vector<std::string> ShaderResource::GetUniforms() const
+inline const std::vector<std::string>& ShaderResource::GetUniformNames() const
 {
-	return m_uniforms;
+	return m_uniformNames;
 }
 
-inline const std::vector<std::string> ShaderResource::GetAttributes() const
+inline const std::vector<std::string>& ShaderResource::GetAttributeNames() const
 {
-	return m_attributes;
+	return m_attributeNames;
 }
 
 #endif // NANAKA_GRAPHICS_SHADERRESOURCE_H

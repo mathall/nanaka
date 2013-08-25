@@ -35,23 +35,6 @@
 
 class RenderElement;
 
-struct MtlUniformDsc
-{
-	const std::string m_name;
-	UniformType m_type;
-};
-
-static const std::vector<MtlUniformDsc> s_optionalUniforms =
-	{
-		{"model", ModelUniformType},
-		{"view", ViewUniformType},
-		{"proj", ProjUniformType},
-		{"tex", TexUniformType},
-		{"color", Vec4UniformType},
-		{"texcoordsScale", Vec2UniformType},
-		{"texcoordsOffset", Vec2UniformType},
-	};
-
 class Material final
 {
 public:
@@ -77,7 +60,7 @@ public:
 
 private:
 
-	UniformValue GetUniformValue(const std::string& name) const;
+	UniformValue GetUniformValue(UniformIdentifier identifier) const;
 
 	Asset<MaterialResource> m_materialAsset;
 

@@ -34,18 +34,6 @@
 
 class RenderElement;
 
-struct MdlAttributeDsc
-{
-	const std::string m_name;
-	GLuint m_num;
-};
-
-static const std::vector<MdlAttributeDsc> s_optionalAttributes =
-	{
-		{"position", 3},
-		{"texcoord", 2},
-	};
-
 class Model final
 {
 public:
@@ -64,7 +52,7 @@ public:
 
 private:
 
-	GLuint GetAttributeBuffer(const std::string& name) const;
+	GLuint GetAttributeBuffer(AttributeIdentifier identifier) const;
 
 	Asset<ModelResource> m_modelAsset;
 
