@@ -6,6 +6,7 @@
       'dependencies': [
         '../external/libpng/build/libpng.gyp:nanaka_png',
         '../external/json-parser/build/json-parser.gyp:nanaka_json_parser',
+        '../external/tremor/build/tremor.gyp:nanaka_tremor',
       ],
       'include_dirs': [
         '..',

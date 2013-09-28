@@ -26,11 +26,21 @@ LOCAL_SRC_FILES := $(NANAKA_LIB_DIR)/libnanaka_zip.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := Nanaka_ogg
+LOCAL_SRC_FILES := $(NANAKA_LIB_DIR)/libnanaka_ogg.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := Nanaka_tremor
+LOCAL_SRC_FILES := $(NANAKA_LIB_DIR)/libnanaka_tremor.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE    := jniNanaka
 LOCAL_CFLAGS    := -Werror -Wall
 LOCAL_SRC_FILES := Nanaka.cpp GLContextManagerImpl.cpp JNIHelper.cpp FileManagerImpl.cpp Application.cpp
 LOCAL_LDLIBS    := -lGLESv2 -lGLESv1_CM -lz -landroid -lEGL -lOpenSLES
-LOCAL_WHOLE_STATIC_LIBRARIES := Nanaka Nanaka_png Nanaka_json_parser Nanaka_zip Game
+LOCAL_WHOLE_STATIC_LIBRARIES := Nanaka Nanaka_png Nanaka_json_parser Nanaka_zip Nanaka_ogg Nanaka_tremor Game
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../nanaka
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../nanaka/external/libzip/src
