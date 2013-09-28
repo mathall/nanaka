@@ -32,6 +32,8 @@ class CollisionListener
 {
 public:
 
+	virtual ~CollisionListener(){}
+
 	virtual void OnCollision(const Collision& collision) = 0;
 };
 

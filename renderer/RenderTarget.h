@@ -41,6 +41,8 @@ class RenderTargetClient
 {
 public:
 
+	virtual ~RenderTargetClient(){}
+
 	virtual bool IsActive() const = 0;
 	virtual Rect GetRect() const = 0;
 	virtual void NewColorBuffer(GLuint){}

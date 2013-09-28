@@ -38,7 +38,7 @@
 
 class Widget;
 
-class WidgetPlacement
+class WidgetPlacement final
 {
 public:
 

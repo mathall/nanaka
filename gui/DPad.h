@@ -42,6 +42,8 @@ class DPadListener
 {
 public:
 
+	virtual ~DPadListener(){}
+
 	virtual void DPadInput(UUID DPadId, DPadAction action, Vec2f position) = 0;
 };
 

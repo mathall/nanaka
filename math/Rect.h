@@ -28,7 +28,7 @@
 
 #include "math/Vec2f.h"
 
-class Rect
+class Rect final
 {
 public:
 

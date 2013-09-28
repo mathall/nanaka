@@ -28,7 +28,7 @@
 
 #include "resource/ResourceLoader.h"
 
-class BillboardAnimationLoader : public ResourceLoader
+class BillboardAnimationLoader final : public ResourceLoader
 {
 public:
 

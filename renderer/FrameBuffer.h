@@ -33,6 +33,8 @@ class FrameBufferClient
 {
 public:
 
+	virtual ~FrameBufferClient(){}
+
 	virtual void NewColorBuffer(GLuint colorBuffer) = 0;
 };
 

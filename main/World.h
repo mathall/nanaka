@@ -47,6 +47,7 @@ class World
 public:
 
 	World();
+	virtual ~World(){}
 
 	void Tick();
 	void Draw(const Camera& camera) const;

@@ -35,6 +35,8 @@ class IGame
 {
 public:
 
+	virtual ~IGame(){}
+
 	// Nanaka will have been initialized by the time this method is called.
 	virtual void Initialize(INanaka* nanaka) = 0;
 

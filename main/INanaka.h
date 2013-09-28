@@ -36,6 +36,8 @@ class INanaka
 {
 public:
 
+	virtual ~INanaka(){}
+
 	virtual void Shutdown() const = 0;
 
 	virtual GUI& GetGUI() = 0;

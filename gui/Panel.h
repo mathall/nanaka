@@ -32,6 +32,8 @@ class PanelListener
 {
 public:
 
+	virtual ~PanelListener(){}
+
 	virtual void PanelInput(UUID panelId, const InputEvent& event) = 0;
 };
 
@@ -40,6 +42,7 @@ class Panel : public Widget
 public:
 
 	Panel();
+	virtual ~Panel(){}
 
 	void AddWidget(std::shared_ptr<Widget> widget);
 	void SetLayoutMethod(LayoutMethod layoutMethod);

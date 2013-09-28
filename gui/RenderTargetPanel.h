@@ -35,6 +35,8 @@ class RenderTargetPanelListener
 {
 public:
 
+	virtual ~RenderTargetPanelListener(){}
+
 	virtual void OnNewSize(UUID panelId) = 0;
 };
 

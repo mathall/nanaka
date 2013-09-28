@@ -36,6 +36,8 @@ class ButtonListener
 {
 public:
 
+	virtual ~ButtonListener(){}
+
 	virtual void ButtonPushed(UUID buttonId) = 0;
 };
 
