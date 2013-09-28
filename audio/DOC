@@ -1,0 +1,5 @@
+To play audio, an AudioStream needs to be created through the AudioEngine. The user then receives an AudioStreamHandle which can be used with the AudioEngine to control the stream. Copies of the same AudioStreamHandle will control the same AudioStream, and when the last AudioStreamHandle for a certain AudioStream goes out of scope it will instruct the AudioEngine to destruct the AudioStream.
+
+An AudioSource is required to create an AudioStream. This AudioSource must live for as long as the AudioStream is kept alive by its user, and it is assumed gone when the AudioStream is being destroyed.
+
+When the AudioDevice creates an AudioStream, it must also supply it with an AudioStreamClient. The AudioStreamClient is the backend of the AudioStream, responsible for making the proper calls to the underlying audio library used by the AudioDevice to make sure the right buffers are playing.

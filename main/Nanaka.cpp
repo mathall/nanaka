@@ -25,6 +25,7 @@
 
 #include "main/Nanaka.h"
 
+#include "audio/AudioEngine.h"
 #include "game/GameEM.h"
 #include "graphics/BillboardAnimationLoader.h"
 #include "graphics/MaterialLoader.h"
@@ -61,6 +62,8 @@ Nanaka::Nanaka(Application& application)
 	Renderer::Instantiate();
 	g_renderer->StartThread();
 
+	AudioEngine::Instantiate();
+
 	m_GUI.Initialize();
 	m_inputHandler.AddInputListener(&m_GUI);
 
@@ -91,6 +94,7 @@ void Nanaka::RunThread()
 
 		m_inputHandler.ProcessEvents();
 		m_game->GameLoop();
+		g_audioEngine->Update();
 		m_GUI.Draw();
 
 		Signal(m_runPermit);
@@ -139,4 +143,5 @@ void Nanaka::Exit()
 	ResourceManager::DestroyInstance();
 	g_renderer->KillThread();
 	Renderer::DestroyInstance();
+	AudioEngine::DestroyInstance();
 }

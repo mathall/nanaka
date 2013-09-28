@@ -29,7 +29,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := jniNanaka
 LOCAL_CFLAGS    := -Werror -Wall
 LOCAL_SRC_FILES := Nanaka.cpp GLContextManagerImpl.cpp JNIHelper.cpp FileManagerImpl.cpp Application.cpp
-LOCAL_LDLIBS    := -lGLESv2 -lGLESv1_CM -lz -landroid -lEGL
+LOCAL_LDLIBS    := -lGLESv2 -lGLESv1_CM -lz -landroid -lEGL -lOpenSLES
 LOCAL_WHOLE_STATIC_LIBRARIES := Nanaka Nanaka_png Nanaka_json_parser Nanaka_zip Game
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../nanaka

@@ -11,6 +11,7 @@
         '..',
       ],
       'includes': [
+        '../audio/audio.gypi',
         '../entity/entity.gypi',
         '../game/game.gypi',
         '../graphics/graphics.gypi',
@@ -35,6 +36,7 @@
           'all_dependent_settings': {
             'link_settings': {
               'libraries': [
+                '-lopenal',
                 '-lGL',
                 '-lpthread',
               ],
