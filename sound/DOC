@@ -1,0 +1,3 @@
+A Sound will use the resouce manager to load a SoundResource which may be of different formats. The raw file will be loaded as an asset and the Sound will then use an appropriate SoundDecoder as the AudioSource for a new AudioStream. If successful, the Sound may then be used for playback.
+
+Copying a Sound will essentially result in a handle for the same stream. If a new stream separate from the original is desired, the Sound must be cloned.

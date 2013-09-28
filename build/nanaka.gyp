@@ -25,6 +25,7 @@
         '../renderer/renderer.gypi',
         '../resource/resource.gypi',
         '../scene/scene.gypi',
+        '../sound/sound.gypi',
         '../utils/utils.gypi',
       ],
       'conditions': [

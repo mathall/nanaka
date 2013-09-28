@@ -38,6 +38,7 @@
 #include "renderer/Renderer.h"
 #include "resource/ResourceManager.h"
 #include "scene/SceneEM.h"
+#include "sound/SoundLoader.h"
 #include "utils/GlobalClock.h"
 #include "utils/UUID.h"
 
@@ -58,6 +59,7 @@ Nanaka::Nanaka(Application& application)
 	g_resourceManager->RegisterLoader<MaterialLoader>();
 	g_resourceManager->RegisterLoader<ShaderLoader>();
 	g_resourceManager->RegisterLoader<ShaderProgramLoader>();
+	g_resourceManager->RegisterLoader<SoundLoader>();
 
 	Renderer::Instantiate();
 	g_renderer->StartThread();
