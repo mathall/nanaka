@@ -51,46 +51,61 @@ AudioStreamHandle AudioEngine::CreateAudioStream(AudioSource* audioSource)
 
 void AudioEngine::PlayOnce(AudioStreamHandle streamHandle)
 {
-	auto streamIt = m_streams.find(streamHandle.GetId());
-	if (streamIt != m_streams.end())
+	if (streamHandle.IsValid())
 	{
-		streamIt->second->Play(AudioStreamPlayModePlayOnce);
+		auto streamIt = m_streams.find(streamHandle.GetId());
+		if (streamIt != m_streams.end())
+		{
+			streamIt->second->Play(AudioStreamPlayModePlayOnce);
+		}
 	}
 }
 
 void AudioEngine::Repeat(AudioStreamHandle streamHandle)
 {
-	auto streamIt = m_streams.find(streamHandle.GetId());
-	if (streamIt != m_streams.end())
+	if (streamHandle.IsValid())
 	{
-		streamIt->second->Play(AudioStreamPlayModeLoop);
+		auto streamIt = m_streams.find(streamHandle.GetId());
+		if (streamIt != m_streams.end())
+		{
+			streamIt->second->Play(AudioStreamPlayModeLoop);
+		}
 	}
 }
 
 void AudioEngine::Stop(AudioStreamHandle streamHandle)
 {
-	auto streamIt = m_streams.find(streamHandle.GetId());
-	if (streamIt != m_streams.end())
+	if (streamHandle.IsValid())
 	{
-		streamIt->second->Stop();
+		auto streamIt = m_streams.find(streamHandle.GetId());
+		if (streamIt != m_streams.end())
+		{
+			streamIt->second->Stop();
+		}
 	}
 }
 
 void AudioEngine::Pause(AudioStreamHandle streamHandle)
 {
-	auto streamIt = m_streams.find(streamHandle.GetId());
-	if (streamIt != m_streams.end())
+	if (streamHandle.IsValid())
 	{
-		streamIt->second->Pause();
+		auto streamIt = m_streams.find(streamHandle.GetId());
+		if (streamIt != m_streams.end())
+		{
+			streamIt->second->Pause();
+		}
 	}
 }
 
 void AudioEngine::Unpause(AudioStreamHandle streamHandle)
 {
-	auto streamIt = m_streams.find(streamHandle.GetId());
-	if (streamIt != m_streams.end())
+	if (streamHandle.IsValid())
 	{
-		streamIt->second->Unpause();
+		auto streamIt = m_streams.find(streamHandle.GetId());
+		if (streamIt != m_streams.end())
+		{
+			streamIt->second->Unpause();
+		}
 	}
 }
 
