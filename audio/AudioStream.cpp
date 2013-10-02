@@ -58,8 +58,6 @@ void AudioStream::FillBuffers()
 			while (bytesRead < m_bufferSize)
 			{
 				m_source->Reset();
-				buffer[bytesRead] = 0;
-				bytesRead++;
 				bytesRead += m_source->GetData(
 					buffer + bytesRead, m_bufferSize - bytesRead);
 			}
