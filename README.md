@@ -51,6 +51,7 @@ To build a project using Nanaka, the following dependencies are required:
 * libogg (included)
 * tremor (included)
 * glew (non-android) and GLES2
+* OpenAL (non-android)
 
 And optionally:
 
