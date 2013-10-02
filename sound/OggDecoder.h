@@ -82,7 +82,8 @@ inline AudioSampleFormat OggDecoder::GetAudioSampleFormat() const
 
 inline bool OggDecoder::HasData() const
 {
-	return m_oggFile.m_position != m_oggFile.m_beginning + m_oggFile.m_size;
+	return ov_pcm_tell(m_vorbisFile.get())
+		!= ov_pcm_total(m_vorbisFile.get(), -1);
 }
 
 inline void OggDecoder::Reset()
