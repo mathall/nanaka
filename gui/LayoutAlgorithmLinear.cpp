@@ -72,7 +72,7 @@ LayoutProperties LayoutAlgorithm::CalculateLayoutPropertiesLinear(
 	desiredW += maxDesiredW;
 	desiredH += maxDesiredH;
 
-	newLayoutProps.m_desiredPixelSize = Vec2f(maxDesiredW, maxDesiredH);
+	newLayoutProps.m_desiredPixelSize = Vec2f(desiredW, desiredH);
 	return newLayoutProps;
 }
 
