@@ -35,12 +35,6 @@
 #include "resource/Resource.h"
 #include "resource/ResourceParameters.h"
 
-enum AttributeIdentifier
-{
-	PositionAttributeIdentifier,
-	TexcoordAttributeIdentifier,
-};
-
 static const std::unordered_map<std::string, AttributeIdentifier>
 s_attributeNameIdentifierLookup =
 	{

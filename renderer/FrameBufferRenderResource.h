@@ -33,6 +33,8 @@ class FrameBufferRenderResource final : public RenderResource
 {
 public:
 
+	static const RenderResourceType s_type = FrameBufferRenderResourceType;
+
 	FrameBufferRenderResource();
 
 	void SetSize(Vec2f size);
@@ -50,7 +52,7 @@ public:
 };
 
 inline FrameBufferRenderResource::FrameBufferRenderResource()
-	: RenderResource(FrameBufferRenderResourceType)
+	: RenderResource(s_type)
 	, m_size(Vec2f::Zero())
 	, m_FBO(0)
 	, m_colorBuffer(0)

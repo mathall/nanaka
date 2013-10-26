@@ -29,6 +29,7 @@
 
 #include "renderer/FrameBufferRenderResource.h"
 #include "renderer/GL.h"
+#include "renderer/MeshRenderResource.h"
 #include "renderer/Projection.h"
 #include "renderer/RenderResourceManager.h"
 #include "renderer/TextureRenderResource.h"
@@ -53,7 +54,10 @@ void RenderPipeline::ProcessRenderList(
 {
 	for (auto& renderElement : m_renderLists[renderList])
 	{
-		if (renderElement->m_EBO == 0 || renderElement->m_shaderProgram == 0)
+		auto mesh = renderResourceManager.Get<MeshRenderResource>(
+			renderElement->m_meshHandle);
+
+		if (!mesh || mesh->m_EBO == 0 || renderElement->m_shaderProgram == 0)
 		{
 			continue;
 		}
@@ -98,15 +102,16 @@ void RenderPipeline::ProcessRenderList(
 
 		for (auto attribute : renderElement->m_attributes)
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, attribute.m_buffer);
+			glBindBuffer(GL_ARRAY_BUFFER,
+				GetAttributeBuffer(mesh, attribute.m_desc.m_identifier));
 			glEnableVertexAttribArray(attribute.m_location);
-			glVertexAttribPointer(attribute.m_location, attribute.m_num,
+			glVertexAttribPointer(attribute.m_location, attribute.m_desc.m_num,
 				GL_FLOAT, GL_FALSE, 0, 0);
 		}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderElement->m_EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_EBO);
 		glDrawElements(
-			GL_TRIANGLES, renderElement->m_numIndices, GL_UNSIGNED_SHORT, 0);
+			GL_TRIANGLES, mesh->m_indexBufferSize, GL_UNSIGNED_SHORT, 0);
 
 		m_renderElementPool.PutObject(std::move(renderElement));
 	}
@@ -157,8 +162,30 @@ GLuint RenderPipeline::GetGLHandle(
 			handle = static_cast<FrameBufferRenderResource*>(
 				renderResource.get())->m_colorBuffer;
 			break;
+		default:
+			break;
 		}
 	}
 
 	return handle;
+}
+
+GLuint RenderPipeline::GetAttributeBuffer(
+	std::shared_ptr<MeshRenderResource> mesh,
+	AttributeIdentifier identifier) const
+{
+	GLuint ret = 0;
+
+	switch (identifier)
+	{
+	case PositionAttributeIdentifier:
+		ret = mesh->m_posVBO;
+		break;
+
+	case TexcoordAttributeIdentifier:
+		ret = mesh->m_texVBO;
+		break;
+	}
+
+	return ret;
 }

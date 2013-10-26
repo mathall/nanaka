@@ -35,6 +35,18 @@
 #include "renderer/RenderList.h"
 #include "renderer/RenderResourceHandle.h"
 
+enum AttributeIdentifier
+{
+	PositionAttributeIdentifier,
+	TexcoordAttributeIdentifier,
+};
+
+struct AttributeDescription
+{
+	AttributeIdentifier m_identifier;
+	GLuint m_num;
+};
+
 struct TexUnit
 {
 	RenderResourceHandle m_handle;
@@ -69,8 +81,7 @@ struct Uniform
 struct Attribute
 {
 	GLint m_location;
-	GLuint m_buffer;
-	GLuint m_num;
+	AttributeDescription m_desc;
 };
 
 class RenderElement final
@@ -81,8 +92,7 @@ public:
 	GLuint m_shaderProgram;
 	std::vector<Uniform> m_uniforms;
 	std::vector<Attribute> m_attributes;
-	GLuint m_EBO;
-	int m_numIndices;
+	RenderResourceHandle m_meshHandle;
 	RenderList m_renderList;
 
 	struct Clear

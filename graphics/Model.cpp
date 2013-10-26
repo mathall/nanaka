@@ -27,12 +27,6 @@
 
 #include "resource/ResourceManager.h"
 
-struct AttributeDescription
-{
-	AttributeIdentifier m_identifier;
-	GLuint m_num;
-};
-
 static const std::vector<AttributeDescription> s_attributeDescriptions =
 	{
 		{PositionAttributeIdentifier, 3},
@@ -70,32 +64,12 @@ void Model::PrepRender(RenderElement& RE) const
 			attribute.m_location =
 				m_material.GetShaderProgram().GetAttributeLocation(
 					attributeDsc.m_identifier);
-			attribute.m_buffer = GetAttributeBuffer(attributeDsc.m_identifier);
-			attribute.m_num = attributeDsc.m_num;
+			attribute.m_desc = attributeDsc;
 			RE.m_attributes.push_back(attribute);
 		}
 	}
 
-	RE.m_EBO = m_modelAsset.GetResource()->GetEBO();
-	RE.m_numIndices = m_modelAsset.GetResource()->GetIndexBufferSize();
+	RE.m_meshHandle = m_modelAsset.GetResource()->GetMeshHandle();
 
 	m_material.PrepRender(RE);
-}
-
-GLuint Model::GetAttributeBuffer(AttributeIdentifier identifier) const
-{
-	GLuint ret = 0;
-
-	switch (identifier)
-	{
-	case PositionAttributeIdentifier:
-		ret = m_modelAsset.GetResource()->GetPosVBO();
-		break;
-
-	case TexcoordAttributeIdentifier:
-		ret = m_modelAsset.GetResource()->GetTexVBO();
-		break;
-	}
-
-	return ret;
 }

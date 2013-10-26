@@ -34,6 +34,8 @@ class TextureRenderResource final : public RenderResource
 {
 public:
 
+	static const RenderResourceType s_type = TextureRenderResourceType;
+
 	TextureRenderResource(
 		int width,
 		int height,

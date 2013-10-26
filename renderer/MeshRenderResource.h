@@ -23,48 +23,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "graphics/ModelResource.h"
+#ifndef NANAKA_RENDERER_MESHRENDERRESOURCE_H
+#define NANAKA_RENDERER_MESHRENDERRESOURCE_H
 
-MeshGLResource::MeshGLResource(
-	std::unique_ptr<GLfloat[]> vertexBuffer,
-	int vertexBufferSize,
-	std::unique_ptr<GLfloat[]> texcoordBuffer,
-	int texcoordBufferSize,
-	std::unique_ptr<GLushort[]> indexBuffer,
-	int indexBufferSize)
-	: m_vertexBuffer(std::move(vertexBuffer))
-	, m_vertexBufferSize(vertexBufferSize)
-	, m_texcoordBuffer(std::move(texcoordBuffer))
-	, m_texcoordBufferSize(texcoordBufferSize)
-	, m_indexBuffer(std::move(indexBuffer))
-	, m_indexBufferSize(indexBufferSize)
-	, m_posVBO(0)
-	, m_texVBO(0)
-	, m_EBO(0)
+#include <memory>
+
+#include "renderer/RenderResource.h"
+
+class MeshRenderResource final : public RenderResource
 {
-}
+public:
 
-void MeshGLResource::Build()
-{
-	glGenBuffers(1, &m_posVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_vertexBufferSize,
-		m_vertexBuffer.get(), GL_STATIC_DRAW);
+	static const RenderResourceType s_type = MeshRenderResourceType;
 
-	glGenBuffers(1, &m_texVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_texVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_texcoordBufferSize,
-		m_texcoordBuffer.get(), GL_STATIC_DRAW);
+	MeshRenderResource(
+		std::unique_ptr<GLfloat[]> vertexBuffer,
+		int vertexBufferSize,
+		std::unique_ptr<GLfloat[]> texcoordBuffer,
+		int texcoordBufferSize,
+		std::unique_ptr<GLushort[]> indexBuffer,
+		int indexBufferSize);
 
-	glGenBuffers(1, &m_EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*m_indexBufferSize,
-		m_indexBuffer.get(), GL_STATIC_DRAW);
-}
+	/**
+	 * GLResource implementation.
+	 */
+	void Build() override;
+	void Destroy() override;
 
-void MeshGLResource::Destroy()
-{
-	glDeleteBuffers(1, &m_EBO);
-	glDeleteBuffers(1, &m_posVBO);
-	glDeleteBuffers(1, &m_texVBO);
-}
+	std::unique_ptr<GLfloat[]> m_vertexBuffer;
+	int m_vertexBufferSize;
+	std::unique_ptr<GLfloat[]> m_texcoordBuffer;
+	int m_texcoordBufferSize;
+	std::unique_ptr<GLushort[]> m_indexBuffer;
+	int m_indexBufferSize;
+
+	GLuint m_posVBO;
+	GLuint m_texVBO;
+	GLuint m_EBO;
+};
+
+#endif // NANAKA_RENDERER_MESHRENDERRESOURCE_H

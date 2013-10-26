@@ -31,8 +31,9 @@
 
 enum RenderResourceType
 {
-	TextureRenderResourceType,
 	FrameBufferRenderResourceType,
+	MeshRenderResourceType,
+	TextureRenderResourceType,
 };
 
 class RenderResource : public GLResource

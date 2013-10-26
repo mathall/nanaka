@@ -17,7 +17,6 @@
     '../graphics/Model.h',
     '../graphics/ModelLoader.cpp',
     '../graphics/ModelLoader.h',
-    '../graphics/ModelResource.cpp',
     '../graphics/ModelResource.h',
     '../graphics/ShaderLoader.cpp',
     '../graphics/ShaderLoader.h',

@@ -23,67 +23,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_GRAPHICS_MODEL_H
-#define NANAKA_GRAPHICS_MODEL_H
+#include "renderer/MeshRenderResource.h"
 
-#include <string>
-
-#include "graphics/Material.h"
-#include "graphics/ModelResource.h"
-#include "resource/Asset.h"
-
-class RenderElement;
-
-class Model final
+MeshRenderResource::MeshRenderResource(
+	std::unique_ptr<GLfloat[]> vertexBuffer,
+	int vertexBufferSize,
+	std::unique_ptr<GLfloat[]> texcoordBuffer,
+	int texcoordBufferSize,
+	std::unique_ptr<GLushort[]> indexBuffer,
+	int indexBufferSize)
+	: RenderResource(s_type)
+	, m_vertexBuffer(std::move(vertexBuffer))
+	, m_vertexBufferSize(vertexBufferSize)
+	, m_texcoordBuffer(std::move(texcoordBuffer))
+	, m_texcoordBufferSize(texcoordBufferSize)
+	, m_indexBuffer(std::move(indexBuffer))
+	, m_indexBufferSize(indexBufferSize)
+	, m_posVBO(0)
+	, m_texVBO(0)
+	, m_EBO(0)
 {
-public:
-
-	Model() = default;
-	explicit Model(std::string modelFilePath);
-
-	void PrepRender(RenderElement& RE) const;
-
-	void SetMaterial(Material material);
-	const Material& GetMaterial() const;
-
-	void SetPosition(Vec3f position);
-	void SetRotation(Quat rotation);
-	void SetScale(Vec3f scale);
-
-private:
-
-	Asset<ModelResource> m_modelAsset;
-
-	Material m_material;
-
-	Vec3f m_position;
-	Quat m_rotation;
-	Vec3f m_scale;
-};
-
-inline void Model::SetMaterial(Material material)
-{
-	m_material = material;
 }
 
-inline const Material& Model::GetMaterial() const
+void MeshRenderResource::Build()
 {
-	return m_material;
+	glGenBuffers(1, &m_posVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_vertexBufferSize,
+		m_vertexBuffer.get(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_texVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_texVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_texcoordBufferSize,
+		m_texcoordBuffer.get(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*m_indexBufferSize,
+		m_indexBuffer.get(), GL_STATIC_DRAW);
 }
 
-inline void Model::SetPosition(Vec3f position)
+void MeshRenderResource::Destroy()
 {
-	m_position = position;
+	glDeleteBuffers(1, &m_EBO);
+	glDeleteBuffers(1, &m_posVBO);
+	glDeleteBuffers(1, &m_texVBO);
 }
-
-inline void Model::SetRotation(Quat rotation)
-{
-	m_rotation = rotation;
-}
-
-inline void Model::SetScale(Vec3f scale)
-{
-	m_scale = scale;
-}
-
-#endif // NANAKA_GRAPHICS_MODEL_H

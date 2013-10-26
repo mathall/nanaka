@@ -101,8 +101,8 @@ std::shared_ptr<Resource> TextureLoader::Load(
 	// Cleanup.
 	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
 
-	auto renderResourceId = g_renderer->GenerateTexture(width, height,
+	auto renderResourceHandle = g_renderer->GenerateTexture(width, height,
 		std::unique_ptr<GLvoid>(static_cast<GLvoid*>(pixels.release())));
 
-	return std::make_shared<TextureResource>(renderResourceId);
+	return std::make_shared<TextureResource>(renderResourceHandle);
 }

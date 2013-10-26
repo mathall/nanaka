@@ -83,10 +83,12 @@ std::shared_ptr<Resource> ModelLoader::Load(
 	auto material = g_resourceManager->Acquire<MaterialResource>(
 		ResourceKey(std::string(materialVal)));
 
+	auto renderResourceHandle = g_renderer->GenerateMesh(
+		std::move(vertexBuffer), numPositions,
+		std::move(texcoordBuffer), numTexcoords,
+		std::move(indexBuffer), numIndices);
+
 	return std::make_shared<ModelResource>(
-		std::make_shared<MeshGLResource>(
-			std::move(vertexBuffer), numPositions,
-			std::move(texcoordBuffer), numTexcoords,
-			std::move(indexBuffer), numIndices),
+		renderResourceHandle,
 		material);
 }

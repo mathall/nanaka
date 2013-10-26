@@ -39,7 +39,7 @@ public:
 	FrameBuffer(FrameBuffer&) = delete;
 	FrameBuffer& operator=(const FrameBuffer&) = delete;
 
-	RenderResourceHandle GetFrameBufferHandle();
+	RenderResourceHandle GetFrameBufferHandle() const;
 
 private:
 
@@ -59,7 +59,7 @@ inline FrameBuffer::~FrameBuffer()
 	}
 }
 
-inline RenderResourceHandle FrameBuffer::GetFrameBufferHandle()
+inline RenderResourceHandle FrameBuffer::GetFrameBufferHandle() const
 {
 	return m_renderResourceHandle;
 }

@@ -64,9 +64,6 @@ public:
 
 private:
 
-	std::shared_ptr<FrameBufferRenderResource> GetFrameBuffer(
-		const RenderResourceManager& renderResourceManager) const;
-
 	RenderResourceHandle m_frameBufferHandle;
 	RenderTargetClient* m_client;
 	Rect m_viewportRect;

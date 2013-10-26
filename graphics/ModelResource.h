@@ -27,100 +27,51 @@
 #define NANAKA_GRAPHICS_MODELRESOURCE_H
 
 #include "graphics/MaterialResource.h"
-#include "renderer/GLResource.h"
 #include "renderer/GL.h"
 #include "renderer/Renderer.h"
+#include "renderer/RenderResourceHandle.h"
 #include "resource/Asset.h"
 #include "resource/Resource.h"
-
-class MeshGLResource final : public GLResource
-{
-public:
-
-	MeshGLResource(
-		std::unique_ptr<GLfloat[]> vertexBuffer,
-		int vertexBufferSize,
-		std::unique_ptr<GLfloat[]> texcoordBuffer,
-		int texcoordBufferSize,
-		std::unique_ptr<GLushort[]> indexBuffer,
-		int indexBufferSize);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build() override;
-	void Destroy() override;
-
-	std::unique_ptr<GLfloat[]> m_vertexBuffer;
-	int m_vertexBufferSize;
-	std::unique_ptr<GLfloat[]> m_texcoordBuffer;
-	int m_texcoordBufferSize;
-	std::unique_ptr<GLushort[]> m_indexBuffer;
-	int m_indexBufferSize;
-
-	GLuint m_posVBO;
-	GLuint m_texVBO;
-	GLuint m_EBO;
-};
 
 class ModelResource final : public Resource
 {
 public:
 
 	ModelResource(
-		std::shared_ptr<MeshGLResource> mesh,
+		RenderResourceHandle renderResourceHandle,
 		Asset<MaterialResource> materialAsset);
 	~ModelResource();
 
 	ModelResource(ModelResource&) = delete;
 	ModelResource& operator=(const ModelResource&) = delete;
 
-	int GetIndexBufferSize() const;
-	GLuint GetPosVBO() const;
-	GLuint GetTexVBO() const;
-	GLuint GetEBO() const;
+	RenderResourceHandle GetMeshHandle() const;
 
 	Asset<MaterialResource> GetMaterialAsset() const;
 
 private:
 
-	std::shared_ptr<MeshGLResource> m_GLResource;
+	RenderResourceHandle m_renderResourceHandle;
 
 	Asset<MaterialResource> m_materialAsset;
 };
 
 inline ModelResource::ModelResource(
-	std::shared_ptr<MeshGLResource> mesh,
+	RenderResourceHandle renderResourceHandle,
 	Asset<MaterialResource> materialAsset)
-	: m_GLResource(mesh)
+	: m_renderResourceHandle(renderResourceHandle)
 	, m_materialAsset(materialAsset)
 {
-	g_renderer->QueueGLResourceForBuild(m_GLResource);
 }
 
 inline ModelResource::~ModelResource()
 {
-	g_renderer->QueueGLResourceForDestruction(m_GLResource);
+	g_renderer->DestroyRenderResource(m_renderResourceHandle);
 }
 
-inline int ModelResource::GetIndexBufferSize() const
+inline RenderResourceHandle ModelResource::GetMeshHandle() const
 {
-	return m_GLResource->m_indexBufferSize;
-}
-
-inline GLuint ModelResource::GetPosVBO() const
-{
-	return m_GLResource->m_posVBO;
-}
-
-inline GLuint ModelResource::GetTexVBO() const
-{
-	return m_GLResource->m_texVBO;
-}
-
-inline GLuint ModelResource::GetEBO() const
-{
-	return m_GLResource->m_EBO;
+	return m_renderResourceHandle;
 }
 
 inline Asset<MaterialResource> ModelResource::GetMaterialAsset() const

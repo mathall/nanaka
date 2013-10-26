@@ -75,6 +75,13 @@ public:
 		int height,
 		std::unique_ptr<GLvoid> pixels);
 	RenderResourceHandle GenerateFrameBuffer();
+	RenderResourceHandle GenerateMesh(
+		std::unique_ptr<GLfloat[]> vertexBuffer,
+		int vertexBufferSize,
+		std::unique_ptr<GLfloat[]> texcoordBuffer,
+		int texcoordBufferSize,
+		std::unique_ptr<GLushort[]> indexBuffer,
+		int indexBufferSize);
 
 	void DestroyRenderResource(RenderResourceHandle renderResourceHandle);
 

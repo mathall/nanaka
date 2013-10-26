@@ -33,6 +33,7 @@
 #include "renderer/RenderList.h"
 #include "utils/ObjectPool.h"
 
+class MeshRenderResource;
 class Projection;
 class RenderResourceManager;
 
@@ -62,6 +63,10 @@ public:
 	void QueueRE(std::unique_ptr<RenderElement> renderElement);
 
 private:
+
+	GLuint GetAttributeBuffer(
+		std::shared_ptr<MeshRenderResource> mesh,
+		AttributeIdentifier identifier) const;
 
 	GLuint GetGLHandle(
 		RenderResourceHandle renderResourceHandle,

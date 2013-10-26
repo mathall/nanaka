@@ -47,7 +47,9 @@ void RenderTarget::Setup(
 	}
 	else
 	{
-		if (auto frameBuffer = GetFrameBuffer(renderResourceManager))
+		if (auto frameBuffer =
+			renderResourceManager.Get<FrameBufferRenderResource>(
+				m_frameBufferHandle))
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->m_FBO);
 		}
@@ -91,26 +93,13 @@ void RenderTarget::UpdateViewport(
 	Vec2f newViewportSize(m_viewportRect.w, m_viewportRect.h);
 	if (!IsOnScreen() && !newViewportSize.Equals(oldViewportSize))
 	{
-		if (auto frameBuffer = GetFrameBuffer(renderResourceManager))
+		if (auto frameBuffer =
+			renderResourceManager.Get<FrameBufferRenderResource>(
+				m_frameBufferHandle))
 		{
 			frameBuffer->SetSize(newViewportSize);
 			g_renderer->QueueGLResourceForDestruction(frameBuffer);
 			g_renderer->QueueGLResourceForBuild(frameBuffer);
 		}
 	}
-}
-
-std::shared_ptr<FrameBufferRenderResource> RenderTarget::GetFrameBuffer(
-	const RenderResourceManager& renderResourceManager) const
-{
-	if (auto renderResource = renderResourceManager.Get(m_frameBufferHandle))
-	{
-		if (renderResource->GetType() == FrameBufferRenderResourceType)
-		{
-			return std::static_pointer_cast<FrameBufferRenderResource>(
-				renderResource);
-		}
-	}
-
-	return nullptr;
 }

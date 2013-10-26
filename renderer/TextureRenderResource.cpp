@@ -29,7 +29,7 @@ TextureRenderResource::TextureRenderResource(
 	int width,
 	int height,
 	std::unique_ptr<GLvoid> pixels)
-	: RenderResource(TextureRenderResourceType)
+	: RenderResource(s_type)
 	, m_width(width)
 	, m_height(height)
 	, m_pixels(std::move(pixels))

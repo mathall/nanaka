@@ -30,9 +30,8 @@
 #include <unordered_map>
 
 #include "renderer/GL.h"
+#include "renderer/RenderResource.h"
 #include "renderer/RenderResourceHandle.h"
-
-class RenderResource;
 
 /**
  * RenderResourceManager keeps track of RenderResources, allowing lookup of
@@ -48,14 +47,39 @@ public:
 		int height,
 		std::unique_ptr<GLvoid> pixels);
 	RenderResourceHandle GenerateFrameBuffer();
+	RenderResourceHandle GenerateMesh(
+		std::unique_ptr<GLfloat[]> vertexBuffer,
+		int vertexBufferSize,
+		std::unique_ptr<GLfloat[]> texcoordBuffer,
+		int texcoordBufferSize,
+		std::unique_ptr<GLushort[]> indexBuffer,
+		int indexBufferSize);
 	void DestroyResource(RenderResourceHandle resourceHandle);
 	std::shared_ptr<RenderResource> Get(
 		RenderResourceHandle resourceHandle) const;
+
+	template<typename T>
+	std::shared_ptr<T> Get(RenderResourceHandle resourceHandle) const;
 
 private:
 
 	std::unordered_map<RenderResourceHandle, std::shared_ptr<RenderResource>>
 		m_renderResources;
 };
+
+template<typename T>
+inline std::shared_ptr<T> RenderResourceManager::Get(
+	RenderResourceHandle resourceHandle) const
+{
+	if (auto renderResource = Get(resourceHandle))
+	{
+		if (renderResource->GetType() == T::s_type)
+		{
+			return std::static_pointer_cast<T>(renderResource);
+		}
+	}
+
+	return nullptr;
+}
 
 #endif // NANAKA_RENDERER_RENDERRESOURCEMANAGER_H

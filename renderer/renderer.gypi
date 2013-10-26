@@ -5,6 +5,8 @@
     '../renderer/GLResource.h',
     '../renderer/GLResourceManager.cpp',
     '../renderer/GLResourceManager.h',
+    '../renderer/MeshRenderResource.cpp',
+    '../renderer/MeshRenderResource.h',
     '../renderer/Projection.cpp',
     '../renderer/Projection.h',
     '../renderer/RenderContext.h',

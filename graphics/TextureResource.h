@@ -40,7 +40,7 @@ public:
 	TextureResource(TextureResource&) = delete;
 	TextureResource& operator=(const TextureResource&) = delete;
 
-	RenderResourceHandle GetTextureHandle();
+	RenderResourceHandle GetTextureHandle() const;
 
 private:
 
@@ -58,7 +58,7 @@ inline TextureResource::~TextureResource()
 	g_renderer->DestroyRenderResource(m_renderResourceHandle);
 }
 
-inline RenderResourceHandle TextureResource::GetTextureHandle()
+inline RenderResourceHandle TextureResource::GetTextureHandle() const
 {
 	return m_renderResourceHandle;
 }

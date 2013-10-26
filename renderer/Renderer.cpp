@@ -145,6 +145,22 @@ RenderResourceHandle Renderer::GenerateFrameBuffer()
 	return m_renderResourceManager.GenerateFrameBuffer();
 }
 
+RenderResourceHandle Renderer::GenerateMesh(
+	std::unique_ptr<GLfloat[]> vertexBuffer,
+	int vertexBufferSize,
+	std::unique_ptr<GLfloat[]> texcoordBuffer,
+	int texcoordBufferSize,
+	std::unique_ptr<GLushort[]> indexBuffer,
+	int indexBufferSize)
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateMesh(
+		std::move(vertexBuffer), vertexBufferSize,
+		std::move(texcoordBuffer), texcoordBufferSize,
+		std::move(indexBuffer), indexBufferSize);
+}
+
 void Renderer::RunThread()
 {
 	while (!m_killThreadRequested)
