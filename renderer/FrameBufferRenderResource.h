@@ -42,7 +42,7 @@ public:
 	/**
 	 * GLResource implementation.
 	 */
-	void Build() override;
+	void Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	Vec2f m_size;

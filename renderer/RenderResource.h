@@ -33,6 +33,7 @@ enum RenderResourceType
 {
 	FrameBufferRenderResourceType,
 	MeshRenderResourceType,
+	ShaderRenderResourceType,
 	TextureRenderResourceType,
 };
 

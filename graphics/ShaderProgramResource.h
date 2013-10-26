@@ -39,17 +39,17 @@ class ShaderProgramGLResource final : public GLResource
 public:
 
 	ShaderProgramGLResource(
-		Asset<ShaderResource> vertexShader,
-		Asset<ShaderResource> fragmentShader);
+		RenderResourceHandle vertexShaderHandle,
+		RenderResourceHandle fragmentShaderHandle);
 
 	/**
 	 * GLResource implementation.
 	 */
-	void Build() override;
+	void Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
-	Asset<ShaderResource> m_vertexShader;
-	Asset<ShaderResource> m_fragmentShader;
+	RenderResourceHandle m_vertexShaderHandle;
+	RenderResourceHandle m_fragmentShaderHandle;
 	GLuint m_program;
 	std::unordered_map<AttributeIdentifier, GLint> m_attributes;
 	std::unordered_map<UniformIdentifier, GLint> m_vUniforms;
@@ -57,10 +57,10 @@ public:
 };
 
 inline ShaderProgramGLResource::ShaderProgramGLResource(
-	Asset<ShaderResource> vertexShader,
-	Asset<ShaderResource> fragmentShader)
-	: m_vertexShader(vertexShader)
-	, m_fragmentShader(fragmentShader)
+	RenderResourceHandle vertexShaderHandle,
+	RenderResourceHandle fragmentShaderHandle)
+	: m_vertexShaderHandle(vertexShaderHandle)
+	, m_fragmentShaderHandle(fragmentShaderHandle)
 {
 }
 
@@ -73,7 +73,9 @@ class ShaderProgramResource final : public Resource
 {
 public:
 
-	explicit ShaderProgramResource(
+	ShaderProgramResource(
+		Asset<ShaderResource> vertexShader,
+		Asset<ShaderResource> fragmentShader,
 		std::shared_ptr<ShaderProgramGLResource> shaderProgram);
 	~ShaderProgramResource();
 
@@ -88,12 +90,18 @@ public:
 
 private:
 
+	Asset<ShaderResource> m_vertexShader;
+	Asset<ShaderResource> m_fragmentShader;
 	std::shared_ptr<ShaderProgramGLResource> m_GLResource;
 };
 
 inline ShaderProgramResource::ShaderProgramResource(
+	Asset<ShaderResource> vertexShader,
+	Asset<ShaderResource> fragmentShader,
 	std::shared_ptr<ShaderProgramGLResource> GLResource)
-	: m_GLResource(GLResource)
+	: m_vertexShader(vertexShader)
+	, m_fragmentShader(fragmentShader)
+	, m_GLResource(GLResource)
 {
 	g_renderer->QueueGLResourceForBuild(m_GLResource, 1);
 }

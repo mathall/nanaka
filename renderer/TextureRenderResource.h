@@ -44,7 +44,7 @@ public:
 	/**
 	 * GLResource implementation.
 	 */
-	void Build() override;
+	void Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	const int m_width;

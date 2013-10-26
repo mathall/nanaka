@@ -25,7 +25,8 @@
 
 #include "renderer/FrameBufferRenderResource.h"
 
-void FrameBufferRenderResource::Build()
+void FrameBufferRenderResource::Build(
+	const RenderResourceManager& renderResourceManager)
 {
 	glGenFramebuffers(1, &m_FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);

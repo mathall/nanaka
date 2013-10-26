@@ -45,7 +45,8 @@ MeshRenderResource::MeshRenderResource(
 {
 }
 
-void MeshRenderResource::Build()
+void MeshRenderResource::Build(
+	const RenderResourceManager& renderResourceManager)
 {
 	glGenBuffers(1, &m_posVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);

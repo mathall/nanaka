@@ -30,7 +30,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "renderer/GLResource.h"
 #include "renderer/Renderer.h"
 #include "resource/Resource.h"
 #include "resource/ResourceParameters.h"
@@ -114,106 +113,36 @@ inline ShaderResourceParameters::ShaderResourceParameters(GLuint type)
 {
 }
 
-class ShaderGLResource final : public GLResource
-{
-public:
-
-	ShaderGLResource(GLuint type, std::string source);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build() override;
-	void Destroy() override;
-
-	std::string m_source;
-
-	GLuint m_type;
-	GLuint m_shaderHandle;
-};
-
-inline ShaderGLResource::ShaderGLResource(
-	GLuint type,
-	std::string source)
-	: m_source(source)
-	, m_type(type)
-{
-}
-
-inline void ShaderGLResource::Destroy()
-{
-	glDeleteShader(m_shaderHandle);
-}
-
 class ShaderResource final : public Resource
 {
 public:
 
-	ShaderResource(
-		std::shared_ptr<ShaderGLResource> GLResource,
-		std::vector<std::string> uniforms,
-		std::vector<std::string> attributes);
+	explicit ShaderResource(RenderResourceHandle renderResourceHandle);
 	~ShaderResource();
 
 	ShaderResource(ShaderResource&) = delete;
 	ShaderResource& operator=(const ShaderResource&) = delete;
 
-	GLuint GetShaderHandle() const;
-	const std::vector<std::string>& GetUniformNames() const;
-	const std::vector<std::string>& GetAttributeNames() const;
+	RenderResourceHandle GetShaderHandle() const;
 
 private:
 
-	// shared_ptr because GLResources may be queued up on the GLResourceManager.
-	std::shared_ptr<ShaderGLResource> m_GLResource;
-
-	std::vector<std::string> m_uniformNames;
-	std::vector<UniformIdentifier> m_uniformIdentifiers;
-	std::vector<std::string> m_attributeNames;
-	std::vector<AttributeIdentifier> m_attributeIdentifiers;
+	RenderResourceHandle m_renderResourceHandle;
 };
 
-inline ShaderResource::ShaderResource(
-	std::shared_ptr<ShaderGLResource> GLResource,
-	std::vector<std::string> uniforms,
-	std::vector<std::string> attributes)
-	: m_GLResource(GLResource)
-	, m_uniformNames(uniforms)
-	, m_attributeNames(attributes)
+inline ShaderResource::ShaderResource(RenderResourceHandle renderResourceHandle)
+	: m_renderResourceHandle(renderResourceHandle)
 {
-	for (auto& uniformName : m_uniformNames)
-	{
-		m_uniformIdentifiers.push_back(
-			s_uniformNameIdentifierLookup.find(uniformName)->second);
-	}
-
-	for (auto& attributeName : m_attributeNames)
-	{
-		m_attributeIdentifiers.push_back(
-			s_attributeNameIdentifierLookup.find(attributeName)->second);
-	}
-
-	g_renderer->QueueGLResourceForBuild(m_GLResource);
 }
 
 inline ShaderResource::~ShaderResource()
 {
-	g_renderer->QueueGLResourceForDestruction(m_GLResource);
+	g_renderer->DestroyRenderResource(m_renderResourceHandle);
 }
 
-inline GLuint ShaderResource::GetShaderHandle() const
+inline RenderResourceHandle ShaderResource::GetShaderHandle() const
 {
-	return m_GLResource->m_shaderHandle;
-}
-
-inline const std::vector<std::string>& ShaderResource::GetUniformNames() const
-{
-	return m_uniformNames;
-}
-
-inline const std::vector<std::string>& ShaderResource::GetAttributeNames() const
-{
-	return m_attributeNames;
+	return m_renderResourceHandle;
 }
 
 #endif // NANAKA_GRAPHICS_SHADERRESOURCE_H

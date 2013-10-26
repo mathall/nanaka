@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include "renderer/GL.h"
 #include "renderer/RenderResource.h"
@@ -54,6 +55,11 @@ public:
 		int texcoordBufferSize,
 		std::unique_ptr<GLushort[]> indexBuffer,
 		int indexBufferSize);
+	RenderResourceHandle GenerateShader(
+		GLuint type,
+		std::string source,
+		std::vector<std::string> uniformNames,
+		std::vector<std::string> attributeNames);
 	void DestroyResource(RenderResourceHandle resourceHandle);
 	std::shared_ptr<RenderResource> Get(
 		RenderResourceHandle resourceHandle) const;

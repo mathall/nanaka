@@ -37,7 +37,8 @@ TextureRenderResource::TextureRenderResource(
 {
 }
 
-void TextureRenderResource::Build()
+void TextureRenderResource::Build(
+	const RenderResourceManager& renderResourceManager)
 {
 	glGenTextures(1, &m_texHandle);
 	glBindTexture(GL_TEXTURE_2D, m_texHandle);

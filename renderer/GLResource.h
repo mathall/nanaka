@@ -29,6 +29,8 @@
 #include "renderer/GL.h"
 #include "utils/UUID.h"
 
+class RenderResourceManager;
+
 /**
  * GLResource is implemented by resources which need to be built and destroyed
  * in the GL context.
@@ -42,7 +44,7 @@ public:
 
 	UUID GetId();
 
-	virtual void Build() = 0;
+	virtual void Build(const RenderResourceManager& renderResourceManager) = 0;
 	virtual void Destroy() = 0;
 
 private:

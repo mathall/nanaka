@@ -82,6 +82,11 @@ public:
 		int texcoordBufferSize,
 		std::unique_ptr<GLushort[]> indexBuffer,
 		int indexBufferSize);
+	RenderResourceHandle GenerateShader(
+		GLuint type,
+		std::string source,
+		std::vector<std::string> uniformNames,
+		std::vector<std::string> attributeNames);
 
 	void DestroyRenderResource(RenderResourceHandle renderResourceHandle);
 

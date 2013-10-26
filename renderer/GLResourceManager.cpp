@@ -37,7 +37,8 @@ void GLResourceManager::QueueBuiltResourcesForRebuild()
 	m_builtResources.clear();
 }
 
-void GLResourceManager::ProcessQueues()
+void GLResourceManager::ProcessQueues(
+	const RenderResourceManager& renderResourceManager)
 {
 	for (auto queuedGLResource : m_destroyQueue)
 	{
@@ -56,7 +57,7 @@ void GLResourceManager::ProcessQueues()
 		{
 			if (auto resource = queuedGLResource.lock())
 			{
-				resource->Build();
+				resource->Build(renderResourceManager);
 				BuiltResource builtResource;
 				builtResource.resource = resource;
 				builtResource.level = level;

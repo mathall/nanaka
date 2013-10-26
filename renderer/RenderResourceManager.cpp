@@ -3,6 +3,7 @@
 #include "renderer/FrameBufferRenderResource.h"
 #include "renderer/MeshRenderResource.h"
 #include "renderer/Renderer.h"
+#include "renderer/ShaderRenderResource.h"
 #include "renderer/TextureRenderResource.h"
 
 RenderResourceHandle RenderResourceManager::GenerateTexture(
@@ -43,6 +44,22 @@ RenderResourceHandle RenderResourceManager::GenerateMesh(
 		std::move(vertexBuffer), vertexBufferSize,
 		std::move(texcoordBuffer), texcoordBufferSize,
 		std::move(indexBuffer), indexBufferSize);
+	auto resourceHandle = renderResource->GetHandle();
+
+	m_renderResources.insert(std::make_pair(resourceHandle, renderResource));
+	g_renderer->QueueGLResourceForBuild(renderResource);
+
+	return resourceHandle;
+}
+
+RenderResourceHandle RenderResourceManager::GenerateShader(
+	GLuint type,
+	std::string source,
+	std::vector<std::string> uniformNames,
+	std::vector<std::string> attributeNames)
+{
+	auto renderResource = std::make_shared<ShaderRenderResource>(
+		type, source, uniformNames, attributeNames);
 	auto resourceHandle = renderResource->GetHandle();
 
 	m_renderResources.insert(std::make_pair(resourceHandle, renderResource));

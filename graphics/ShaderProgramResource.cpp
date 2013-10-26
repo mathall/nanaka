@@ -25,14 +25,28 @@
 
 #include "graphics/ShaderProgramResource.h"
 
-void ShaderProgramGLResource::Build()
+#include "renderer/RenderResourceManager.h"
+#include "renderer/ShaderRenderResource.h"
+
+void ShaderProgramGLResource::Build(
+	const RenderResourceManager& renderResourceManager)
 {
+	auto vertexShader =
+		renderResourceManager.Get<ShaderRenderResource>(m_vertexShaderHandle);
+	auto fragmentShader =
+		renderResourceManager.Get<ShaderRenderResource>(m_fragmentShaderHandle);
+
+	if (!vertexShader || !fragmentShader)
+	{
+		return;
+	}
+
 	m_program = glCreateProgram();
-	glAttachShader(m_program, m_vertexShader.GetResource()->GetShaderHandle());
-	glAttachShader(m_program, m_fragmentShader.GetResource()->GetShaderHandle());
+	glAttachShader(m_program, vertexShader->m_shaderHandle);
+	glAttachShader(m_program, fragmentShader->m_shaderHandle);
 	glLinkProgram(m_program);
 
-	for (auto attributeName : m_vertexShader.GetResource()->GetAttributeNames())
+	for (auto attributeName : vertexShader->m_attributeNames)
 	{
 		GLint attribLoc = glGetAttribLocation(m_program, attributeName.c_str());
 		m_attributes.insert(std::make_pair(
@@ -40,14 +54,14 @@ void ShaderProgramGLResource::Build()
 			attribLoc));
 	}
 
-	for (auto uniformName : m_vertexShader.GetResource()->GetUniformNames())
+	for (auto uniformName : vertexShader->m_uniformNames)
 	{
 		GLint uniLoc = glGetUniformLocation(m_program, uniformName.c_str());
 		m_vUniforms.insert(std::make_pair(
 			s_uniformNameIdentifierLookup.find(uniformName)->second, uniLoc));
 	}
 
-	for (auto uniformName : m_fragmentShader.GetResource()->GetUniformNames())
+	for (auto uniformName : fragmentShader->m_uniformNames)
 	{
 		GLint uniLoc = glGetUniformLocation(m_program, uniformName.c_str());
 		m_fUniforms.insert(std::make_pair(

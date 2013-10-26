@@ -48,11 +48,3 @@ bool ShaderResourceParameters::Equals(
 
 	return m_type == rhsPtr->m_type;
 }
-
-void ShaderGLResource::Build()
-{
-	m_shaderHandle = glCreateShader(m_type);
-	const char* shource_cstr = m_source.c_str();
-	glShaderSource(m_shaderHandle, 1, &shource_cstr, NULL);
-	glCompileShader(m_shaderHandle);
-}

@@ -161,6 +161,18 @@ RenderResourceHandle Renderer::GenerateMesh(
 		std::move(indexBuffer), indexBufferSize);
 }
 
+RenderResourceHandle Renderer::GenerateShader(
+	GLuint type,
+	std::string source,
+	std::vector<std::string> uniformNames,
+	std::vector<std::string> attributeNames)
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateShader(
+		type, source, uniformNames, attributeNames);
+}
+
 void Renderer::RunThread()
 {
 	while (!m_killThreadRequested)
@@ -190,7 +202,7 @@ void Renderer::RunThread()
 			m_contextChanged = false;
 		}
 
-		m_GLResourceManager.ProcessQueues();
+		m_GLResourceManager.ProcessQueues(m_renderResourceManager);
 
 		auto endRenderRequests = m_endRenderRequests;
 		ExitCriticalSection();

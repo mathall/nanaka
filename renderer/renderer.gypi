@@ -23,6 +23,8 @@
     '../renderer/RenderResourceManager.h',
     '../renderer/RenderTarget.cpp',
     '../renderer/RenderTarget.h',
+    '../renderer/ShaderRenderResource.cpp',
+    '../renderer/ShaderRenderResource.h',
     '../renderer/TextureRenderResource.cpp',
     '../renderer/TextureRenderResource.h',
   ],

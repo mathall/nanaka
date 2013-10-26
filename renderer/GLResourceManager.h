@@ -35,6 +35,7 @@
 #include "utils/UUID.h"
 
 class GLResource;
+class RenderResourceManager;
 
 struct BuiltResource
 {
@@ -57,7 +58,7 @@ public:
 		int level = 0);
 	void QueueResourceForDestruction(std::shared_ptr<GLResource> resource);
 	void QueueBuiltResourcesForRebuild();
-	void ProcessQueues();
+	void ProcessQueues(const RenderResourceManager& renderResourceManager);
 
 private:
 

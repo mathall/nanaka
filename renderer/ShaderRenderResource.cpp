@@ -23,43 +23,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_MESHRENDERRESOURCE_H
-#define NANAKA_RENDERER_MESHRENDERRESOURCE_H
+#include "renderer/ShaderRenderResource.h"
 
-#include <memory>
-
-#include "renderer/RenderResource.h"
-
-class MeshRenderResource final : public RenderResource
+ShaderRenderResource::ShaderRenderResource(
+	GLuint type,
+	std::string source,
+	std::vector<std::string> uniformNames,
+	std::vector<std::string> attributeNames)
+	: RenderResource(s_type)
+	, m_source(source)
+	, m_type(type)
+	, m_uniformNames(uniformNames)
+	, m_attributeNames(attributeNames)
 {
-public:
+}
 
-	static const RenderResourceType s_type = MeshRenderResourceType;
-
-	MeshRenderResource(
-		std::unique_ptr<GLfloat[]> vertexBuffer,
-		int vertexBufferSize,
-		std::unique_ptr<GLfloat[]> texcoordBuffer,
-		int texcoordBufferSize,
-		std::unique_ptr<GLushort[]> indexBuffer,
-		int indexBufferSize);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
-	void Destroy() override;
-
-	std::unique_ptr<GLfloat[]> m_vertexBuffer;
-	int m_vertexBufferSize;
-	std::unique_ptr<GLfloat[]> m_texcoordBuffer;
-	int m_texcoordBufferSize;
-	std::unique_ptr<GLushort[]> m_indexBuffer;
-	int m_indexBufferSize;
-
-	GLuint m_posVBO;
-	GLuint m_texVBO;
-	GLuint m_EBO;
-};
-
-#endif // NANAKA_RENDERER_MESHRENDERRESOURCE_H
+void ShaderRenderResource::Build(
+	const RenderResourceManager& renderResourceManager)
+{
+	m_shaderHandle = glCreateShader(m_type);
+	const char* shource_cstr = m_source.c_str();
+	glShaderSource(m_shaderHandle, 1, &shource_cstr, NULL);
+	glCompileShader(m_shaderHandle);
+}
