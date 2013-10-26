@@ -27,23 +27,29 @@
 
 #include <algorithm>
 
+#include "renderer/FrameBufferRenderResource.h"
 #include "renderer/GL.h"
 #include "renderer/Projection.h"
+#include "renderer/RenderResourceManager.h"
+#include "renderer/TextureRenderResource.h"
 
 RenderPipeline::RenderPipeline()
 	: m_depthSortAxis(DepthSortAxisY)
 {
 }
 
-void RenderPipeline::ProcessAllRenderLists(Projection& projection)
+void RenderPipeline::ProcessAllRenderLists(
+	Projection& projection,
+	const RenderResourceManager& renderResourceManager)
 {
-	ProcessRenderList(RenderListGeneral, projection);
-	ProcessRenderList(RenderListTransparent, projection);
+	ProcessRenderList(RenderListGeneral, projection, renderResourceManager);
+	ProcessRenderList(RenderListTransparent, projection, renderResourceManager);
 }
 
 void RenderPipeline::ProcessRenderList(
 	RenderList renderList,
-	Projection& projection)
+	Projection& projection,
+	const RenderResourceManager& renderResourceManager)
 {
 	for (auto& renderElement : m_renderLists[renderList])
 	{
@@ -72,7 +78,9 @@ void RenderPipeline::ProcessRenderList(
 				break;
 			case TexUniformType:
 				glActiveTexture(GL_TEXTURE0 + uniform.m_value.m_tex.m_unit);
-				glBindTexture(GL_TEXTURE_2D, uniform.m_value.m_tex.m_handle);
+				glBindTexture(GL_TEXTURE_2D,
+					GetGLHandle(
+						uniform.m_value.m_tex.m_handle, renderResourceManager));
 				glUniform1i(uniform.m_location, uniform.m_value.m_tex.m_unit);
 				break;
 			case Vec2UniformType:
@@ -129,4 +137,28 @@ void RenderPipeline::QueueRE(std::unique_ptr<RenderElement> renderElement)
 	{
 		m_renderLists[RenderListGeneral].push_back(std::move(renderElement));
 	}
+}
+
+GLuint RenderPipeline::GetGLHandle(
+	RenderResourceHandle renderResourceHandle,
+	const RenderResourceManager& renderResourceManager)
+{
+	GLuint handle = 0;
+
+	if (auto renderResource = renderResourceManager.Get(renderResourceHandle))
+	{
+		switch (renderResource->GetType())
+		{
+		case TextureRenderResourceType:
+			handle = static_cast<TextureRenderResource*>(
+				renderResource.get())->m_texHandle;
+			break;
+		case FrameBufferRenderResourceType:
+			handle = static_cast<FrameBufferRenderResource*>(
+				renderResource.get())->m_colorBuffer;
+			break;
+		}
+	}
+
+	return handle;
 }

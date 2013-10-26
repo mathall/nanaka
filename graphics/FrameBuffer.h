@@ -23,63 +23,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#ifndef NANAKA_GRAPHICS_FRAMEBUFFER_H
+#define NANAKA_GRAPHICS_FRAMEBUFFER_H
 
-#include <memory>
-#include <vector>
+#include "renderer/Renderer.h"
+#include "renderer/RenderResourceHandle.h"
 
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
-
-class Projection;
-class RenderResourceManager;
-
-enum DepthSorthAxis
-{
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
-};
-
-class RenderPipeline final
+class FrameBuffer final
 {
 public:
 
-	RenderPipeline();
+	FrameBuffer();
+	~FrameBuffer();
 
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+	FrameBuffer(FrameBuffer&) = delete;
+	FrameBuffer& operator=(const FrameBuffer&) = delete;
 
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	RenderResourceHandle GetFrameBufferHandle();
 
 private:
 
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	RenderResourceHandle m_renderResourceHandle;
 };
 
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
+inline FrameBuffer::FrameBuffer()
+	: m_renderResourceHandle(g_renderer->GenerateFrameBuffer())
 {
-	return m_renderElementPool.GetObject();
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
+inline FrameBuffer::~FrameBuffer()
 {
-	m_depthSortAxis = axis;
+	if (g_renderer)
+	{
+		g_renderer->DestroyRenderResource(m_renderResourceHandle);
+	}
 }
 
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H
+inline RenderResourceHandle FrameBuffer::GetFrameBufferHandle()
+{
+	return m_renderResourceHandle;
+}
+
+#endif // NANAKA_GRAPHICS_FRAMEBUFFER_H

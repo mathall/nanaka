@@ -35,37 +35,37 @@ class Texture final
 public:
 
 	Texture() = default;
-	explicit Texture(GLuint textureHandle);
+	explicit Texture(RenderResourceHandle renderResourceHandle);
 	explicit Texture(std::string filePath);
 	explicit Texture(Asset<TextureResource> texture);
 
-	GLuint GetTextureHandle() const;
+	RenderResourceHandle GetTextureHandle() const;
 
 private:
 
 	Asset<TextureResource> m_textureAsset;
-	GLuint m_textureHandle;
+	RenderResourceHandle m_textureHandle;
 };
 
-inline Texture::Texture(GLuint textureHandle)
+inline Texture::Texture(RenderResourceHandle renderResourceHandle)
 	: m_textureAsset()
-	, m_textureHandle(textureHandle)
+	, m_textureHandle(renderResourceHandle)
 {
 }
 
 inline Texture::Texture(std::string filePath)
 	: m_textureAsset(g_resourceManager->Acquire<TextureResource>(filePath))
-	, m_textureHandle(0)
+	, m_textureHandle(RenderResourceHandle::Invalid)
 {
 }
 
 inline Texture::Texture(Asset<TextureResource> texture)
 	: m_textureAsset(texture)
-	, m_textureHandle(0)
+	, m_textureHandle(RenderResourceHandle::Invalid)
 {
 }
 
-inline GLuint Texture::GetTextureHandle() const
+inline RenderResourceHandle Texture::GetTextureHandle() const
 {
 	return m_textureAsset.IsValid() ?
 		m_textureAsset.GetResource()->GetTextureHandle() : m_textureHandle;

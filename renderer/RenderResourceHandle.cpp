@@ -23,42 +23,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "renderer/FrameBuffer.h"
+#include "renderer/RenderResourceHandle.h"
 
-void FrameBuffer::Build()
-{
-	glGenFramebuffers(1, &m_FBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+const RenderResourceHandle RenderResourceHandle::Invalid
+	= RenderResourceHandle(0);
 
-	glGenTextures(1, &m_colorBuffer);
-	glBindTexture(GL_TEXTURE_2D, m_colorBuffer);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA,
-		GL_UNSIGNED_BYTE, NULL);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-		m_colorBuffer, 0);
-
-	glGenRenderbuffers(1, &m_depthBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16,
-		m_size.x, m_size.y);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, m_depthBuffer);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	m_client->NewColorBuffer(m_colorBuffer);
-}
-
-void FrameBuffer::Destroy()
-{
-	glDeleteTextures(1, &m_colorBuffer);
-	glDeleteRenderbuffers(1, &m_depthBuffer);
-	glDeleteFramebuffers(1, &m_FBO);
-}
+int RenderResourceHandle::s_nextId = 1;

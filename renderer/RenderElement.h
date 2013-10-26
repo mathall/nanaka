@@ -33,10 +33,11 @@
 #include "math/Vec4f.h"
 #include "renderer/GL.h"
 #include "renderer/RenderList.h"
+#include "renderer/RenderResourceHandle.h"
 
 struct TexUnit
 {
-	GLuint m_handle;
+	RenderResourceHandle m_handle;
 	GLuint m_unit;
 };
 

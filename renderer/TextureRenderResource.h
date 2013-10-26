@@ -23,63 +23,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#ifndef NANAKA_RENDERER_TEXTURERENDERRESOURCE_H
+#define NANAKA_RENDERER_TEXTURERENDERRESOURCE_H
 
 #include <memory>
-#include <vector>
 
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
+#include "renderer/RenderResource.h"
 
-class Projection;
-class RenderResourceManager;
-
-enum DepthSorthAxis
-{
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
-};
-
-class RenderPipeline final
+class TextureRenderResource final : public RenderResource
 {
 public:
 
-	RenderPipeline();
+	TextureRenderResource(
+		int width,
+		int height,
+		std::unique_ptr<GLvoid> pixels);
 
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+	/**
+	 * GLResource implementation.
+	 */
+	void Build() override;
+	void Destroy() override;
 
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	const int m_width;
+	const int m_height;
+	std::unique_ptr<GLvoid> m_pixels;
 
-private:
-
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	GLuint m_texHandle;
 };
 
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
+inline void TextureRenderResource::Destroy()
 {
-	return m_renderElementPool.GetObject();
+	glDeleteTextures(1, &m_texHandle);
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
-{
-	m_depthSortAxis = axis;
-}
-
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H
+#endif // NANAKA_RENDERER_TEXTURERENDERRESOURCE_H

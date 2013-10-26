@@ -26,6 +26,7 @@
 #ifndef NANAKA_GUI_RENDERTARGETPANEL_H
 #define NANAKA_GUI_RENDERTARGETPANEL_H
 
+#include "graphics/FrameBuffer.h"
 #include "graphics/Model.h"
 #include "gui/Panel.h"
 #include "renderer/RenderTarget.h"
@@ -55,7 +56,6 @@ public:
 	 */
 	bool IsActive() const override;
 	Rect GetRect() const override;
-	void NewColorBuffer(GLuint colorBuffer) override;
 
 protected:
 
@@ -71,6 +71,7 @@ private:
 	RenderTargetPanelListener* m_listener;
 	Vec2f m_lastSize;
 
+	FrameBuffer m_frameBuffer;
 	Model m_targetBillboard;
 };
 

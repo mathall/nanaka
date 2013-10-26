@@ -5,6 +5,7 @@
     '../graphics/BillboardAnimationLoader.cpp',
     '../graphics/BillboardAnimationLoader.h',
     '../graphics/BillboardAnimationResource.h',
+    '../graphics/FrameBuffer.h',
     '../graphics/Interpolation.h',
     '../graphics/KeyframedAnimation.h',
     '../graphics/Material.cpp',
@@ -30,7 +31,6 @@
     '../graphics/Texture.h',
     '../graphics/TextureLoader.cpp',
     '../graphics/TextureLoader.h',
-    '../graphics/TextureResource.cpp',
     '../graphics/TextureResource.h',
   ],
 }

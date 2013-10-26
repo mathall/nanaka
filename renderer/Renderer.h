@@ -36,6 +36,7 @@
 #include "pi/NanakaNativeWindow.h"
 #include "renderer/GLResourceManager.h"
 #include "renderer/RenderContext.h"
+#include "renderer/RenderResourceManager.h"
 #include "renderer/RenderTarget.h"
 #include "utils/Monitor.h"
 #include "utils/Thread.h"
@@ -63,11 +64,19 @@ public:
 	void EndRender(UUID renderContextId);
 
 	UUID GenerateRenderContext(
-		RenderTarget::TargetType renderTargetType,
-		RenderTargetClient* renderTargetClient);
+		RenderTargetClient* renderTargetClient,
+		RenderResourceHandle frameBufferHandle = RenderResourceHandle::Invalid);
 
 	RenderPipeline& GetRenderPipeline(UUID renderContextId);
 	Projection& GetProjection(UUID renderContextId);
+
+	RenderResourceHandle GenerateTexture(
+		int width,
+		int height,
+		std::unique_ptr<GLvoid> pixels);
+	RenderResourceHandle GenerateFrameBuffer();
+
+	void DestroyRenderResource(RenderResourceHandle renderResourceHandle);
 
 protected:
 
@@ -87,6 +96,7 @@ private:
 
 	std::unordered_map<UUID, std::unique_ptr<RenderContext>> m_renderContexts;
 	GLResourceManager m_GLResourceManager;
+	RenderResourceManager m_renderResourceManager;
 	std::unique_ptr<GLContextManager> m_GLContextManager;
 	NanakaNativeWindow* m_nativeWindow;
 

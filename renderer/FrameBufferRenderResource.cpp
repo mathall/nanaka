@@ -23,63 +23,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#include "renderer/FrameBufferRenderResource.h"
 
-#include <memory>
-#include <vector>
-
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
-
-class Projection;
-class RenderResourceManager;
-
-enum DepthSorthAxis
+void FrameBufferRenderResource::Build()
 {
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
-};
+	glGenFramebuffers(1, &m_FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-class RenderPipeline final
-{
-public:
+	glGenTextures(1, &m_colorBuffer);
+	glBindTexture(GL_TEXTURE_2D, m_colorBuffer);
 
-	RenderPipeline();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA,
+		GL_UNSIGNED_BYTE, NULL);
 
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+		m_colorBuffer, 0);
 
-private:
+	glGenRenderbuffers(1, &m_depthBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16,
+		m_size.x, m_size.y);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, m_depthBuffer);
 
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
-};
-
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
-{
-	return m_renderElementPool.GetObject();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
+void FrameBufferRenderResource::Destroy()
 {
-	m_depthSortAxis = axis;
+	glDeleteTextures(1, &m_colorBuffer);
+	glDeleteRenderbuffers(1, &m_depthBuffer);
+	glDeleteFramebuffers(1, &m_FBO);
 }
-
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H

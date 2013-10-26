@@ -26,69 +26,41 @@
 #ifndef NANAKA_GRAPHICS_TEXTURERESOURCE_H
 #define NANAKA_GRAPHICS_TEXTURERESOURCE_H
 
-#include <memory>
-
-#include "renderer/GLResource.h"
 #include "renderer/Renderer.h"
+#include "renderer/RenderResourceHandle.h"
 #include "resource/Resource.h"
-
-class TextureGLResource final : public GLResource
-{
-public:
-
-	TextureGLResource(int width, int height, std::unique_ptr<GLvoid> pixels);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build() override;
-	void Destroy() override;
-
-	const int m_width;
-	const int m_height;
-
-	GLuint m_texHandle;
-	std::unique_ptr<GLvoid> m_pixels;
-};
-
-inline void TextureGLResource::Destroy()
-{
-	glDeleteTextures(1, &m_texHandle);
-}
 
 class TextureResource final : public Resource
 {
 public:
 
-	explicit TextureResource(std::shared_ptr<TextureGLResource> GLResource);
+	explicit TextureResource(RenderResourceHandle renderResourceHandle);
 	~TextureResource();
 
 	TextureResource(TextureResource&) = delete;
 	TextureResource& operator=(const TextureResource&) = delete;
 
-	GLuint GetTextureHandle();
+	RenderResourceHandle GetTextureHandle();
 
 private:
 
-	// shared_ptr because GLResources may be queued up on the GLResourceManager.
-	std::shared_ptr<TextureGLResource> m_GLResource;
+	RenderResourceHandle m_renderResourceHandle;
 };
 
 inline TextureResource::TextureResource(
-	std::shared_ptr<TextureGLResource> GLResource)
-	: m_GLResource(GLResource)
+	RenderResourceHandle renderResourceHandle)
+	: m_renderResourceHandle(renderResourceHandle)
 {
-	g_renderer->QueueGLResourceForBuild(m_GLResource);
 }
 
 inline TextureResource::~TextureResource()
 {
-	g_renderer->QueueGLResourceForDestruction(m_GLResource);
+	g_renderer->DestroyRenderResource(m_renderResourceHandle);
 }
 
-inline GLuint TextureResource::GetTextureHandle()
+inline RenderResourceHandle TextureResource::GetTextureHandle()
 {
-	return m_GLResource->m_texHandle;
+	return m_renderResourceHandle;
 }
 
 #endif // NANAKA_GRAPHICS_TEXTURERESOURCE_H

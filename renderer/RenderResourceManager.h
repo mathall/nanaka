@@ -23,63 +23,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#ifndef NANAKA_RENDERER_RENDERRESOURCEMANAGER_H
+#define NANAKA_RENDERER_RENDERRESOURCEMANAGER_H
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
+#include "renderer/GL.h"
+#include "renderer/RenderResourceHandle.h"
 
-class Projection;
-class RenderResourceManager;
+class RenderResource;
 
-enum DepthSorthAxis
-{
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
-};
-
-class RenderPipeline final
+/**
+ * RenderResourceManager keeps track of RenderResources, allowing lookup of
+ * actual RenderResources as the user of the Renderer refers to them using
+ * RenderResourceHandles.
+ */
+class RenderResourceManager final
 {
 public:
 
-	RenderPipeline();
-
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	RenderResourceHandle GenerateTexture(
+		int width,
+		int height,
+		std::unique_ptr<GLvoid> pixels);
+	RenderResourceHandle GenerateFrameBuffer();
+	void DestroyResource(RenderResourceHandle resourceHandle);
+	std::shared_ptr<RenderResource> Get(
+		RenderResourceHandle resourceHandle) const;
 
 private:
 
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	std::unordered_map<RenderResourceHandle, std::shared_ptr<RenderResource>>
+		m_renderResources;
 };
 
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
-{
-	return m_renderElementPool.GetObject();
-}
-
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
-{
-	m_depthSortAxis = axis;
-}
-
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H
+#endif // NANAKA_RENDERER_RENDERRESOURCEMANAGER_H

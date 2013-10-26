@@ -23,63 +23,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#ifndef NANAKA_RENDERER_FRAMEBUFFERRENDERRESOURCE_H
+#define NANAKA_RENDERER_FRAMEBUFFERRENDERRESOURCE_H
 
-#include <memory>
-#include <vector>
+#include "math/Vec2f.h"
+#include "renderer/RenderResource.h"
 
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
-
-class Projection;
-class RenderResourceManager;
-
-enum DepthSorthAxis
-{
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
-};
-
-class RenderPipeline final
+class FrameBufferRenderResource final : public RenderResource
 {
 public:
 
-	RenderPipeline();
+	FrameBufferRenderResource();
 
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+	void SetSize(Vec2f size);
 
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	/**
+	 * GLResource implementation.
+	 */
+	void Build() override;
+	void Destroy() override;
 
-private:
-
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	Vec2f m_size;
+	GLuint m_FBO;
+	GLuint m_colorBuffer;
+	GLuint m_depthBuffer;
 };
 
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
+inline FrameBufferRenderResource::FrameBufferRenderResource()
+	: RenderResource(FrameBufferRenderResourceType)
+	, m_size(Vec2f::Zero())
+	, m_FBO(0)
+	, m_colorBuffer(0)
 {
-	return m_renderElementPool.GetObject();
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
+inline void FrameBufferRenderResource::SetSize(Vec2f size)
 {
-	m_depthSortAxis = axis;
+	m_size = size;
 }
 
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H
+#endif // NANAKA_RENDERER_FRAMEBUFFERRENDERRESOURCE_H

@@ -39,8 +39,7 @@ void GUI::Initialize()
 {
 	SetActiveView(CreateView());
 
-	m_renderContextId = g_renderer->GenerateRenderContext(
-		RenderTarget::GUI, this);
+	m_renderContextId = g_renderer->GenerateRenderContext(this);
 }
 
 void GUI::Draw()

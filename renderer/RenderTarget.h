@@ -29,9 +29,10 @@
 #include <memory>
 
 #include "math/Rect.h"
-#include "renderer/FrameBuffer.h"
+#include "renderer/RenderResourceHandle.h"
 
-class RenderBuffer;
+class FrameBufferRenderResource;
+class RenderResourceManager;
 
 /**
  * RenderTargetClient is implemented by the GUI element receiving the rendered
@@ -45,44 +46,31 @@ public:
 
 	virtual bool IsActive() const = 0;
 	virtual Rect GetRect() const = 0;
-	virtual void NewColorBuffer(GLuint){}
 };
 
-class RenderTarget final : public FrameBufferClient
+class RenderTarget final
 {
 public:
 
-	enum TargetType
-	{
-		GUI,
-		OffScreen,
-	};
-
-	RenderTarget(TargetType type, RenderTargetClient* client);
+	RenderTarget(
+		RenderResourceHandle frameBufferHandle,
+		RenderTargetClient* client);
 
 	bool IsOnScreen() const;
 	bool IsActive() const;
-	void UpdateViewport();
-	void Setup() const;
+	void UpdateViewport(const RenderResourceManager& renderResourceManager);
+	void Setup(const RenderResourceManager& renderResourceManager) const;
 	void Finalize() const;
-
-	/**
-	 * FrameBufferClient implementation.
-	 */
-	void NewColorBuffer(GLuint colorBuffer) override;
 
 private:
 
-	TargetType m_targetType;
+	std::shared_ptr<FrameBufferRenderResource> GetFrameBuffer(
+		const RenderResourceManager& renderResourceManager) const;
+
+	RenderResourceHandle m_frameBufferHandle;
 	RenderTargetClient* m_client;
-	std::shared_ptr<FrameBuffer> m_frameBuffer;
 	Rect m_viewportRect;
 };
-
-inline void RenderTarget::NewColorBuffer(GLuint colorBuffer)
-{
-	m_client->NewColorBuffer(colorBuffer);
-}
 
 inline bool RenderTarget::IsActive() const
 {
@@ -92,7 +80,7 @@ inline bool RenderTarget::IsActive() const
 
 inline bool RenderTarget::IsOnScreen() const
 {
-	return m_targetType == TargetType::GUI;
+	return m_frameBufferHandle == RenderResourceHandle::Invalid;
 }
 
 #endif // NANAKA_RENDERER_RENDERTARGET_H

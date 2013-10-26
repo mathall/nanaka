@@ -23,20 +23,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "graphics/TextureResource.h"
+#include "renderer/TextureRenderResource.h"
 
-TextureGLResource::TextureGLResource(
+TextureRenderResource::TextureRenderResource(
 	int width,
 	int height,
 	std::unique_ptr<GLvoid> pixels)
-	: m_width(width)
+	: RenderResource(TextureRenderResourceType)
+	, m_width(width)
 	, m_height(height)
-	, m_texHandle(0)
 	, m_pixels(std::move(pixels))
+	, m_texHandle(0)
 {
 }
 
-void TextureGLResource::Build()
+void TextureRenderResource::Build()
 {
 	glGenTextures(1, &m_texHandle);
 	glBindTexture(GL_TEXTURE_2D, m_texHandle);

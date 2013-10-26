@@ -23,53 +23,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_FRAMEBUFFER_H
-#define NANAKA_RENDERER_FRAMEBUFFER_H
+#ifndef NANAKA_RENDERER_RENDERRESOURCEHANDLE_H
+#define NANAKA_RENDERER_RENDERRESOURCEHANDLE_H
 
-#include "math/Vec2f.h"
-#include "renderer/GLResource.h"
+#include <functional>
 
-class FrameBufferClient
+class RenderResourceHandle final
 {
 public:
 
-	virtual ~FrameBufferClient(){}
+	RenderResourceHandle() = default;
 
-	virtual void NewColorBuffer(GLuint colorBuffer) = 0;
+	bool operator==(const RenderResourceHandle& resourceHandle) const;
+
+	static RenderResourceHandle New();
+
+	static const RenderResourceHandle Invalid;
+
+private:
+
+	friend struct std::hash<RenderResourceHandle>;
+
+	explicit RenderResourceHandle(int handle);
+
+	int m_handle;
+
+	static int s_nextId;
 };
 
-class FrameBuffer final : public GLResource
+inline RenderResourceHandle::RenderResourceHandle(int handle)
 {
+	m_handle = handle;
+}
+
+inline bool RenderResourceHandle::operator==(
+	const RenderResourceHandle& resourceHandle) const
+{
+	return m_handle == resourceHandle.m_handle;
+}
+
+inline RenderResourceHandle RenderResourceHandle::New()
+{
+	return RenderResourceHandle(s_nextId++);
+}
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmismatched-tags"
+#endif // defined(__clang__)
+
+namespace std {
+template<>
+struct hash<RenderResourceHandle> {
 public:
-
-	FrameBuffer(FrameBufferClient* client);
-
-	void SetSize(Vec2f size);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build() override;
-	void Destroy() override;
-
-	Vec2f m_size;
-	GLuint m_FBO;
-	GLuint m_colorBuffer;
-	GLuint m_depthBuffer;
-	FrameBufferClient* m_client;
+	size_t operator()(const RenderResourceHandle& resourceHandle) const
+	{
+		return std::hash<int>()(resourceHandle.m_handle);
+	}
 };
+} // namespace std
 
-inline FrameBuffer::FrameBuffer(FrameBufferClient* client)
-	: m_size(Vec2f::Zero())
-	, m_FBO(0)
-	, m_colorBuffer(0)
-	, m_client(client)
-{
-}
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)
 
-inline void FrameBuffer::SetSize(Vec2f size)
-{
-	m_size = size;
-}
-
-#endif // NANAKA_RENDERER_FRAMEBUFFER_H
+#endif // NANAKA_RENDERER_RENDERRESOURCEHANDLE_H

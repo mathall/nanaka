@@ -1,7 +1,7 @@
 {
   'sources': [
-    '../renderer/FrameBuffer.cpp',
-    '../renderer/FrameBuffer.h',
+    '../renderer/FrameBufferRenderResource.cpp',
+    '../renderer/FrameBufferRenderResource.h',
     '../renderer/GLResource.h',
     '../renderer/GLResourceManager.cpp',
     '../renderer/GLResourceManager.h',
@@ -14,7 +14,14 @@
     '../renderer/RenderList.h',
     '../renderer/RenderPipeline.cpp',
     '../renderer/RenderPipeline.h',
+    '../renderer/RenderResource.h',
+    '../renderer/RenderResourceHandle.cpp',
+    '../renderer/RenderResourceHandle.h',
+    '../renderer/RenderResourceManager.cpp',
+    '../renderer/RenderResourceManager.h',
     '../renderer/RenderTarget.cpp',
     '../renderer/RenderTarget.h',
+    '../renderer/TextureRenderResource.cpp',
+    '../renderer/TextureRenderResource.h',
   ],
 }

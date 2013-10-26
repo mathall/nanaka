@@ -80,12 +80,19 @@ void Renderer::QueueGLResourceForDestruction(
 	m_GLResourceManager.QueueResourceForDestruction(resource);
 }
 
+void Renderer::DestroyRenderResource(RenderResourceHandle renderResourceHandle)
+{
+	ScopedMonitorLock lock(this);
+
+	m_renderResourceManager.DestroyResource(renderResourceHandle);
+}
+
 bool Renderer::StartRender(UUID renderContextId)
 {
 	ScopedMonitorLock lock(this);
 
 	auto& renderContext = m_renderContexts[renderContextId];
-	renderContext->GetRenderTarget().UpdateViewport();
+	renderContext->GetRenderTarget().UpdateViewport(m_renderResourceManager);
 	if (renderContext->GetRenderTarget().IsActive())
 	{
 		WaitFor(renderContext->GetRenderPermit());
@@ -106,18 +113,36 @@ void Renderer::EndRender(UUID renderContextId)
 }
 
 UUID Renderer::GenerateRenderContext(
-	RenderTarget::TargetType renderTargetType,
-	RenderTargetClient* renderTargetClient)
+	RenderTargetClient* renderTargetClient,
+	RenderResourceHandle frameBufferHandle)
 {
 	ScopedMonitorLock lock(this);
 
 	auto renderContext = std::unique_ptr<RenderContext>(
-		new RenderContext(renderTargetType, renderTargetClient));
+		new RenderContext(frameBufferHandle, renderTargetClient));
 	auto renderContextId = renderContext->GetId();
 	m_renderContexts.insert(
 		std::make_pair(renderContextId, std::move(renderContext)));
 
 	return renderContextId;
+}
+
+RenderResourceHandle Renderer::GenerateTexture(
+	int width,
+	int height,
+	std::unique_ptr<GLvoid> pixels)
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateTexture(
+		width, height, std::move(pixels));
+}
+
+RenderResourceHandle Renderer::GenerateFrameBuffer()
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateFrameBuffer();
 }
 
 void Renderer::RunThread()
@@ -194,10 +219,10 @@ void Renderer::Render(UUID renderContextId)
 	auto& renderContext = m_renderContexts[renderContextId];
 	auto& renderTarget = renderContext->GetRenderTarget();
 
-	renderTarget.Setup();
+	renderTarget.Setup(m_renderResourceManager);
 
 	renderContext->GetRenderPipeline().ProcessAllRenderLists(
-		renderContext->GetProjection());
+		renderContext->GetProjection(), m_renderResourceManager);
 
 	renderTarget.Finalize();
 

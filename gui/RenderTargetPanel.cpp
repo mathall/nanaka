@@ -36,13 +36,10 @@ RenderTargetPanel::RenderTargetPanel()
 	, m_targetBillboard("nanaka/models/gui_billboard.nmdl")
 {
 	m_renderContextId = g_renderer->GenerateRenderContext(
-		RenderTarget::OffScreen, this);
-}
+		this, m_frameBuffer.GetFrameBufferHandle());
 
-void RenderTargetPanel::NewColorBuffer(GLuint colorBuffer)
-{
 	auto material = m_targetBillboard.GetMaterial();
-	material.SetTexture(Texture(colorBuffer));
+	material.SetTexture(Texture(m_frameBuffer.GetFrameBufferHandle()));
 	m_targetBillboard.SetMaterial(material);
 }
 

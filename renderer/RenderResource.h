@@ -23,63 +23,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERPIPELINE_H
-#define NANAKA_RENDERER_RENDERPIPELINE_H
+#ifndef NANAKA_RENDERER_RENDERRESOURCE_H
+#define NANAKA_RENDERER_RENDERRESOURCE_H
 
-#include <memory>
-#include <vector>
+#include "renderer/GLResource.h"
+#include "renderer/RenderResourceHandle.h"
 
-#include "renderer/RenderElement.h"
-#include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
-
-class Projection;
-class RenderResourceManager;
-
-enum DepthSorthAxis
+enum RenderResourceType
 {
-	DepthSortAxisX,
-	DepthSortAxisY,
-	DepthSortAxisZ,
+	TextureRenderResourceType,
+	FrameBufferRenderResourceType,
 };
 
-class RenderPipeline final
+class RenderResource : public GLResource
 {
 public:
 
-	RenderPipeline();
+	explicit RenderResource(RenderResourceType type);
+	virtual ~RenderResource(){}
 
-	void ProcessAllRenderLists(
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-	void ProcessRenderList(
-		RenderList renderList,
-		Projection& projection,
-		const RenderResourceManager& renderResourceManager);
-
-	void SetDepthSortAxis(DepthSorthAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
+	RenderResourceType GetType() const;
+	RenderResourceHandle GetHandle() const;
 
 private:
 
-	GLuint GetGLHandle(
-		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
-
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	RenderResourceType m_type;
+	RenderResourceHandle m_handle;
 };
 
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
+inline RenderResource::RenderResource(RenderResourceType type)
+	: GLResource()
+	, m_type(type)
+	, m_handle(RenderResourceHandle::New())
 {
-	return m_renderElementPool.GetObject();
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
+inline RenderResourceType RenderResource::GetType() const
 {
-	m_depthSortAxis = axis;
+	return m_type;
 }
 
-#endif // NANAKA_RENDERER_RENDERPIPELINE_H
+inline RenderResourceHandle RenderResource::GetHandle() const
+{
+	return m_handle;
+}
+
+#endif // NANAKA_RENDERER_RENDERRESOURCE_H

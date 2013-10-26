@@ -25,33 +25,32 @@
 
 #include "renderer/RenderTarget.h"
 
+#include "renderer/FrameBufferRenderResource.h"
 #include "renderer/Renderer.h"
+#include "renderer/RenderResourceManager.h"
 
 RenderTarget::RenderTarget(
-	TargetType type,
+	RenderResourceHandle frameBufferHandle,
 	RenderTargetClient* client)
-	: m_targetType(type)
+	: m_frameBufferHandle(frameBufferHandle)
 	, m_client(client)
-	, m_frameBuffer(std::make_shared<FrameBuffer>(this))
 	, m_viewportRect(0.0f, 0.0f, 0.0f, 0.0f)
 {
-	if (m_targetType == OffScreen)
-	{
-		g_renderer->QueueGLResourceForBuild(m_frameBuffer);
-	}
 }
 
-void RenderTarget::Setup() const
+void RenderTarget::Setup(
+	const RenderResourceManager& renderResourceManager) const
 {
-	switch (m_targetType)
+	if (IsOnScreen())
 	{
-	case GUI:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		break;
-
-	case OffScreen:
-		glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->m_FBO);
-		break;
+	}
+	else
+	{
+		if (auto frameBuffer = GetFrameBuffer(renderResourceManager))
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->m_FBO);
+		}
 	}
 
 	glClearColor(128.0f / 255.0f, 168.0f / 255.0f, 248.0f / 255.0f, 1.0f);
@@ -76,7 +75,7 @@ void RenderTarget::Setup() const
 
 void RenderTarget::Finalize() const
 {
-	if (m_targetType == OffScreen)
+	if (!IsOnScreen())
 	{
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
@@ -84,15 +83,34 @@ void RenderTarget::Finalize() const
 	}
 }
 
-void RenderTarget::UpdateViewport()
+void RenderTarget::UpdateViewport(
+	const RenderResourceManager& renderResourceManager)
 {
 	Vec2f oldViewportSize(m_viewportRect.w, m_viewportRect.h);
 	m_viewportRect = m_client->GetRect();
 	Vec2f newViewportSize(m_viewportRect.w, m_viewportRect.h);
-	if (m_targetType == OffScreen && !newViewportSize.Equals(oldViewportSize))
+	if (!IsOnScreen() && !newViewportSize.Equals(oldViewportSize))
 	{
-		m_frameBuffer->SetSize(newViewportSize);
-		g_renderer->QueueGLResourceForDestruction(m_frameBuffer);
-		g_renderer->QueueGLResourceForBuild(m_frameBuffer);
+		if (auto frameBuffer = GetFrameBuffer(renderResourceManager))
+		{
+			frameBuffer->SetSize(newViewportSize);
+			g_renderer->QueueGLResourceForDestruction(frameBuffer);
+			g_renderer->QueueGLResourceForBuild(frameBuffer);
+		}
 	}
+}
+
+std::shared_ptr<FrameBufferRenderResource> RenderTarget::GetFrameBuffer(
+	const RenderResourceManager& renderResourceManager) const
+{
+	if (auto renderResource = renderResourceManager.Get(m_frameBufferHandle))
+	{
+		if (renderResource->GetType() == FrameBufferRenderResourceType)
+		{
+			return std::static_pointer_cast<FrameBufferRenderResource>(
+				renderResource);
+		}
+	}
+
+	return nullptr;
 }
