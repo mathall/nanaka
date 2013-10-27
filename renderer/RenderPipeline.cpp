@@ -32,6 +32,7 @@
 #include "renderer/MeshRenderResource.h"
 #include "renderer/Projection.h"
 #include "renderer/RenderResourceManager.h"
+#include "renderer/ShaderProgramRenderResource.h"
 #include "renderer/TextureRenderResource.h"
 
 RenderPipeline::RenderPipeline()
@@ -57,43 +58,52 @@ void RenderPipeline::ProcessRenderList(
 		auto mesh = renderResourceManager.Get<MeshRenderResource>(
 			renderElement->m_meshHandle);
 
-		if (!mesh || mesh->m_EBO == 0 || renderElement->m_shaderProgram == 0)
+		if (!mesh || mesh->m_EBO == 0)
 		{
 			continue;
 		}
 
-		glUseProgram(renderElement->m_shaderProgram);
+		auto shaderProgram =
+			renderResourceManager.Get<ShaderProgramRenderResource>(
+				renderElement->m_shaderProgramHandle);
+
+		if (!shaderProgram)
+		{
+			continue;
+		}
+
+		glUseProgram(shaderProgram->m_program);
 
 		for (auto uniform : renderElement->m_uniforms)
 		{
-			switch (uniform.m_type)
+			auto location = shaderProgram->GetUniformLocation(
+				uniform.m_desc.m_identifier);
+			switch (uniform.m_desc.m_type)
 			{
 			case ModelUniformType:
-				glUniformMatrix4fv(uniform.m_location, 1, GL_FALSE,
+				glUniformMatrix4fv(location, 1, GL_FALSE,
 					renderElement->m_modelTransform.data());
 				break;
 			case ViewUniformType:
-				glUniformMatrix4fv(uniform.m_location, 1, GL_FALSE,
-					projection.GetView().data());
+				glUniformMatrix4fv(
+					location, 1, GL_FALSE, projection.GetView().data());
 				break;
 			case ProjUniformType:
-				glUniformMatrix4fv(uniform.m_location, 1, GL_FALSE,
-					projection.GetProj().data());
+				glUniformMatrix4fv(
+					location, 1, GL_FALSE, projection.GetProj().data());
 				break;
 			case TexUniformType:
 				glActiveTexture(GL_TEXTURE0 + uniform.m_value.m_tex.m_unit);
 				glBindTexture(GL_TEXTURE_2D,
 					GetGLHandle(
 						uniform.m_value.m_tex.m_handle, renderResourceManager));
-				glUniform1i(uniform.m_location, uniform.m_value.m_tex.m_unit);
+				glUniform1i(location, uniform.m_value.m_tex.m_unit);
 				break;
 			case Vec2UniformType:
-				glUniform2fv(
-					uniform.m_location, 1, uniform.m_value.m_vec2.data());
+				glUniform2fv(location, 1, uniform.m_value.m_vec2.data());
 				break;
 			case Vec4UniformType:
-				glUniform4fv(
-					uniform.m_location, 1, uniform.m_value.m_vec4.data());
+				glUniform4fv(location, 1, uniform.m_value.m_vec4.data());
 				break;
 			default:
 				break;
@@ -102,11 +112,13 @@ void RenderPipeline::ProcessRenderList(
 
 		for (auto attribute : renderElement->m_attributes)
 		{
+			auto location = shaderProgram->GetAttributeLocation(
+				attribute.m_desc.m_identifier);
 			glBindBuffer(GL_ARRAY_BUFFER,
 				GetAttributeBuffer(mesh, attribute.m_desc.m_identifier));
-			glEnableVertexAttribArray(attribute.m_location);
-			glVertexAttribPointer(attribute.m_location, attribute.m_desc.m_num,
-				GL_FLOAT, GL_FALSE, 0, 0);
+			glEnableVertexAttribArray(location);
+			glVertexAttribPointer(
+				location, attribute.m_desc.m_num, GL_FLOAT, GL_FALSE, 0, 0);
 		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_EBO);

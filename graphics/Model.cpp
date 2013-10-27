@@ -61,9 +61,6 @@ void Model::PrepRender(RenderElement& RE) const
 			attributeDsc.m_identifier))
 		{
 			Attribute attribute;
-			attribute.m_location =
-				m_material.GetShaderProgram().GetAttributeLocation(
-					attributeDsc.m_identifier);
 			attribute.m_desc = attributeDsc;
 			RE.m_attributes.push_back(attribute);
 		}

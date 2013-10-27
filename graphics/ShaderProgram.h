@@ -38,11 +38,9 @@ public:
 	explicit ShaderProgram(std::string filePath);
 	explicit ShaderProgram(Asset<ShaderProgramResource> shaderProgram);
 
-	GLuint GetShaderProgramHandle() const;
+	RenderResourceHandle GetShaderProgramHandle() const;
 	bool HasAttribute(AttributeIdentifier identifier) const;
-	GLint GetAttributeLocation(AttributeIdentifier identifier) const;
 	bool HasUniform(UniformIdentifier identifier) const;
-	GLint GetUniformLocation(UniformIdentifier identifier) const;
 
 private:
 
@@ -60,37 +58,23 @@ inline ShaderProgram::ShaderProgram(Asset<ShaderProgramResource> shaderProgram)
 {
 }
 
-inline GLuint ShaderProgram::GetShaderProgramHandle() const
+inline RenderResourceHandle ShaderProgram::GetShaderProgramHandle() const
 {
 	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->GetShaderProgramHandle() : 0;
+		m_shaderProgramAsset.GetResource()->GetShaderProgramHandle() :
+		RenderResourceHandle::Invalid;
 }
 
 inline bool ShaderProgram::HasAttribute(AttributeIdentifier identifier) const
 {
-	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->HasAttribute(identifier) : false;
-}
-
-inline GLint ShaderProgram::GetAttributeLocation(
-	AttributeIdentifier identifier) const
-{
-	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->GetAttributeLocation(identifier) :
-		-1;
+	return m_shaderProgramAsset.IsValid()
+		&& m_shaderProgramAsset.GetResource()->HasAttribute(identifier);
 }
 
 inline bool ShaderProgram::HasUniform(UniformIdentifier identifier) const
 {
-	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->HasUniform(identifier) : false;
-}
-
-inline GLint ShaderProgram::GetUniformLocation(
-	UniformIdentifier identifier) const
-{
-	return m_shaderProgramAsset.IsValid() ?
-		m_shaderProgramAsset.GetResource()->GetUniformLocation(identifier) : -1;
+	return m_shaderProgramAsset.IsValid()
+		&& m_shaderProgramAsset.GetResource()->HasUniform(identifier);
 }
 
 #endif // NANAKA_GRAPHICS_SHADERPROGRAM_H

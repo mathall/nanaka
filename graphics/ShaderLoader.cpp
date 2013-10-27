@@ -78,5 +78,6 @@ std::shared_ptr<Resource> ShaderLoader::Load(
 	auto renderResourceHandle = g_renderer->GenerateShader(
 		params->m_type, source, uniforms, attributes);
 
-	return std::make_shared<ShaderResource>(renderResourceHandle);
+	return std::make_shared<ShaderResource>(
+		renderResourceHandle, uniforms, attributes);
 }

@@ -23,52 +23,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERRESOURCE_H
-#define NANAKA_RENDERER_RENDERRESOURCE_H
+#ifndef NANAKA_RENDERER_ATTRIBUTE_H
+#define NANAKA_RENDERER_ATTRIBUTE_H
 
-#include "renderer/GLResource.h"
-#include "renderer/RenderResourceHandle.h"
+#include <functional>
+#include <string>
+#include <unordered_map>
 
-enum RenderResourceType
+#include "renderer/GL.h"
+
+enum AttributeIdentifier
 {
-	FrameBufferRenderResourceType,
-	MeshRenderResourceType,
-	ShaderRenderResourceType,
-	ShaderProgramRenderResourceType,
-	TextureRenderResourceType,
+	PositionAttributeIdentifier,
+	TexcoordAttributeIdentifier,
 };
 
-class RenderResource : public GLResource
+struct AttributeDescription
 {
+	AttributeIdentifier m_identifier;
+	GLuint m_num;
+};
+
+struct Attribute
+{
+	AttributeDescription m_desc;
+};
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmismatched-tags"
+#endif // defined(__clang__)
+
+namespace std {
+template<>
+struct hash<AttributeIdentifier> {
 public:
-
-	explicit RenderResource(RenderResourceType type);
-	virtual ~RenderResource(){}
-
-	RenderResourceType GetType() const;
-	RenderResourceHandle GetHandle() const;
-
-private:
-
-	RenderResourceType m_type;
-	RenderResourceHandle m_handle;
+	size_t operator()(const AttributeIdentifier& identifier) const
+	{
+		return std::hash<int>()(identifier);
+	}
 };
+} // namespace std
 
-inline RenderResource::RenderResource(RenderResourceType type)
-	: GLResource()
-	, m_type(type)
-	, m_handle(RenderResourceHandle::New())
-{
-}
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)
 
-inline RenderResourceType RenderResource::GetType() const
-{
-	return m_type;
-}
+static const std::unordered_map<std::string, AttributeIdentifier>
+s_attributeNameIdentifierLookup =
+	{
+		{"position", PositionAttributeIdentifier},
+		{"texcoord", TexcoordAttributeIdentifier},
+	};
 
-inline RenderResourceHandle RenderResource::GetHandle() const
-{
-	return m_handle;
-}
-
-#endif // NANAKA_RENDERER_RENDERRESOURCE_H
+#endif // NANAKA_RENDERER_ATTRIBUTE_H

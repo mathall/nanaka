@@ -4,6 +4,7 @@
 #include "renderer/MeshRenderResource.h"
 #include "renderer/Renderer.h"
 #include "renderer/ShaderRenderResource.h"
+#include "renderer/ShaderProgramRenderResource.h"
 #include "renderer/TextureRenderResource.h"
 
 RenderResourceHandle RenderResourceManager::GenerateTexture(
@@ -64,6 +65,20 @@ RenderResourceHandle RenderResourceManager::GenerateShader(
 
 	m_renderResources.insert(std::make_pair(resourceHandle, renderResource));
 	g_renderer->QueueGLResourceForBuild(renderResource);
+
+	return resourceHandle;
+}
+
+RenderResourceHandle RenderResourceManager::GenerateShaderProgram(
+	RenderResourceHandle vertexShaderHandle,
+	RenderResourceHandle fragmentShaderHandle)
+{
+	auto renderResource = std::make_shared<ShaderProgramRenderResource>(
+		vertexShaderHandle, fragmentShaderHandle);
+	auto resourceHandle = renderResource->GetHandle();
+
+	m_renderResources.insert(std::make_pair(resourceHandle, renderResource));
+	g_renderer->QueueGLResourceForBuild(renderResource, 1);
 
 	return resourceHandle;
 }

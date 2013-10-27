@@ -23,12 +23,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "graphics/ShaderProgramResource.h"
+#include "renderer/ShaderProgramRenderResource.h"
 
 #include "renderer/RenderResourceManager.h"
 #include "renderer/ShaderRenderResource.h"
 
-void ShaderProgramGLResource::Build(
+void ShaderProgramRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
 	auto vertexShader =
@@ -69,11 +69,11 @@ void ShaderProgramGLResource::Build(
 	}
 }
 
-GLint ShaderProgramResource::GetAttributeLocation(
+GLint ShaderProgramRenderResource::GetAttributeLocation(
 	AttributeIdentifier identifier) const
 {
-	auto attributeIt = m_GLResource->m_attributes.find(identifier);
-	if (attributeIt != m_GLResource->m_attributes.end())
+	auto attributeIt = m_attributes.find(identifier);
+	if (attributeIt != m_attributes.end())
 	{
 		return attributeIt->second;
 	}
@@ -83,18 +83,18 @@ GLint ShaderProgramResource::GetAttributeLocation(
 	}
 }
 
-GLint ShaderProgramResource::GetUniformLocation(
+GLint ShaderProgramRenderResource::GetUniformLocation(
 	UniformIdentifier identifier) const
 {
-	auto uniformIt = m_GLResource->m_fUniforms.find(identifier);
-	if (uniformIt != m_GLResource->m_fUniforms.end())
+	auto uniformIt = m_fUniforms.find(identifier);
+	if (uniformIt != m_fUniforms.end())
 	{
 		return uniformIt->second;
 	}
 	else
 	{
-		uniformIt = m_GLResource->m_vUniforms.find(identifier);
-		if (uniformIt != m_GLResource->m_vUniforms.end())
+		uniformIt = m_vUniforms.find(identifier);
+		if (uniformIt != m_vUniforms.end())
 		{
 			return uniformIt->second;
 		}

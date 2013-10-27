@@ -26,48 +26,10 @@
 #ifndef NANAKA_GRAPHICS_SHADERPROGRAMRESOURCE_H
 #define NANAKA_GRAPHICS_SHADERPROGRAMRESOURCE_H
 
-#include <unordered_map>
-
-#include "renderer/GLResource.h"
 #include "renderer/Renderer.h"
 #include "resource/Asset.h"
 #include "resource/Resource.h"
 #include "graphics/ShaderResource.h"
-
-class ShaderProgramGLResource final : public GLResource
-{
-public:
-
-	ShaderProgramGLResource(
-		RenderResourceHandle vertexShaderHandle,
-		RenderResourceHandle fragmentShaderHandle);
-
-	/**
-	 * GLResource implementation.
-	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
-	void Destroy() override;
-
-	RenderResourceHandle m_vertexShaderHandle;
-	RenderResourceHandle m_fragmentShaderHandle;
-	GLuint m_program;
-	std::unordered_map<AttributeIdentifier, GLint> m_attributes;
-	std::unordered_map<UniformIdentifier, GLint> m_vUniforms;
-	std::unordered_map<UniformIdentifier, GLint> m_fUniforms;
-};
-
-inline ShaderProgramGLResource::ShaderProgramGLResource(
-	RenderResourceHandle vertexShaderHandle,
-	RenderResourceHandle fragmentShaderHandle)
-	: m_vertexShaderHandle(vertexShaderHandle)
-	, m_fragmentShaderHandle(fragmentShaderHandle)
-{
-}
-
-inline void ShaderProgramGLResource::Destroy()
-{
-	glDeleteProgram(m_program);
-}
 
 class ShaderProgramResource final : public Resource
 {
@@ -76,60 +38,58 @@ public:
 	ShaderProgramResource(
 		Asset<ShaderResource> vertexShader,
 		Asset<ShaderResource> fragmentShader,
-		std::shared_ptr<ShaderProgramGLResource> shaderProgram);
+		RenderResourceHandle renderResourceHandle);
 	~ShaderProgramResource();
 
 	ShaderProgramResource(ShaderProgramResource&) = delete;
 	ShaderProgramResource& operator=(const ShaderProgramResource&) = delete;
 
-	GLuint GetShaderProgramHandle() const;
+	RenderResourceHandle GetShaderProgramHandle() const;
 	bool HasAttribute(AttributeIdentifier identifier) const;
-	GLint GetAttributeLocation(AttributeIdentifier identifier) const;
 	bool HasUniform(UniformIdentifier identifier) const;
-	GLint GetUniformLocation(UniformIdentifier identifier) const;
 
 private:
 
 	Asset<ShaderResource> m_vertexShader;
 	Asset<ShaderResource> m_fragmentShader;
-	std::shared_ptr<ShaderProgramGLResource> m_GLResource;
+	RenderResourceHandle m_renderResourceHandle;
 };
 
 inline ShaderProgramResource::ShaderProgramResource(
 	Asset<ShaderResource> vertexShader,
 	Asset<ShaderResource> fragmentShader,
-	std::shared_ptr<ShaderProgramGLResource> GLResource)
+	RenderResourceHandle renderResourceHandle)
 	: m_vertexShader(vertexShader)
 	, m_fragmentShader(fragmentShader)
-	, m_GLResource(GLResource)
+	, m_renderResourceHandle(renderResourceHandle)
 {
-	g_renderer->QueueGLResourceForBuild(m_GLResource, 1);
 }
 
 inline ShaderProgramResource::~ShaderProgramResource()
 {
-	g_renderer->QueueGLResourceForDestruction(m_GLResource);
+	g_renderer->DestroyRenderResource(m_renderResourceHandle);
 }
 
-inline GLuint ShaderProgramResource::GetShaderProgramHandle() const
+inline RenderResourceHandle
+ShaderProgramResource::GetShaderProgramHandle() const
 {
-	return m_GLResource->m_program;
+	return m_renderResourceHandle;
 }
 
 inline bool ShaderProgramResource::HasAttribute(
 	AttributeIdentifier identifier) const
 {
-	return m_GLResource->m_attributes.find(identifier)
-		!= m_GLResource->m_attributes.end();
+	return m_vertexShader.IsValid()
+		&& m_vertexShader.GetResource()->HasAttribute(identifier);
 }
 
 inline bool ShaderProgramResource::HasUniform(
 	UniformIdentifier identifier) const
 {
-	return m_GLResource->m_fUniforms.find(identifier)
-		!= m_GLResource->m_fUniforms.end()
-		|| m_GLResource->m_vUniforms.find(identifier)
-		!= m_GLResource->m_vUniforms.end();
+	return (m_vertexShader.IsValid()
+		&& m_vertexShader.GetResource()->HasUniform(identifier))
+		|| (m_fragmentShader.IsValid()
+		&& m_fragmentShader.GetResource()->HasUniform(identifier));
 }
 
 #endif // NANAKA_GRAPHICS_SHADERPROGRAMRESOURCE_H

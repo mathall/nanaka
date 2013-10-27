@@ -30,12 +30,6 @@
 #include "renderer/RenderElement.h"
 #include "resource/ResourceManager.h"
 
-struct UniformDescription
-{
-	UniformIdentifier m_identifier;
-	UniformType m_type;
-};
-
 static const std::vector<UniformDescription> s_uniformDescriptions =
 	{
 		{ModelUniformIdentifier, ModelUniformType},
@@ -80,16 +74,14 @@ void Material::PrepRender(RenderElement& RE) const
 {
 	RE.m_renderList = m_transparent ? RenderListTransparent : RenderListGeneral;
 
-	RE.m_shaderProgram = m_shaderProgram.GetShaderProgramHandle();
+	RE.m_shaderProgramHandle = m_shaderProgram.GetShaderProgramHandle();
 
 	for (const auto& uniformDsc : s_uniformDescriptions)
 	{
 		if (m_shaderProgram.HasUniform(uniformDsc.m_identifier))
 		{
 			Uniform uniform;
-			uniform.m_location =
-				m_shaderProgram.GetUniformLocation(uniformDsc.m_identifier);
-			uniform.m_type = uniformDsc.m_type;
+			uniform.m_desc = uniformDsc;
 			uniform.m_value = GetUniformValue(uniformDsc.m_identifier);
 			RE.m_uniforms.push_back(uniform);
 		}

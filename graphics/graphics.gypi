@@ -23,7 +23,6 @@
     '../graphics/ShaderProgram.h',
     '../graphics/ShaderProgramLoader.cpp',
     '../graphics/ShaderProgramLoader.h',
-    '../graphics/ShaderProgramResource.cpp',
     '../graphics/ShaderProgramResource.h',
     '../graphics/ShaderResource.cpp',
     '../graphics/ShaderResource.h',

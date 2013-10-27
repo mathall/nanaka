@@ -1,5 +1,6 @@
 {
   'sources': [
+    '../renderer/Attribute.h',
     '../renderer/FrameBufferRenderResource.cpp',
     '../renderer/FrameBufferRenderResource.h',
     '../renderer/GLResource.h',
@@ -23,9 +24,12 @@
     '../renderer/RenderResourceManager.h',
     '../renderer/RenderTarget.cpp',
     '../renderer/RenderTarget.h',
+    '../renderer/ShaderProgramRenderResource.cpp',
+    '../renderer/ShaderProgramRenderResource.h',
     '../renderer/ShaderRenderResource.cpp',
     '../renderer/ShaderRenderResource.h',
     '../renderer/TextureRenderResource.cpp',
     '../renderer/TextureRenderResource.h',
+    '../renderer/Uniform.h',
   ],
 }

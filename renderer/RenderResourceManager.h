@@ -60,7 +60,12 @@ public:
 		std::string source,
 		std::vector<std::string> uniformNames,
 		std::vector<std::string> attributeNames);
+	RenderResourceHandle GenerateShaderProgram(
+		RenderResourceHandle vertexShaderHandle,
+		RenderResourceHandle fragmentShaderHandle);
+
 	void DestroyResource(RenderResourceHandle resourceHandle);
+
 	std::shared_ptr<RenderResource> Get(
 		RenderResourceHandle resourceHandle) const;
 

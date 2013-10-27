@@ -66,11 +66,12 @@ std::shared_ptr<Resource> ShaderProgramLoader::Load(
 
 	if (vertexShader.IsValid() && fragmentShader.IsValid())
 	{
+		auto renderResourceHandle = g_renderer->GenerateShaderProgram(
+			vertexShader.GetResource()->GetShaderHandle(),
+			fragmentShader.GetResource()->GetShaderHandle());
+
 		return std::make_shared<ShaderProgramResource>(
-			vertexShader, fragmentShader,
-			std::make_shared<ShaderProgramGLResource>(
-				vertexShader.GetResource()->GetShaderHandle(),
-				fragmentShader.GetResource()->GetShaderHandle()));
+			vertexShader, fragmentShader, renderResourceHandle);
 	}
 	else
 	{

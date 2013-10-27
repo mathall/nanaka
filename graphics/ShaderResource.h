@@ -27,71 +27,12 @@
 #define NANAKA_GRAPHICS_SHADERRESOURCE_H
 
 #include <functional>
-#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "renderer/Renderer.h"
 #include "resource/Resource.h"
 #include "resource/ResourceParameters.h"
-
-static const std::unordered_map<std::string, AttributeIdentifier>
-s_attributeNameIdentifierLookup =
-	{
-		{"position", PositionAttributeIdentifier},
-		{"texcoord", TexcoordAttributeIdentifier},
-	};
-
-enum UniformIdentifier
-{
-	ModelUniformIdentifier,
-	ViewUniformIdentifier,
-	ProjUniformIdentifier,
-	TexUniformIdentifier,
-	ColorUniformIdentifier,
-	TexcoordsScaleUniformIdentifier,
-	TexcoordsOffsetUniformIdentifier,
-};
-
-static const std::unordered_map<std::string, UniformIdentifier>
-s_uniformNameIdentifierLookup =
-	{
-		{"model", ModelUniformIdentifier},
-		{"view", ViewUniformIdentifier},
-		{"proj", ProjUniformIdentifier},
-		{"tex", TexUniformIdentifier},
-		{"color", ColorUniformIdentifier},
-		{"texcoordsScale", TexcoordsScaleUniformIdentifier},
-		{"texcoordsOffset", TexcoordsOffsetUniformIdentifier},
-	};
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmismatched-tags"
-#endif // defined(__clang__)
-
-namespace std {
-template<>
-struct hash<UniformIdentifier> {
-public:
-	size_t operator()(const UniformIdentifier& identifier) const
-	{
-		return std::hash<int>()(identifier);
-	}
-};
-
-template<>
-struct hash<AttributeIdentifier> {
-public:
-	size_t operator()(const AttributeIdentifier& identifier) const
-	{
-		return std::hash<int>()(identifier);
-	}
-};
-} // namespace std
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
 
 class ShaderResourceParameters final : public ResourceParameters
 {
@@ -117,22 +58,43 @@ class ShaderResource final : public Resource
 {
 public:
 
-	explicit ShaderResource(RenderResourceHandle renderResourceHandle);
+	ShaderResource(
+		RenderResourceHandle renderResourceHandle,
+		const std::vector<std::string>& uniformNames,
+		const std::vector<std::string>& attributeNames);
 	~ShaderResource();
 
 	ShaderResource(ShaderResource&) = delete;
 	ShaderResource& operator=(const ShaderResource&) = delete;
 
 	RenderResourceHandle GetShaderHandle() const;
+	bool HasAttribute(AttributeIdentifier identifier) const;
+	bool HasUniform(UniformIdentifier identifier) const;
 
 private:
 
 	RenderResourceHandle m_renderResourceHandle;
+	std::unordered_set<UniformIdentifier> m_uniformIdentifiers;
+	std::unordered_set<AttributeIdentifier> m_attributeIdentifiers;
 };
 
-inline ShaderResource::ShaderResource(RenderResourceHandle renderResourceHandle)
+inline ShaderResource::ShaderResource(
+	RenderResourceHandle renderResourceHandle,
+	const std::vector<std::string>& uniformNames,
+	const std::vector<std::string>& attributeNames)
 	: m_renderResourceHandle(renderResourceHandle)
 {
+	for (auto& uniformName : uniformNames)
+	{
+		m_uniformIdentifiers.insert(
+			s_uniformNameIdentifierLookup.find(uniformName)->second);
+	}
+
+	for (auto& attributeName : attributeNames)
+	{
+		m_attributeIdentifiers.insert(
+			s_attributeNameIdentifierLookup.find(attributeName)->second);
+	}
 }
 
 inline ShaderResource::~ShaderResource()
@@ -143,6 +105,18 @@ inline ShaderResource::~ShaderResource()
 inline RenderResourceHandle ShaderResource::GetShaderHandle() const
 {
 	return m_renderResourceHandle;
+}
+
+inline bool ShaderResource::HasAttribute(AttributeIdentifier identifier) const
+{
+	return m_attributeIdentifiers.find(identifier)
+		!= m_attributeIdentifiers.end();
+}
+
+inline bool ShaderResource::HasUniform(UniformIdentifier identifier) const
+{
+	return m_uniformIdentifiers.find(identifier)
+		!= m_uniformIdentifiers.end();
 }
 
 #endif // NANAKA_GRAPHICS_SHADERRESOURCE_H

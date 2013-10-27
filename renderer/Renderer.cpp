@@ -173,6 +173,16 @@ RenderResourceHandle Renderer::GenerateShader(
 		type, source, uniformNames, attributeNames);
 }
 
+RenderResourceHandle Renderer::GenerateShaderProgram(
+	RenderResourceHandle vertexShaderHandle,
+	RenderResourceHandle fragmentShaderHandle)
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateShaderProgram(
+		vertexShaderHandle, fragmentShaderHandle);
+}
+
 void Renderer::RunThread()
 {
 	while (!m_killThreadRequested)

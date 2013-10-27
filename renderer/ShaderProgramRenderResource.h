@@ -23,39 +23,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_RENDERELEMENT_H
-#define NANAKA_RENDERER_RENDERELEMENT_H
+#ifndef NANAKA_RENDERER_SHADERPROGRAMRERENDERRESOURCE_H
+#define NANAKA_RENDERER_SHADERPROGRAMRERENDERRESOURCE_H
 
-#include <vector>
+#include <unordered_map>
 
-#include "math/Mat44.h"
 #include "renderer/Attribute.h"
-#include "renderer/GL.h"
-#include "renderer/RenderList.h"
-#include "renderer/RenderResourceHandle.h"
+#include "renderer/RenderResource.h"
 #include "renderer/Uniform.h"
 
-class RenderElement final
+class ShaderProgramRenderResource final : public RenderResource
 {
 public:
 
-	Mat44 m_modelTransform;
-	RenderResourceHandle m_shaderProgramHandle;
-	std::vector<Uniform> m_uniforms;
-	std::vector<Attribute> m_attributes;
-	RenderResourceHandle m_meshHandle;
-	RenderList m_renderList;
+	static const RenderResourceType s_type = ShaderProgramRenderResourceType;
 
-	struct Clear
-	{
-		void operator()(RenderElement& renderElement);
-	};
+	ShaderProgramRenderResource(
+		RenderResourceHandle vertexShaderHandle,
+		RenderResourceHandle fragmentShaderHandle);
+
+	/**
+	 * GLResource implementation.
+	 */
+	void Build(const RenderResourceManager& renderResourceManager) override;
+	void Destroy() override;
+
+	GLint GetAttributeLocation(AttributeIdentifier identifier) const;
+	GLint GetUniformLocation(UniformIdentifier identifier) const;
+
+	RenderResourceHandle m_vertexShaderHandle;
+	RenderResourceHandle m_fragmentShaderHandle;
+	GLuint m_program;
+	std::unordered_map<AttributeIdentifier, GLint> m_attributes;
+	std::unordered_map<UniformIdentifier, GLint> m_vUniforms;
+	std::unordered_map<UniformIdentifier, GLint> m_fUniforms;
 };
 
-inline void RenderElement::Clear::operator()(RenderElement& RE)
+inline ShaderProgramRenderResource::ShaderProgramRenderResource(
+	RenderResourceHandle vertexShaderHandle,
+	RenderResourceHandle fragmentShaderHandle)
+	: RenderResource(s_type)
+	, m_vertexShaderHandle(vertexShaderHandle)
+	, m_fragmentShaderHandle(fragmentShaderHandle)
 {
-	RE.m_uniforms.clear();
-	RE.m_attributes.clear();
 }
 
-#endif // NANAKA_RENDERER_RENDERELEMENT_H
+inline void ShaderProgramRenderResource::Destroy()
+{
+	glDeleteProgram(m_program);
+}
+
+#endif // NANAKA_RENDERER_SHADERPROGRAMRERENDERRESOURCE_H
