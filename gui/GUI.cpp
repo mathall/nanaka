@@ -28,6 +28,7 @@
 #include "renderer/Renderer.h"
 #include "renderer/RenderContext.h"
 #include "renderer/RenderPipeline.h"
+#include "renderer/RenderTarget.h"
 
 GUI::GUI()
 	: m_renderContextId(UUID::Invalid)
@@ -39,7 +40,8 @@ void GUI::Initialize()
 {
 	SetActiveView(CreateView());
 
-	m_renderContextId = g_renderer->GenerateRenderContext(this);
+	m_renderContextId =
+		g_renderer->GenerateRenderContext(OnScreenRenderTargetType);
 }
 
 void GUI::Draw()
@@ -80,13 +82,7 @@ void GUI::SetActiveView(UUID viewId)
 
 	if (viewIt != m_views.end())
 	{
-		if (m_activeView)
-		{
-			m_activeView->SetActive(false);
-		}
-
 		m_activeView = viewIt->second.get();
-		m_activeView->SetActive(true);
 		m_activeView->Reset();
 	}
 }

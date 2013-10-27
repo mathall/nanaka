@@ -29,7 +29,6 @@
 #include "graphics/FrameBuffer.h"
 #include "graphics/Model.h"
 #include "gui/Panel.h"
-#include "renderer/RenderTarget.h"
 #include "utils/UUID.h"
 
 class RenderTargetPanelListener
@@ -41,7 +40,7 @@ public:
 	virtual void OnNewSize(UUID panelId) = 0;
 };
 
-class RenderTargetPanel final : public Panel, public RenderTargetClient
+class RenderTargetPanel final : public Panel
 {
 public:
 
@@ -50,12 +49,6 @@ public:
 	void SetRenderTargetPanelListener(RenderTargetPanelListener* listener);
 	float GetAspectRatio() const;
 	UUID GetRenderContextId() const;
-
-	/**
-	 * RenderTargetClient implementation.
-	 */
-	bool IsActive() const override;
-	Rect GetRect() const override;
 
 protected:
 
@@ -71,23 +64,13 @@ private:
 	RenderTargetPanelListener* m_listener;
 	Vec2f m_lastSize;
 
-	FrameBuffer m_frameBuffer;
+	std::unique_ptr<FrameBuffer> m_frameBuffer;
 	Model m_targetBillboard;
 };
 
 inline float RenderTargetPanel::GetAspectRatio() const
 {
 	return m_size.y == 0.0f ? 1.0f : (m_size.x / m_size.y);
-}
-
-inline Rect RenderTargetPanel::GetRect() const
-{
-	return Rect(Vec2f(0.0f, 0.0f), m_size);
-}
-
-inline bool RenderTargetPanel::IsActive() const
-{
-	return IsVisible() && IsViewActive();
 }
 
 inline UUID RenderTargetPanel::GetRenderContextId() const

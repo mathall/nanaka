@@ -33,7 +33,7 @@ class FrameBuffer final
 {
 public:
 
-	FrameBuffer();
+	explicit FrameBuffer(Vec2f size);
 	~FrameBuffer();
 
 	FrameBuffer(FrameBuffer&) = delete;
@@ -46,8 +46,8 @@ private:
 	RenderResourceHandle m_renderResourceHandle;
 };
 
-inline FrameBuffer::FrameBuffer()
-	: m_renderResourceHandle(g_renderer->GenerateFrameBuffer())
+inline FrameBuffer::FrameBuffer(Vec2f size)
+	: m_renderResourceHandle(g_renderer->GenerateFrameBuffer(size))
 {
 }
 

@@ -28,6 +28,7 @@
 #include "math/Rect.h"
 #include "renderer/Renderer.h"
 #include "renderer/RenderContext.h"
+#include "renderer/RenderTarget.h"
 
 RenderTargetPanel::RenderTargetPanel()
 	: m_renderContextId(UUID::Invalid)
@@ -35,12 +36,8 @@ RenderTargetPanel::RenderTargetPanel()
 	, m_lastSize(Vec2f::Zero())
 	, m_targetBillboard("nanaka/models/gui_billboard.nmdl")
 {
-	m_renderContextId = g_renderer->GenerateRenderContext(
-		this, m_frameBuffer.GetFrameBufferHandle());
-
-	auto material = m_targetBillboard.GetMaterial();
-	material.SetTexture(Texture(m_frameBuffer.GetFrameBufferHandle()));
-	m_targetBillboard.SetMaterial(material);
+	m_renderContextId =
+		g_renderer->GenerateRenderContext(OffScreenRenderTargetType);
 }
 
 void RenderTargetPanel::OnPlacementUpdated()
@@ -57,6 +54,17 @@ void RenderTargetPanel::OnPlacementUpdated()
 	}
 
 	m_lastSize = m_size;
+
+	g_renderer->SetViewportRect(m_renderContextId, Rect(Vec2f::Zero(), m_size));
+
+	m_frameBuffer = std::unique_ptr<FrameBuffer>(new FrameBuffer(m_size));
+
+	g_renderer->SetFrameBufferHandle(
+		m_renderContextId, m_frameBuffer->GetFrameBufferHandle());
+
+	auto material = m_targetBillboard.GetMaterial();
+	material.SetTexture(Texture(m_frameBuffer->GetFrameBufferHandle()));
+	m_targetBillboard.SetMaterial(material);
 
 	if (m_listener != NULL)
 	{

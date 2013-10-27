@@ -60,12 +60,14 @@ public:
 		int level = 0);
 	void QueueGLResourceForDestruction(std::shared_ptr<GLResource> resource);
 
+	void SetViewportRect(UUID renderContextId, Rect viewportRect);
+	void SetFrameBufferHandle(
+		UUID renderContextId,
+		RenderResourceHandle frameBufferHandle);
 	bool StartRender(UUID renderContextId);
 	void EndRender(UUID renderContextId);
 
-	UUID GenerateRenderContext(
-		RenderTargetClient* renderTargetClient,
-		RenderResourceHandle frameBufferHandle = RenderResourceHandle::Invalid);
+	UUID GenerateRenderContext(RenderTargetType renderTargetType);
 
 	RenderPipeline& GetRenderPipeline(UUID renderContextId);
 	Projection& GetProjection(UUID renderContextId);
@@ -74,7 +76,7 @@ public:
 		int width,
 		int height,
 		std::unique_ptr<GLvoid> pixels);
-	RenderResourceHandle GenerateFrameBuffer();
+	RenderResourceHandle GenerateFrameBuffer(Vec2f size);
 	RenderResourceHandle GenerateMesh(
 		std::unique_ptr<GLfloat[]> vertexBuffer,
 		int vertexBufferSize,

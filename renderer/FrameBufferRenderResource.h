@@ -35,9 +35,7 @@ public:
 
 	static const RenderResourceType s_type = FrameBufferRenderResourceType;
 
-	FrameBufferRenderResource();
-
-	void SetSize(Vec2f size);
+	FrameBufferRenderResource(Vec2f size);
 
 	/**
 	 * GLResource implementation.
@@ -51,17 +49,12 @@ public:
 	GLuint m_depthBuffer;
 };
 
-inline FrameBufferRenderResource::FrameBufferRenderResource()
+inline FrameBufferRenderResource::FrameBufferRenderResource(Vec2f size)
 	: RenderResource(s_type)
-	, m_size(Vec2f::Zero())
+	, m_size(size)
 	, m_FBO(0)
 	, m_colorBuffer(0)
 {
-}
-
-inline void FrameBufferRenderResource::SetSize(Vec2f size)
-{
-	m_size = size;
 }
 
 #endif // NANAKA_RENDERER_FRAMEBUFFERRENDERRESOURCE_H

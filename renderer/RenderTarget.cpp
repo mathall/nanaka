@@ -29,13 +29,20 @@
 #include "renderer/Renderer.h"
 #include "renderer/RenderResourceManager.h"
 
-RenderTarget::RenderTarget(
-	RenderResourceHandle frameBufferHandle,
-	RenderTargetClient* client)
-	: m_frameBufferHandle(frameBufferHandle)
-	, m_client(client)
+RenderTarget::RenderTarget(RenderTargetType type)
+	: m_frameBufferHandle(RenderResourceHandle::Invalid)
+	, m_type(type)
 	, m_viewportRect(0.0f, 0.0f, 0.0f, 0.0f)
 {
+}
+
+bool RenderTarget::IsValid(
+	const RenderResourceManager& renderResourceManager) const
+{
+	return m_viewportRect.w > 0.0f && m_viewportRect.h > 0.0f
+		&& (IsOnScreen()
+			|| renderResourceManager.Get<FrameBufferRenderResource>(
+				m_frameBufferHandle));
 }
 
 void RenderTarget::Setup(
@@ -52,6 +59,10 @@ void RenderTarget::Setup(
 				m_frameBufferHandle))
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->m_FBO);
+		}
+		else
+		{
+			assert(!"No frame buffer to bind.");
 		}
 	}
 
@@ -82,24 +93,5 @@ void RenderTarget::Finalize() const
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 		glClear(GL_COLOR_BUFFER_BIT);
-	}
-}
-
-void RenderTarget::UpdateViewport(
-	const RenderResourceManager& renderResourceManager)
-{
-	Vec2f oldViewportSize(m_viewportRect.w, m_viewportRect.h);
-	m_viewportRect = m_client->GetRect();
-	Vec2f newViewportSize(m_viewportRect.w, m_viewportRect.h);
-	if (!IsOnScreen() && !newViewportSize.Equals(oldViewportSize))
-	{
-		if (auto frameBuffer =
-			renderResourceManager.Get<FrameBufferRenderResource>(
-				m_frameBufferHandle))
-		{
-			frameBuffer->SetSize(newViewportSize);
-			g_renderer->QueueGLResourceForDestruction(frameBuffer);
-			g_renderer->QueueGLResourceForBuild(frameBuffer);
-		}
 	}
 }

@@ -87,13 +87,30 @@ void Renderer::DestroyRenderResource(RenderResourceHandle renderResourceHandle)
 	m_renderResourceManager.DestroyResource(renderResourceHandle);
 }
 
+void Renderer::SetViewportRect(UUID renderContextId, Rect viewportRect)
+{
+	ScopedMonitorLock lock(this);
+
+	auto& renderContext = m_renderContexts[renderContextId];
+	renderContext->GetRenderTarget().SetViewportRect(viewportRect);
+}
+
+void Renderer::SetFrameBufferHandle(
+	UUID renderContextId,
+	RenderResourceHandle frameBufferHandle)
+{
+	ScopedMonitorLock lock(this);
+
+	auto& renderContext = m_renderContexts[renderContextId];
+	renderContext->GetRenderTarget().SetFrameBufferHandle(frameBufferHandle);
+}
+
 bool Renderer::StartRender(UUID renderContextId)
 {
 	ScopedMonitorLock lock(this);
 
 	auto& renderContext = m_renderContexts[renderContextId];
-	renderContext->GetRenderTarget().UpdateViewport(m_renderResourceManager);
-	if (renderContext->GetRenderTarget().IsActive())
+	if (renderContext->GetRenderTarget().IsValid(m_renderResourceManager))
 	{
 		WaitFor(renderContext->GetRenderPermit());
 		return true;
@@ -112,14 +129,12 @@ void Renderer::EndRender(UUID renderContextId)
 	}
 }
 
-UUID Renderer::GenerateRenderContext(
-	RenderTargetClient* renderTargetClient,
-	RenderResourceHandle frameBufferHandle)
+UUID Renderer::GenerateRenderContext(RenderTargetType renderTargetType)
 {
 	ScopedMonitorLock lock(this);
 
 	auto renderContext = std::unique_ptr<RenderContext>(
-		new RenderContext(frameBufferHandle, renderTargetClient));
+		new RenderContext(renderTargetType));
 	auto renderContextId = renderContext->GetId();
 	m_renderContexts.insert(
 		std::make_pair(renderContextId, std::move(renderContext)));
@@ -138,11 +153,11 @@ RenderResourceHandle Renderer::GenerateTexture(
 		width, height, std::move(pixels));
 }
 
-RenderResourceHandle Renderer::GenerateFrameBuffer()
+RenderResourceHandle Renderer::GenerateFrameBuffer(Vec2f size)
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateFrameBuffer();
+	return m_renderResourceManager.GenerateFrameBuffer(size);
 }
 
 RenderResourceHandle Renderer::GenerateMesh(

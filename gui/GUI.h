@@ -35,7 +35,6 @@
 #include "gui/Font.h"
 #include "gui/View.h"
 #include "input/InputListener.h"
-#include "renderer/RenderTarget.h"
 #include "utils/UUID.h"
 
 class InputEvent;
@@ -45,7 +44,7 @@ class Widget;
  * GUI is a manager of Views and Fonts. One View may be active at a time, and
  * that View will receive all input events sent to the GUI.
  */
-class GUI final : public InputListener, public RenderTargetClient
+class GUI final : public InputListener
 {
 public:
 
@@ -67,12 +66,6 @@ public:
 	 */
 	void HandleEvent(const InputEvent& event) override;
 
-	/**
-	 * RenderTargetClient implementation.
-	 */
-	Rect GetRect() const override;
-	bool IsActive() const override;
-
 private:
 
 
@@ -86,16 +79,8 @@ private:
 inline void GUI::SetDisplayProperties(DisplayProperties displayProps)
 {
 	m_displayProperties = displayProps;
-}
-
-inline Rect GUI::GetRect() const
-{
-	return Rect(Vec2f::Zero(), m_displayProperties.m_realSize);
-}
-
-inline bool GUI::IsActive() const
-{
-	return true;
+	g_renderer->SetViewportRect(m_renderContextId,
+		Rect(Vec2f::Zero(), m_displayProperties.m_realSize));
 }
 
 inline const Font* GUI::GetFont(UUID fontId) const

@@ -55,15 +55,6 @@ void Widget::SetVisibleRecursively(bool visible, bool ancestorsVisible)
 	PropagateDirty();
 }
 
-void Widget::SetViewActiveRecursively(bool active)
-{
-	m_viewActive = active;
-	for (auto child : m_children)
-	{
-		child->SetViewActiveRecursively(active);
-	}
-}
-
 void Widget::SetAlphaRecursively(float alpha, float ancestorAlpha)
 {
 	m_alpha = alpha;

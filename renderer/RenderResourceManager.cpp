@@ -22,9 +22,9 @@ RenderResourceHandle RenderResourceManager::GenerateTexture(
 	return resourceHandle;
 }
 
-RenderResourceHandle RenderResourceManager::GenerateFrameBuffer()
+RenderResourceHandle RenderResourceManager::GenerateFrameBuffer(Vec2f size)
 {
-	auto renderResource = std::make_shared<FrameBufferRenderResource>();
+	auto renderResource = std::make_shared<FrameBufferRenderResource>(size);
 	auto resourceHandle = renderResource->GetHandle();
 
 	m_renderResources.insert(std::make_pair(resourceHandle, renderResource));

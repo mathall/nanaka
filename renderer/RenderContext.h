@@ -36,9 +36,7 @@ class RenderContext final
 {
 public:
 
-	RenderContext(
-		RenderResourceHandle frameBufferHandle,
-		RenderTargetClient* renderTargetClient);
+	explicit RenderContext(RenderTargetType renderTargetType);
 
 	RenderTarget& GetRenderTarget();
 	Projection& GetProjection();
@@ -55,11 +53,9 @@ private:
 	Sem m_renderPermit;
 };
 
-inline RenderContext::RenderContext(
-	RenderResourceHandle frameBufferHandle,
-	RenderTargetClient* renderTargetClient)
+inline RenderContext::RenderContext(RenderTargetType renderTargetType)
 	: m_Id(UUID::New())
-	, m_renderTarget(frameBufferHandle, renderTargetClient)
+	, m_renderTarget(renderTargetType)
 	, m_renderPermit(1)
 {
 }

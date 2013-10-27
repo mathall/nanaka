@@ -30,6 +30,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "math/Vec2f.h"
 #include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 #include "renderer/RenderResourceHandle.h"
@@ -47,7 +48,7 @@ public:
 		int width,
 		int height,
 		std::unique_ptr<GLvoid> pixels);
-	RenderResourceHandle GenerateFrameBuffer();
+	RenderResourceHandle GenerateFrameBuffer(Vec2f size);
 	RenderResourceHandle GenerateMesh(
 		std::unique_ptr<GLfloat[]> vertexBuffer,
 		int vertexBufferSize,

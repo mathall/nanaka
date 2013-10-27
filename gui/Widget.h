@@ -95,7 +95,6 @@ protected:
 		GUISizeUnit edgeSizeUnit,
 		FrameBorderEdges edges);
 
-	bool IsViewActive() const;
 	void PropagateDirty(LayoutDirtyMode dirtyMode = LayoutDirtyModeAll);
 
 	Vec2f m_position;
@@ -108,7 +107,6 @@ private:
 	// View controlls the root widget and calls on several private methods.
 	friend class View;
 
-	void SetViewActiveRecursively(bool active);
 	void SetAlphaRecursively(float alpha, float ancestorAlpha);
 	void SetVisibleRecursively(bool visible, bool ancestorsVisible);
 	void PointerLostRecursively(int pointerId);
@@ -136,7 +134,6 @@ private:
 	bool m_needLayout;
 	bool m_needRecalcLayoutProperties;
 	bool m_swallowsInput;
-	bool m_viewActive;
 	float m_alpha;
 	float m_ancestorAlpha;
 	bool m_visible;
@@ -172,11 +169,6 @@ inline void Widget::SetVisible(bool visible)
 inline bool Widget::IsVisible() const
 {
 	return m_visible && m_ancestorsVisible;
-}
-
-inline bool Widget::IsViewActive() const
-{
-	return m_viewActive;
 }
 
 inline void Widget::SetAlpha(float alpha)

@@ -26,6 +26,7 @@
 #ifndef NANAKA_RENDERER_RENDERTARGET_H
 #define NANAKA_RENDERER_RENDERTARGET_H
 
+#include <cassert>
 #include <memory>
 
 #include "math/Rect.h"
@@ -34,50 +35,47 @@
 class FrameBufferRenderResource;
 class RenderResourceManager;
 
-/**
- * RenderTargetClient is implemented by the GUI element receiving the rendered
- * image.
- */
-class RenderTargetClient
+enum RenderTargetType
 {
-public:
-
-	virtual ~RenderTargetClient(){}
-
-	virtual bool IsActive() const = 0;
-	virtual Rect GetRect() const = 0;
+	OffScreenRenderTargetType,
+	OnScreenRenderTargetType,
 };
 
 class RenderTarget final
 {
 public:
 
-	RenderTarget(
-		RenderResourceHandle frameBufferHandle,
-		RenderTargetClient* client);
+	explicit RenderTarget(RenderTargetType type);
 
 	bool IsOnScreen() const;
-	bool IsActive() const;
-	void UpdateViewport(const RenderResourceManager& renderResourceManager);
+	bool IsValid(const RenderResourceManager& renderResourceManager) const;
+	void SetFrameBufferHandle(RenderResourceHandle frameBufferHandle);
+	void SetViewportRect(Rect viewportRect);
 	void Setup(const RenderResourceManager& renderResourceManager) const;
 	void Finalize() const;
 
 private:
 
 	RenderResourceHandle m_frameBufferHandle;
-	RenderTargetClient* m_client;
+	RenderTargetType m_type;
 	Rect m_viewportRect;
 };
 
-inline bool RenderTarget::IsActive() const
+inline void RenderTarget::SetFrameBufferHandle(
+	RenderResourceHandle frameBufferHandle)
 {
-	return m_viewportRect.w > 0.0f && m_viewportRect.h > 0.0f
-		&& m_client->IsActive();
+	assert(!IsOnScreen());
+	m_frameBufferHandle = frameBufferHandle;
+}
+
+inline void RenderTarget::SetViewportRect(Rect viewportRect)
+{
+	m_viewportRect = viewportRect;
 }
 
 inline bool RenderTarget::IsOnScreen() const
 {
-	return m_frameBufferHandle == RenderResourceHandle::Invalid;
+	return m_type == OnScreenRenderTargetType;
 }
 
 #endif // NANAKA_RENDERER_RENDERTARGET_H

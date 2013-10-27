@@ -48,7 +48,6 @@ public:
 	void Draw(RenderPipeline& renderPipeline) const;
 	void HandleEvent(const InputEvent& event);
 	void Reset();
-	void SetActive(bool active);
 	UUID GetId() const;
 
 private:
@@ -79,11 +78,6 @@ inline void View::Draw(RenderPipeline& renderPipeline) const
 inline UUID View::GetId() const
 {
 	return m_Id;
-}
-
-inline void View::SetActive(bool active)
-{
-	m_content.SetViewActiveRecursively(active);
 }
 
 #endif // NANAKA_GUI_VIEW_H
