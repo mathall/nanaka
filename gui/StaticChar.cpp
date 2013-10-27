@@ -25,7 +25,6 @@
 
 #include "gui/StaticChar.h"
 #include "gui/Font.h"
-#include "renderer/RenderList.h"
 
 StaticChar::StaticChar(const Font& font, char character)
 	: m_billboard("nanaka/models/gui_billboard.nmdl")

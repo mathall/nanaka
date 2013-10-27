@@ -26,7 +26,6 @@
 #include "renderer/RenderTarget.h"
 
 #include "renderer/FrameBufferRenderResource.h"
-#include "renderer/Renderer.h"
 #include "renderer/RenderResourceManager.h"
 
 RenderTarget::RenderTarget(RenderTargetType type)

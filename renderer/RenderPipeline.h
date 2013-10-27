@@ -33,7 +33,6 @@
 #include "renderer/RenderList.h"
 #include "utils/ObjectPool.h"
 
-class MeshRenderResource;
 class Projection;
 class RenderResourceManager;
 

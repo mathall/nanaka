@@ -27,7 +27,6 @@
 
 #include "math/Rect.h"
 #include "renderer/Renderer.h"
-#include "renderer/RenderContext.h"
 #include "renderer/RenderTarget.h"
 
 RenderTargetPanel::RenderTargetPanel()

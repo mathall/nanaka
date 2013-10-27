@@ -44,26 +44,8 @@ class RenderResourceManager final
 {
 public:
 
-	RenderResourceHandle GenerateTexture(
-		int width,
-		int height,
-		std::unique_ptr<GLvoid> pixels);
-	RenderResourceHandle GenerateFrameBuffer(Vec2f size);
-	RenderResourceHandle GenerateMesh(
-		std::unique_ptr<GLfloat[]> vertexBuffer,
-		int vertexBufferSize,
-		std::unique_ptr<GLfloat[]> texcoordBuffer,
-		int texcoordBufferSize,
-		std::unique_ptr<GLushort[]> indexBuffer,
-		int indexBufferSize);
-	RenderResourceHandle GenerateShader(
-		GLuint type,
-		std::string source,
-		std::vector<std::string> uniformNames,
-		std::vector<std::string> attributeNames);
-	RenderResourceHandle GenerateShaderProgram(
-		RenderResourceHandle vertexShaderHandle,
-		RenderResourceHandle fragmentShaderHandle);
+	template<typename T, typename... Args>
+	RenderResourceHandle GenerateResource(Args... args);
 
 	void DestroyResource(RenderResourceHandle resourceHandle);
 
@@ -86,6 +68,20 @@ private:
 	// Kept as members to avoid unnecessary heap allocations.
 	std::vector<RenderResourceHandle> m_failedBuilds;
 };
+
+template<typename T, typename... Args>
+RenderResourceHandle RenderResourceManager::GenerateResource(Args... args)
+{
+	auto renderResource = std::unique_ptr<T>(
+		new T(std::forward<Args>(args)...));
+	auto resourceHandle = renderResource->GetHandle();
+
+	m_renderResources.insert(std::make_pair(
+		resourceHandle, std::move(renderResource)));
+	m_buildQueue.push_back(resourceHandle);
+
+	return resourceHandle;
+}
 
 template<typename T>
 inline T* RenderResourceManager::Get(RenderResourceHandle resourceHandle) const

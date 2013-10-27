@@ -26,7 +26,6 @@
 #include "gui/GUI.h"
 
 #include "renderer/Renderer.h"
-#include "renderer/RenderContext.h"
 #include "renderer/RenderPipeline.h"
 #include "renderer/RenderTarget.h"
 

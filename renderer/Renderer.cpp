@@ -27,6 +27,12 @@
 
 #include <algorithm>
 
+#include "renderer/FrameBufferRenderResource.h"
+#include "renderer/MeshRenderResource.h"
+#include "renderer/ShaderProgramRenderResource.h"
+#include "renderer/ShaderRenderResource.h"
+#include "renderer/TextureRenderResource.h"
+
 Renderer::Renderer()
 	: m_killThreadRequested(false)
 	, m_contextLost(true)
@@ -140,7 +146,7 @@ RenderResourceHandle Renderer::GenerateTexture(
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateTexture(
+	return m_renderResourceManager.GenerateResource<TextureRenderResource>(
 		width, height, std::move(pixels));
 }
 
@@ -148,7 +154,8 @@ RenderResourceHandle Renderer::GenerateFrameBuffer(Vec2f size)
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateFrameBuffer(size);
+	return m_renderResourceManager.GenerateResource<FrameBufferRenderResource>(
+		size);
 }
 
 RenderResourceHandle Renderer::GenerateMesh(
@@ -161,7 +168,7 @@ RenderResourceHandle Renderer::GenerateMesh(
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateMesh(
+	return m_renderResourceManager.GenerateResource<MeshRenderResource>(
 		std::move(vertexBuffer), vertexBufferSize,
 		std::move(texcoordBuffer), texcoordBufferSize,
 		std::move(indexBuffer), indexBufferSize);
@@ -175,7 +182,7 @@ RenderResourceHandle Renderer::GenerateShader(
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateShader(
+	return m_renderResourceManager.GenerateResource<ShaderRenderResource>(
 		type, source, uniformNames, attributeNames);
 }
 
@@ -185,8 +192,9 @@ RenderResourceHandle Renderer::GenerateShaderProgram(
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateShaderProgram(
-		vertexShaderHandle, fragmentShaderHandle);
+	return
+		m_renderResourceManager.GenerateResource<ShaderProgramRenderResource>(
+			vertexShaderHandle, fragmentShaderHandle);
 }
 
 void Renderer::RunThread()

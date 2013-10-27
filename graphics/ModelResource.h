@@ -27,7 +27,6 @@
 #define NANAKA_GRAPHICS_MODELRESOURCE_H
 
 #include "graphics/MaterialResource.h"
-#include "renderer/GL.h"
 #include "renderer/Renderer.h"
 #include "renderer/RenderResourceHandle.h"
 #include "resource/Asset.h"

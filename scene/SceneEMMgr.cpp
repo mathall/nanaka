@@ -25,7 +25,6 @@
 
 #include "scene/SceneEMMgr.h"
 
-#include "renderer/RenderContext.h"
 #include "renderer/Renderer.h"
 #include "renderer/RenderPipeline.h"
 #include "scene/Camera.h"
