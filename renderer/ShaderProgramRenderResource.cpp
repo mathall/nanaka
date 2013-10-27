@@ -28,7 +28,7 @@
 #include "renderer/RenderResourceManager.h"
 #include "renderer/ShaderRenderResource.h"
 
-void ShaderProgramRenderResource::Build(
+bool ShaderProgramRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
 	auto vertexShader =
@@ -36,9 +36,10 @@ void ShaderProgramRenderResource::Build(
 	auto fragmentShader =
 		renderResourceManager.Get<ShaderRenderResource>(m_fragmentShaderHandle);
 
-	if (!vertexShader || !fragmentShader)
+	if (!vertexShader || !fragmentShader ||
+		!vertexShader->IsBuilt() || !fragmentShader->IsBuilt())
 	{
-		return;
+		return false;
 	}
 
 	m_program = glCreateProgram();
@@ -67,6 +68,8 @@ void ShaderProgramRenderResource::Build(
 		m_fUniforms.insert(std::make_pair(
 			s_uniformNameIdentifierLookup.find(uniformName)->second, uniLoc));
 	}
+
+	return true;
 }
 
 GLint ShaderProgramRenderResource::GetAttributeLocation(

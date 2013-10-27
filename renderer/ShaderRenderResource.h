@@ -29,6 +29,7 @@
 #include <memory>
 #include <vector>
 
+#include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 
 class ShaderRenderResource final : public RenderResource
@@ -44,9 +45,9 @@ public:
 		std::vector<std::string> attributeNames);
 
 	/**
-	 * GLResource implementation.
+	 * RenderResource implementation.
 	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
+	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	std::string m_source;

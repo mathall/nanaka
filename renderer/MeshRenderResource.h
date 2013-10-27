@@ -28,6 +28,8 @@
 
 #include <memory>
 
+#include "renderer/Attribute.h"
+#include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 
 class MeshRenderResource final : public RenderResource
@@ -45,10 +47,12 @@ public:
 		int indexBufferSize);
 
 	/**
-	 * GLResource implementation.
+	 * RenderResource implementation.
 	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
+	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
+
+	GLuint GetAttributeBuffer(AttributeIdentifier identifier) const;
 
 	std::unique_ptr<GLfloat[]> m_vertexBuffer;
 	int m_vertexBufferSize;

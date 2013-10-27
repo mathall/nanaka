@@ -115,7 +115,7 @@ void RenderPipeline::ProcessRenderList(
 			auto location = shaderProgram->GetAttributeLocation(
 				attribute.m_desc.m_identifier);
 			glBindBuffer(GL_ARRAY_BUFFER,
-				GetAttributeBuffer(mesh, attribute.m_desc.m_identifier));
+				mesh->GetAttributeBuffer(attribute.m_desc.m_identifier));
 			glEnableVertexAttribArray(location);
 			glVertexAttribPointer(
 				location, attribute.m_desc.m_num, GL_FLOAT, GL_FALSE, 0, 0);
@@ -168,11 +168,11 @@ GLuint RenderPipeline::GetGLHandle(
 		{
 		case TextureRenderResourceType:
 			handle = static_cast<TextureRenderResource*>(
-				renderResource.get())->m_texHandle;
+				renderResource)->m_texHandle;
 			break;
 		case FrameBufferRenderResourceType:
 			handle = static_cast<FrameBufferRenderResource*>(
-				renderResource.get())->m_colorBuffer;
+				renderResource)->m_colorBuffer;
 			break;
 		default:
 			break;
@@ -180,24 +180,4 @@ GLuint RenderPipeline::GetGLHandle(
 	}
 
 	return handle;
-}
-
-GLuint RenderPipeline::GetAttributeBuffer(
-	std::shared_ptr<MeshRenderResource> mesh,
-	AttributeIdentifier identifier) const
-{
-	GLuint ret = 0;
-
-	switch (identifier)
-	{
-	case PositionAttributeIdentifier:
-		ret = mesh->m_posVBO;
-		break;
-
-	case TexcoordAttributeIdentifier:
-		ret = mesh->m_texVBO;
-		break;
-	}
-
-	return ret;
 }

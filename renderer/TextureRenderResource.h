@@ -28,6 +28,7 @@
 
 #include <memory>
 
+#include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 
 class TextureRenderResource final : public RenderResource
@@ -42,9 +43,9 @@ public:
 		std::unique_ptr<GLvoid> pixels);
 
 	/**
-	 * GLResource implementation.
+	 * RenderResource implementation.
 	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
+	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	const int m_width;

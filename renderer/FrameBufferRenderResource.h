@@ -27,6 +27,7 @@
 #define NANAKA_RENDERER_FRAMEBUFFERRENDERRESOURCE_H
 
 #include "math/Vec2f.h"
+#include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 
 class FrameBufferRenderResource final : public RenderResource
@@ -38,9 +39,9 @@ public:
 	FrameBufferRenderResource(Vec2f size);
 
 	/**
-	 * GLResource implementation.
+	 * RenderResource implementation.
 	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
+	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	Vec2f m_size;

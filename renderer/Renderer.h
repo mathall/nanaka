@@ -34,7 +34,6 @@
 
 #include "pi/GLContextManager.h"
 #include "pi/NanakaNativeWindow.h"
-#include "renderer/GLResourceManager.h"
 #include "renderer/RenderContext.h"
 #include "renderer/RenderResourceManager.h"
 #include "renderer/RenderTarget.h"
@@ -54,11 +53,6 @@ public:
 	void OnWindowCreated(NanakaNativeWindow* nativeWindow);
 	void OnWindowDestroyed();
 	void OnWindowChanged();
-
-	void QueueGLResourceForBuild(
-		std::weak_ptr<GLResource> resource,
-		int level = 0);
-	void QueueGLResourceForDestruction(std::shared_ptr<GLResource> resource);
 
 	void SetViewportRect(UUID renderContextId, Rect viewportRect);
 	void SetFrameBufferHandle(
@@ -112,7 +106,6 @@ private:
 	bool m_contextChanged;
 
 	std::unordered_map<UUID, std::unique_ptr<RenderContext>> m_renderContexts;
-	GLResourceManager m_GLResourceManager;
 	RenderResourceManager m_renderResourceManager;
 	std::unique_ptr<GLContextManager> m_GLContextManager;
 	NanakaNativeWindow* m_nativeWindow;

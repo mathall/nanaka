@@ -25,7 +25,7 @@
 
 #include "renderer/FrameBufferRenderResource.h"
 
-void FrameBufferRenderResource::Build(
+bool FrameBufferRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
 	glGenFramebuffers(1, &m_FBO);
@@ -53,6 +53,8 @@ void FrameBufferRenderResource::Build(
 		GL_RENDERBUFFER, m_depthBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	return true;
 }
 
 void FrameBufferRenderResource::Destroy()

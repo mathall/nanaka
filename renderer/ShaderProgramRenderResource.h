@@ -29,6 +29,7 @@
 #include <unordered_map>
 
 #include "renderer/Attribute.h"
+#include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 #include "renderer/Uniform.h"
 
@@ -43,9 +44,9 @@ public:
 		RenderResourceHandle fragmentShaderHandle);
 
 	/**
-	 * GLResource implementation.
+	 * RenderResource implementation.
 	 */
-	void Build(const RenderResourceManager& renderResourceManager) override;
+	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
 	GLint GetAttributeLocation(AttributeIdentifier identifier) const;

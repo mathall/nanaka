@@ -63,23 +63,6 @@ void Renderer::OnWindowChanged()
 	m_contextChanged = true;
 }
 
-void Renderer::QueueGLResourceForBuild(
-	std::weak_ptr<GLResource> resource,
-	int level)
-{
-	ScopedMonitorLock lock(this);
-
-	m_GLResourceManager.QueueResourceForBuild(resource, level);
-}
-
-void Renderer::QueueGLResourceForDestruction(
-	std::shared_ptr<GLResource> resource)
-{
-	ScopedMonitorLock lock(this);
-
-	m_GLResourceManager.QueueResourceForDestruction(resource);
-}
-
 void Renderer::DestroyRenderResource(RenderResourceHandle renderResourceHandle)
 {
 	ScopedMonitorLock lock(this);
@@ -216,7 +199,7 @@ void Renderer::RunThread()
 		{
 			assert(m_nativeWindow);
 			m_GLContextManager->CreateContext(*m_nativeWindow);
-			m_GLResourceManager.QueueBuiltResourcesForRebuild();
+			m_renderResourceManager.QueueBuiltResourcesForRebuild();
 			m_contextLost = false;
 		}
 
@@ -227,7 +210,7 @@ void Renderer::RunThread()
 			m_contextChanged = false;
 		}
 
-		m_GLResourceManager.ProcessQueues(m_renderResourceManager);
+		m_renderResourceManager.ProcessQueues();
 
 		auto endRenderRequests = m_endRenderRequests;
 		ExitCriticalSection();

@@ -26,8 +26,9 @@
 #ifndef NANAKA_RENDERER_RENDERRESOURCE_H
 #define NANAKA_RENDERER_RENDERRESOURCE_H
 
-#include "renderer/GLResource.h"
 #include "renderer/RenderResourceHandle.h"
+
+class RenderResourceManager;
 
 enum RenderResourceType
 {
@@ -38,26 +39,42 @@ enum RenderResourceType
 	TextureRenderResourceType,
 };
 
-class RenderResource : public GLResource
+enum RenderResourceBuildStatus
+{
+	RenderResourceBuildStatusBuilt,
+	RenderResourceBuildStatusUnbuilt,
+};
+
+class RenderResource
 {
 public:
 
 	explicit RenderResource(RenderResourceType type);
 	virtual ~RenderResource(){}
 
+	void BuildInternal(const RenderResourceManager& renderResourceManager);
+	void DestroyInternal();
+
+	virtual bool Build(const RenderResourceManager& renderResourceManager) = 0;
+	virtual void Destroy() = 0;
+
 	RenderResourceType GetType() const;
 	RenderResourceHandle GetHandle() const;
+
+	bool IsBuilt() const;
+	void ResetBuildStatus();
 
 private:
 
 	RenderResourceType m_type;
 	RenderResourceHandle m_handle;
+	RenderResourceBuildStatus m_buildStatus;
 };
 
 inline RenderResource::RenderResource(RenderResourceType type)
-	: GLResource()
-	, m_type(type)
+	: m_type(type)
 	, m_handle(RenderResourceHandle::New())
+	, m_buildStatus(RenderResourceBuildStatusUnbuilt)
 {
 }
 
@@ -69,6 +86,29 @@ inline RenderResourceType RenderResource::GetType() const
 inline RenderResourceHandle RenderResource::GetHandle() const
 {
 	return m_handle;
+}
+
+inline bool RenderResource::IsBuilt() const
+{
+	return m_buildStatus == RenderResourceBuildStatusBuilt;
+}
+
+inline void RenderResource::ResetBuildStatus()
+{
+	m_buildStatus = RenderResourceBuildStatusUnbuilt;
+}
+
+inline void RenderResource::BuildInternal(
+	const RenderResourceManager& renderResourceManager)
+{
+	m_buildStatus = Build(renderResourceManager) ?
+		RenderResourceBuildStatusBuilt : RenderResourceBuildStatusUnbuilt;
+}
+
+inline void RenderResource::DestroyInternal()
+{
+	Destroy();
+	m_buildStatus = RenderResourceBuildStatusUnbuilt;
 }
 
 #endif // NANAKA_RENDERER_RENDERRESOURCE_H

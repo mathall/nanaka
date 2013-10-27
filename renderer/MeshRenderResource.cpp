@@ -45,7 +45,7 @@ MeshRenderResource::MeshRenderResource(
 {
 }
 
-void MeshRenderResource::Build(
+bool MeshRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
 	glGenBuffers(1, &m_posVBO);
@@ -62,6 +62,8 @@ void MeshRenderResource::Build(
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*m_indexBufferSize,
 		m_indexBuffer.get(), GL_STATIC_DRAW);
+
+	return true;
 }
 
 void MeshRenderResource::Destroy()
@@ -69,4 +71,23 @@ void MeshRenderResource::Destroy()
 	glDeleteBuffers(1, &m_EBO);
 	glDeleteBuffers(1, &m_posVBO);
 	glDeleteBuffers(1, &m_texVBO);
+}
+
+GLuint MeshRenderResource::GetAttributeBuffer(
+	AttributeIdentifier identifier) const
+{
+	GLuint ret = 0;
+
+	switch (identifier)
+	{
+	case PositionAttributeIdentifier:
+		ret = m_posVBO;
+		break;
+
+	case TexcoordAttributeIdentifier:
+		ret = m_texVBO;
+		break;
+	}
+
+	return ret;
 }

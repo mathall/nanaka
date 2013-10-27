@@ -37,7 +37,7 @@ TextureRenderResource::TextureRenderResource(
 {
 }
 
-void TextureRenderResource::Build(
+bool TextureRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
 	glGenTextures(1, &m_texHandle);
@@ -53,4 +53,6 @@ void TextureRenderResource::Build(
 		GL_RGBA, GL_UNSIGNED_BYTE, m_pixels.get());
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+
+	return true;
 }

@@ -67,31 +67,38 @@ public:
 
 	void DestroyResource(RenderResourceHandle resourceHandle);
 
-	std::shared_ptr<RenderResource> Get(
-		RenderResourceHandle resourceHandle) const;
+	void QueueBuiltResourcesForRebuild();
+	void ProcessQueues();
+
+	RenderResource* Get(RenderResourceHandle resourceHandle) const;
 
 	template<typename T>
-	std::shared_ptr<T> Get(RenderResourceHandle resourceHandle) const;
+	T* Get(RenderResourceHandle resourceHandle) const;
 
 private:
 
-	std::unordered_map<RenderResourceHandle, std::shared_ptr<RenderResource>>
+	std::unordered_map<RenderResourceHandle, std::unique_ptr<RenderResource>>
 		m_renderResources;
+
+	std::vector<RenderResourceHandle> m_buildQueue;
+	std::vector<RenderResourceHandle> m_destroyQueue;
+
+	// Kept as members to avoid unnecessary heap allocations.
+	std::vector<RenderResourceHandle> m_failedBuilds;
 };
 
 template<typename T>
-inline std::shared_ptr<T> RenderResourceManager::Get(
-	RenderResourceHandle resourceHandle) const
+inline T* RenderResourceManager::Get(RenderResourceHandle resourceHandle) const
 {
 	if (auto renderResource = Get(resourceHandle))
 	{
 		if (renderResource->GetType() == T::s_type)
 		{
-			return std::static_pointer_cast<T>(renderResource);
+			return static_cast<T*>(renderResource);
 		}
 	}
 
-	return nullptr;
+	return NULL;
 }
 
 #endif // NANAKA_RENDERER_RENDERRESOURCEMANAGER_H

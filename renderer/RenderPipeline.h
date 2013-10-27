@@ -64,10 +64,6 @@ public:
 
 private:
 
-	GLuint GetAttributeBuffer(
-		std::shared_ptr<MeshRenderResource> mesh,
-		AttributeIdentifier identifier) const;
-
 	GLuint GetGLHandle(
 		RenderResourceHandle renderResourceHandle,
 		const RenderResourceManager& renderResourceManager);
