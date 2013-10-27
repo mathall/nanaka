@@ -44,14 +44,14 @@ void GUI::Initialize()
 		g_renderer->GenerateRenderContext(OnScreenRenderTargetType);
 }
 
-void GUI::Draw()
+void GUI::SetDisplayProperties(DisplayProperties displayProps)
 {
-	if (!g_renderer->StartRender(m_renderContextId))
-	{
-		return;
-	}
+	m_displayProperties = displayProps;
 
-	auto& projection = g_renderer->GetProjection(m_renderContextId);
+	g_renderer->SetViewportRect(m_renderContextId,
+		Rect(Vec2f::Zero(), m_displayProperties.m_realSize));
+
+	Projection projection;
 	projection.SetViewDimensions(m_displayProperties.m_size);
 	projection.SetUpVector(-Vec3f::UnitY());
 	projection.SetViewDirection(Vec3f::UnitZ());
@@ -59,6 +59,15 @@ void GUI::Draw()
 		m_displayProperties.m_size.x / 2.0f,
 		m_displayProperties.m_size.y / 2.0f,
 		0.0f));
+	g_renderer->SetProjection(m_renderContextId, projection);
+}
+
+void GUI::Draw()
+{
+	if (!g_renderer->StartRender(m_renderContextId))
+	{
+		return;
+	}
 
 	auto& renderPipeline = g_renderer->GetRenderPipeline(m_renderContextId);
 	renderPipeline.SetDepthSortAxis(DepthSortAxisZ);

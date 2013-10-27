@@ -88,6 +88,14 @@ void Renderer::SetFrameBufferHandle(
 	renderContext->GetRenderTarget().SetFrameBufferHandle(frameBufferHandle);
 }
 
+void Renderer::SetProjection(UUID renderContextId, Projection projection)
+{
+	ScopedMonitorLock lock(this);
+
+	auto& renderContext = m_renderContexts[renderContextId];
+	renderContext->SetProjection(projection);
+}
+
 bool Renderer::StartRender(UUID renderContextId)
 {
 	ScopedMonitorLock lock(this);

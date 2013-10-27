@@ -76,13 +76,6 @@ private:
 	DisplayProperties m_displayProperties;
 };
 
-inline void GUI::SetDisplayProperties(DisplayProperties displayProps)
-{
-	m_displayProperties = displayProps;
-	g_renderer->SetViewportRect(m_renderContextId,
-		Rect(Vec2f::Zero(), m_displayProperties.m_realSize));
-}
-
 inline const Font* GUI::GetFont(UUID fontId) const
 {
 	return m_fonts.at(fontId).get();

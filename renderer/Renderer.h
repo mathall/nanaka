@@ -54,17 +54,16 @@ public:
 	void OnWindowDestroyed();
 	void OnWindowChanged();
 
+	UUID GenerateRenderContext(RenderTargetType renderTargetType);
 	void SetViewportRect(UUID renderContextId, Rect viewportRect);
 	void SetFrameBufferHandle(
 		UUID renderContextId,
 		RenderResourceHandle frameBufferHandle);
+	void SetProjection(UUID renderContextId, Projection projection);
 	bool StartRender(UUID renderContextId);
 	void EndRender(UUID renderContextId);
 
-	UUID GenerateRenderContext(RenderTargetType renderTargetType);
-
 	RenderPipeline& GetRenderPipeline(UUID renderContextId);
-	Projection& GetProjection(UUID renderContextId);
 
 	RenderResourceHandle GenerateTexture(
 		int width,
@@ -119,11 +118,6 @@ private:
 inline RenderPipeline& Renderer::GetRenderPipeline(UUID renderContextId)
 {
 	return m_renderContexts[renderContextId]->GetRenderPipeline();
-}
-
-inline Projection& Renderer::GetProjection(UUID renderContextId)
-{
-	return m_renderContexts[renderContextId]->GetProjection();
 }
 
 #endif // NANAKA_RENDERER_RENDERER_H

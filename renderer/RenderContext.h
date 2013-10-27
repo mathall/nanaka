@@ -39,7 +39,8 @@ public:
 	explicit RenderContext(RenderTargetType renderTargetType);
 
 	RenderTarget& GetRenderTarget();
-	Projection& GetProjection();
+	const Projection& GetProjection() const;
+	void SetProjection(Projection projection);
 	RenderPipeline& GetRenderPipeline();
 	Sem& GetRenderPermit();
 	UUID GetId() const;
@@ -65,9 +66,14 @@ inline RenderTarget& RenderContext::GetRenderTarget()
 	return m_renderTarget;
 }
 
-inline Projection& RenderContext::GetProjection()
+inline const Projection& RenderContext::GetProjection() const
 {
 	return m_projection;
+}
+
+inline void RenderContext::SetProjection(Projection projection)
+{
+	m_projection = projection;
 }
 
 inline RenderPipeline& RenderContext::GetRenderPipeline()

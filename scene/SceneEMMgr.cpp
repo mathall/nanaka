@@ -39,7 +39,9 @@ void SceneEMMgr::DrawScene(const Camera& camera) const
 		return;
 	}
 
-	camera.Setup(g_renderer->GetProjection(renderContextId));
+	Projection projection;
+	camera.Setup(projection);
+	g_renderer->SetProjection(renderContextId, projection);
 
 	for (auto module : m_modules)
 	{

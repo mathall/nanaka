@@ -51,11 +51,11 @@ public:
 	RenderPipeline();
 
 	void ProcessAllRenderLists(
-		Projection& projection,
+		const Projection& projection,
 		const RenderResourceManager& renderResourceManager);
 	void ProcessRenderList(
 		RenderList renderList,
-		Projection& projection,
+		const Projection& projection,
 		const RenderResourceManager& renderResourceManager);
 
 	void SetDepthSortAxis(DepthSorthAxis axis);

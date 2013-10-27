@@ -41,7 +41,7 @@ RenderPipeline::RenderPipeline()
 }
 
 void RenderPipeline::ProcessAllRenderLists(
-	Projection& projection,
+	const Projection& projection,
 	const RenderResourceManager& renderResourceManager)
 {
 	ProcessRenderList(RenderListGeneral, projection, renderResourceManager);
@@ -50,7 +50,7 @@ void RenderPipeline::ProcessAllRenderLists(
 
 void RenderPipeline::ProcessRenderList(
 	RenderList renderList,
-	Projection& projection,
+	const Projection& projection,
 	const RenderResourceManager& renderResourceManager)
 {
 	for (auto& renderElement : m_renderLists[renderList])
