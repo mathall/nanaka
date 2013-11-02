@@ -23,71 +23,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "renderer/MeshRenderResource.h"
+#include "renderer/IndexBufferRenderResource.h"
 
-MeshRenderResource::MeshRenderResource(
-	std::unique_ptr<GLfloat[]> vertexBuffer,
-	int vertexBufferSize,
-	std::unique_ptr<GLfloat[]> texcoordBuffer,
-	int texcoordBufferSize,
-	std::unique_ptr<GLushort[]> indexBuffer,
+IndexBufferRenderResource::IndexBufferRenderResource(
+	std::unique_ptr<GLushort[]> bufferData,
 	int indexBufferSize)
 	: RenderResource(s_type)
-	, m_vertexBuffer(std::move(vertexBuffer))
-	, m_vertexBufferSize(vertexBufferSize)
-	, m_texcoordBuffer(std::move(texcoordBuffer))
-	, m_texcoordBufferSize(texcoordBufferSize)
-	, m_indexBuffer(std::move(indexBuffer))
-	, m_indexBufferSize(indexBufferSize)
-	, m_posVBO(0)
-	, m_texVBO(0)
+	, m_bufferData(std::move(bufferData))
+	, m_bufferDataSize(indexBufferSize)
 	, m_EBO(0)
 {
 }
 
-bool MeshRenderResource::Build(
+bool IndexBufferRenderResource::Build(
 	const RenderResourceManager& renderResourceManager)
 {
-	glGenBuffers(1, &m_posVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_posVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_vertexBufferSize,
-		m_vertexBuffer.get(), GL_STATIC_DRAW);
-
-	glGenBuffers(1, &m_texVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_texVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*m_texcoordBufferSize,
-		m_texcoordBuffer.get(), GL_STATIC_DRAW);
-
 	glGenBuffers(1, &m_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*m_indexBufferSize,
-		m_indexBuffer.get(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * m_bufferDataSize,
+		m_bufferData.get(), GL_STATIC_DRAW);
 
 	return true;
 }
 
-void MeshRenderResource::Destroy()
+void IndexBufferRenderResource::Destroy()
 {
 	glDeleteBuffers(1, &m_EBO);
-	glDeleteBuffers(1, &m_posVBO);
-	glDeleteBuffers(1, &m_texVBO);
-}
-
-GLuint MeshRenderResource::GetAttributeBuffer(
-	AttributeIdentifier identifier) const
-{
-	GLuint ret = 0;
-
-	switch (identifier)
-	{
-	case PositionAttributeIdentifier:
-		ret = m_posVBO;
-		break;
-
-	case TexcoordAttributeIdentifier:
-		ret = m_texVBO;
-		break;
-	}
-
-	return ret;
 }

@@ -72,13 +72,12 @@ public:
 		int height,
 		std::unique_ptr<GLvoid> pixels);
 	RenderResourceHandle GenerateFrameBuffer(Vec2f size);
-	RenderResourceHandle GenerateMesh(
-		std::unique_ptr<GLfloat[]> vertexBuffer,
-		int vertexBufferSize,
-		std::unique_ptr<GLfloat[]> texcoordBuffer,
-		int texcoordBufferSize,
-		std::unique_ptr<GLushort[]> indexBuffer,
-		int indexBufferSize);
+	RenderResourceHandle GenerateVertexBuffer(
+		std::unique_ptr<GLfloat[]> bufferData,
+		int bufferDataSize);
+	RenderResourceHandle GenerateIndexBuffer(
+		std::unique_ptr<GLushort[]> bufferData,
+		int bufferDataSize);
 	RenderResourceHandle GenerateShader(
 		GLuint type,
 		std::string source,

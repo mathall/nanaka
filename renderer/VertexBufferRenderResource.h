@@ -23,28 +23,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_MESHRENDERRESOURCE_H
-#define NANAKA_RENDERER_MESHRENDERRESOURCE_H
+#ifndef NANAKA_RENDERER_VERTEXBUFFERRENDERRESOURCE_H
+#define NANAKA_RENDERER_VERTEXBUFFERRENDERRESOURCE_H
 
 #include <memory>
 
-#include "renderer/Attribute.h"
 #include "renderer/GL.h"
 #include "renderer/RenderResource.h"
 
-class MeshRenderResource final : public RenderResource
+class VertexBufferRenderResource final : public RenderResource
 {
 public:
 
-	static const RenderResourceType s_type = MeshRenderResourceType;
+	static const RenderResourceType s_type = VertexBufferRenderResourceType;
 
-	MeshRenderResource(
-		std::unique_ptr<GLfloat[]> vertexBuffer,
-		int vertexBufferSize,
-		std::unique_ptr<GLfloat[]> texcoordBuffer,
-		int texcoordBufferSize,
-		std::unique_ptr<GLushort[]> indexBuffer,
-		int indexBufferSize);
+	VertexBufferRenderResource(
+		std::unique_ptr<GLfloat[]> bufferData,
+		int bufferDataSize);
 
 	/**
 	 * RenderResource implementation.
@@ -52,18 +47,15 @@ public:
 	bool Build(const RenderResourceManager& renderResourceManager) override;
 	void Destroy() override;
 
-	GLuint GetAttributeBuffer(AttributeIdentifier identifier) const;
+	std::unique_ptr<GLfloat[]> m_bufferData;
+	int m_bufferDataSize;
 
-	std::unique_ptr<GLfloat[]> m_vertexBuffer;
-	int m_vertexBufferSize;
-	std::unique_ptr<GLfloat[]> m_texcoordBuffer;
-	int m_texcoordBufferSize;
-	std::unique_ptr<GLushort[]> m_indexBuffer;
-	int m_indexBufferSize;
-
-	GLuint m_posVBO;
-	GLuint m_texVBO;
-	GLuint m_EBO;
+	GLuint m_VBO;
 };
 
-#endif // NANAKA_RENDERER_MESHRENDERRESOURCE_H
+inline void VertexBufferRenderResource::Destroy()
+{
+	glDeleteBuffers(1, &m_VBO);
+}
+
+#endif // NANAKA_RENDERER_VERTEXBUFFERRENDERRESOURCE_H

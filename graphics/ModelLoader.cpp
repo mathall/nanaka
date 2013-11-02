@@ -55,10 +55,10 @@ std::shared_ptr<Resource> ModelLoader::Load(
 	// Construct vertex buffer
 	assert(positionsVal.type == json_array);
 	const unsigned int numPositions = positionsVal.u.array.length;
-	auto vertexBuffer = std::unique_ptr<GLfloat[]>(new GLfloat[numPositions]);
+	auto positionBuffer = std::unique_ptr<GLfloat[]>(new GLfloat[numPositions]);
 	for (size_t i = 0; i < numPositions; ++i)
 	{
-		vertexBuffer.get()[i] = positionsVal[i].u.dbl;
+		positionBuffer.get()[i] = positionsVal[i].u.dbl;
 	}
 
 	// Construct texture coordinate buffer
@@ -83,12 +83,18 @@ std::shared_ptr<Resource> ModelLoader::Load(
 	auto material = g_resourceManager->Acquire<MaterialResource>(
 		ResourceKey(std::string(materialVal)));
 
-	auto renderResourceHandle = g_renderer->GenerateMesh(
-		std::move(vertexBuffer), numPositions,
-		std::move(texcoordBuffer), numTexcoords,
+	auto positionBufferHandle = g_renderer->GenerateVertexBuffer(
+		std::move(positionBuffer), numPositions);
+
+	auto texcoordBufferHandle = g_renderer->GenerateVertexBuffer(
+		std::move(texcoordBuffer), numTexcoords);
+
+	auto indexBufferHandle = g_renderer->GenerateIndexBuffer(
 		std::move(indexBuffer), numIndices);
 
 	return std::make_shared<ModelResource>(
-		renderResourceHandle,
+		indexBufferHandle,
+		positionBufferHandle,
+		texcoordBufferHandle,
 		material);
 }

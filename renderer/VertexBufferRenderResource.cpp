@@ -23,59 +23,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_RENDERER_ATTRIBUTE_H
-#define NANAKA_RENDERER_ATTRIBUTE_H
+#include "renderer/VertexBufferRenderResource.h"
 
-#include <functional>
-#include <string>
-#include <unordered_map>
-
-#include "renderer/GL.h"
-#include "renderer/RenderResourceHandle.h"
-
-enum AttributeIdentifier
+VertexBufferRenderResource::VertexBufferRenderResource(
+	std::unique_ptr<GLfloat[]> bufferData,
+	int bufferDataSize)
+	: RenderResource(s_type)
+	, m_bufferData(std::move(bufferData))
+	, m_bufferDataSize(bufferDataSize)
+	, m_VBO(0)
 {
-	PositionAttributeIdentifier,
-	TexcoordAttributeIdentifier,
-};
+}
 
-struct AttributeDescription
+bool VertexBufferRenderResource::Build(
+	const RenderResourceManager& renderResourceManager)
 {
-	AttributeIdentifier m_identifier;
-	GLuint m_num;
-};
+	glGenBuffers(1, &m_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_bufferDataSize,
+		m_bufferData.get(), GL_STATIC_DRAW);
 
-struct Attribute
-{
-	AttributeDescription m_desc;
-	RenderResourceHandle m_handle;
-};
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmismatched-tags"
-#endif // defined(__clang__)
-
-namespace std {
-template<>
-struct hash<AttributeIdentifier> {
-public:
-	size_t operator()(const AttributeIdentifier& identifier) const
-	{
-		return std::hash<int>()(identifier);
-	}
-};
-} // namespace std
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
-
-static const std::unordered_map<std::string, AttributeIdentifier>
-s_attributeNameIdentifierLookup =
-	{
-		{"position", PositionAttributeIdentifier},
-		{"texcoord", TexcoordAttributeIdentifier},
-	};
-
-#endif // NANAKA_RENDERER_ATTRIBUTE_H
+	return true;
+}

@@ -3,8 +3,8 @@
     '../renderer/Attribute.h',
     '../renderer/FrameBufferRenderResource.cpp',
     '../renderer/FrameBufferRenderResource.h',
-    '../renderer/MeshRenderResource.cpp',
-    '../renderer/MeshRenderResource.h',
+    '../renderer/IndexBufferRenderResource.cpp',
+    '../renderer/IndexBufferRenderResource.h',
     '../renderer/Projection.cpp',
     '../renderer/Projection.h',
     '../renderer/RenderContext.cpp',
@@ -30,5 +30,7 @@
     '../renderer/TextureRenderResource.cpp',
     '../renderer/TextureRenderResource.h',
     '../renderer/Uniform.h',
+    '../renderer/VertexBufferRenderResource.cpp',
+    '../renderer/VertexBufferRenderResource.h',
   ],
 }

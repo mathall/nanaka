@@ -52,6 +52,9 @@ public:
 
 private:
 
+	RenderResourceHandle GetVertexBufferHandle(
+		AttributeIdentifier identifier) const;
+
 	Asset<ModelResource> m_modelAsset;
 
 	Material m_material;

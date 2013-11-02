@@ -37,40 +37,62 @@ class ModelResource final : public Resource
 public:
 
 	ModelResource(
-		RenderResourceHandle renderResourceHandle,
+		RenderResourceHandle indexBufferHandle,
+		RenderResourceHandle positionBufferHandle,
+		RenderResourceHandle texcoordBufferHandle,
 		Asset<MaterialResource> materialAsset);
 	~ModelResource();
 
 	ModelResource(ModelResource&) = delete;
 	ModelResource& operator=(const ModelResource&) = delete;
 
-	RenderResourceHandle GetMeshHandle() const;
+	RenderResourceHandle GetIndexBufferHandle() const;
+	RenderResourceHandle GetPositionBufferHandle() const;
+	RenderResourceHandle GetTexcoordBufferHandle() const;
 
 	Asset<MaterialResource> GetMaterialAsset() const;
 
 private:
 
-	RenderResourceHandle m_renderResourceHandle;
+	RenderResourceHandle m_indexBufferHandle;
+	RenderResourceHandle m_positionBufferHandle;
+	RenderResourceHandle m_texcoordBufferHandle;
 
 	Asset<MaterialResource> m_materialAsset;
 };
 
 inline ModelResource::ModelResource(
-	RenderResourceHandle renderResourceHandle,
+	RenderResourceHandle indexBufferHandle,
+	RenderResourceHandle positionBufferHandle,
+	RenderResourceHandle texcoordBufferHandle,
 	Asset<MaterialResource> materialAsset)
-	: m_renderResourceHandle(renderResourceHandle)
+	: m_indexBufferHandle(indexBufferHandle)
+	, m_positionBufferHandle(positionBufferHandle)
+	, m_texcoordBufferHandle(texcoordBufferHandle)
 	, m_materialAsset(materialAsset)
 {
 }
 
 inline ModelResource::~ModelResource()
 {
-	g_renderer->DestroyRenderResource(m_renderResourceHandle);
+	g_renderer->DestroyRenderResource(m_indexBufferHandle);
+	g_renderer->DestroyRenderResource(m_positionBufferHandle);
+	g_renderer->DestroyRenderResource(m_texcoordBufferHandle);
 }
 
-inline RenderResourceHandle ModelResource::GetMeshHandle() const
+inline RenderResourceHandle ModelResource::GetIndexBufferHandle() const
 {
-	return m_renderResourceHandle;
+	return m_indexBufferHandle;
+}
+
+inline RenderResourceHandle ModelResource::GetPositionBufferHandle() const
+{
+	return m_positionBufferHandle;
+}
+
+inline RenderResourceHandle ModelResource::GetTexcoordBufferHandle() const
+{
+	return m_texcoordBufferHandle;
 }
 
 inline Asset<MaterialResource> ModelResource::GetMaterialAsset() const

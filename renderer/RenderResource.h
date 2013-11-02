@@ -33,10 +33,11 @@ class RenderResourceManager;
 enum RenderResourceType
 {
 	FrameBufferRenderResourceType,
-	MeshRenderResourceType,
-	ShaderRenderResourceType,
+	IndexBufferRenderResourceType,
 	ShaderProgramRenderResourceType,
+	ShaderRenderResourceType,
 	TextureRenderResourceType,
+	VertexBufferRenderResourceType,
 };
 
 enum RenderResourceBuildStatus

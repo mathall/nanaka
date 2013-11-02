@@ -40,10 +40,10 @@ class RenderElement final
 public:
 
 	Mat44 m_modelTransform;
+	RenderResourceHandle m_indexBufferHandle;
 	RenderResourceHandle m_shaderProgramHandle;
 	std::vector<Uniform> m_uniforms;
 	std::vector<Attribute> m_attributes;
-	RenderResourceHandle m_meshHandle;
 	RenderList m_renderList;
 
 	struct Clear

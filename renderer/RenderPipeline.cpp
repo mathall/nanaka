@@ -29,11 +29,12 @@
 
 #include "renderer/FrameBufferRenderResource.h"
 #include "renderer/GL.h"
-#include "renderer/MeshRenderResource.h"
+#include "renderer/IndexBufferRenderResource.h"
 #include "renderer/Projection.h"
 #include "renderer/RenderResourceManager.h"
 #include "renderer/ShaderProgramRenderResource.h"
 #include "renderer/TextureRenderResource.h"
+#include "renderer/VertexBufferRenderResource.h"
 
 RenderPipeline::RenderPipeline()
 	: m_depthSortAxis(DepthSortAxisY)
@@ -53,10 +54,10 @@ void RenderPipeline::ProcessRenderList(
 {
 	for (auto& renderElement : m_renderLists[renderList])
 	{
-		auto mesh = renderResourceManager.Get<MeshRenderResource>(
-			renderElement->m_meshHandle);
+		auto indexBuffer = renderResourceManager.Get<IndexBufferRenderResource>(
+			renderElement->m_indexBufferHandle);
 
-		if (!mesh || mesh->m_EBO == 0)
+		if (!indexBuffer || indexBuffer->m_EBO == 0)
 		{
 			continue;
 		}
@@ -112,16 +113,19 @@ void RenderPipeline::ProcessRenderList(
 		{
 			auto location = shaderProgram->GetAttributeLocation(
 				attribute.m_desc.m_identifier);
-			glBindBuffer(GL_ARRAY_BUFFER,
-				mesh->GetAttributeBuffer(attribute.m_desc.m_identifier));
+			auto vertexBuffer =
+				renderResourceManager.Get<VertexBufferRenderResource>(
+					attribute.m_handle);
+			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->m_VBO);
 			glEnableVertexAttribArray(location);
 			glVertexAttribPointer(
 				location, attribute.m_desc.m_num, GL_FLOAT, GL_FALSE, 0, 0);
 		}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->m_EBO);
 		glDrawElements(
-			GL_TRIANGLES, mesh->m_indexBufferSize, GL_UNSIGNED_SHORT, 0);
+			GL_TRIANGLES, indexBuffer->m_bufferDataSize, GL_UNSIGNED_SHORT, 0);
+
 	}
 }
 

@@ -28,10 +28,11 @@
 #include <algorithm>
 
 #include "renderer/FrameBufferRenderResource.h"
-#include "renderer/MeshRenderResource.h"
+#include "renderer/IndexBufferRenderResource.h"
 #include "renderer/ShaderProgramRenderResource.h"
 #include "renderer/ShaderRenderResource.h"
 #include "renderer/TextureRenderResource.h"
+#include "renderer/VertexBufferRenderResource.h"
 
 Renderer::Renderer()
 	: m_killThreadRequested(false)
@@ -184,20 +185,24 @@ RenderResourceHandle Renderer::GenerateFrameBuffer(Vec2f size)
 		size);
 }
 
-RenderResourceHandle Renderer::GenerateMesh(
-	std::unique_ptr<GLfloat[]> vertexBuffer,
-	int vertexBufferSize,
-	std::unique_ptr<GLfloat[]> texcoordBuffer,
-	int texcoordBufferSize,
-	std::unique_ptr<GLushort[]> indexBuffer,
-	int indexBufferSize)
+RenderResourceHandle Renderer::GenerateVertexBuffer(
+	std::unique_ptr<GLfloat[]> bufferData,
+	int bufferDataSize)
 {
 	ScopedMonitorLock lock(this);
 
-	return m_renderResourceManager.GenerateResource<MeshRenderResource>(
-		std::move(vertexBuffer), vertexBufferSize,
-		std::move(texcoordBuffer), texcoordBufferSize,
-		std::move(indexBuffer), indexBufferSize);
+	return m_renderResourceManager.GenerateResource<VertexBufferRenderResource>(
+		std::move(bufferData), bufferDataSize);
+}
+
+RenderResourceHandle Renderer::GenerateIndexBuffer(
+	std::unique_ptr<GLushort[]> bufferData,
+	int bufferDataSize)
+{
+	ScopedMonitorLock lock(this);
+
+	return m_renderResourceManager.GenerateResource<IndexBufferRenderResource>(
+		std::move(bufferData), bufferDataSize);
 }
 
 RenderResourceHandle Renderer::GenerateShader(

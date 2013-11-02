@@ -62,11 +62,32 @@ void Model::PrepRender(RenderElement& RE) const
 		{
 			Attribute attribute;
 			attribute.m_desc = attributeDsc;
+			attribute.m_handle =
+				GetVertexBufferHandle(attributeDsc.m_identifier);
 			RE.m_attributes.push_back(attribute);
 		}
 	}
 
-	RE.m_meshHandle = m_modelAsset.GetResource()->GetMeshHandle();
+	RE.m_indexBufferHandle = m_modelAsset.GetResource()->GetIndexBufferHandle();
 
 	m_material.PrepRender(RE);
+}
+
+RenderResourceHandle Model::GetVertexBufferHandle(
+	AttributeIdentifier identifier) const
+{
+	RenderResourceHandle ret = RenderResourceHandle::Invalid;
+
+	switch (identifier)
+	{
+	case PositionAttributeIdentifier:
+		ret = m_modelAsset.GetResource()->GetPositionBufferHandle();
+		break;
+
+	case TexcoordAttributeIdentifier:
+		ret = m_modelAsset.GetResource()->GetTexcoordBufferHandle();
+		break;
+	}
+
+	return ret;
 }
