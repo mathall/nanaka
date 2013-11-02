@@ -35,7 +35,7 @@
 #include "pi/GLContextManager.h"
 #include "pi/NanakaNativeWindow.h"
 #include "renderer/RenderContext.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 #include "renderer/RenderResourceManager.h"
 #include "renderer/RenderTarget.h"
 #include "utils/Monitor.h"
@@ -61,10 +61,10 @@ public:
 		UUID renderContextId,
 		RenderResourceHandle frameBufferHandle);
 	void SetProjection(UUID renderContextId, Projection projection);
-	bool StartRender(UUID renderContextId);
-	void EndRender(UUID renderContextId);
-
-	RenderPipeline& GetRenderPipeline(UUID renderContextId);
+	std::unique_ptr<RenderData> StartRender(UUID renderContextId);
+	void EndRender(
+		UUID renderContextId,
+		std::unique_ptr<RenderData> renderData);
 
 	RenderResourceHandle GenerateTexture(
 		int width,
@@ -115,10 +115,5 @@ private:
 	Sem m_contextLock;
 	Sem m_runPermit;
 };
-
-inline RenderPipeline& Renderer::GetRenderPipeline(UUID renderContextId)
-{
-	return m_renderContexts[renderContextId]->GetRenderPipeline();
-}
 
 #endif // NANAKA_RENDERER_RENDERER_H

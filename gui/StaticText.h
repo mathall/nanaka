@@ -50,7 +50,7 @@ protected:
 	 * Widget implementation.
 	 */
 	void OnPlacementUpdated() override;
-	void OnDraw(RenderPipeline& renderPipeline) const override;
+	void OnDraw(RenderData& renderData) const override;
 
 private:
 

@@ -32,7 +32,7 @@
 #include "math/Vec2f.h"
 #include "math/Vec4f.h"
 
-class RenderPipeline;
+class RenderData;
 
 enum ImageRotation
 {
@@ -54,7 +54,7 @@ public:
 		bool flipV = false);
 
 	void SetPlacement(Vec2f position, Vec2f size, float depth);
-	void Draw(RenderPipeline& renderPipeline) const;
+	void Draw(RenderData& renderData) const;
 	void SetAlpha(float totalAlpha);
 
 private:

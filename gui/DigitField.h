@@ -32,7 +32,7 @@
 #include "math/Vec2f.h"
 
 class Font;
-class RenderPipeline;
+class RenderData;
 class StaticChar;
 
 class DigitField final
@@ -43,7 +43,7 @@ public:
 
 	void SetNumber(unsigned int num);
 	float Place(Vec2f position, float depth, float textSize);
-	void Draw(RenderPipeline& renderPipeline) const;
+	void Draw(RenderData& renderData) const;
 	float GetAspectRatio() const;
 
 private:

@@ -71,9 +71,9 @@ void RenderTargetPanel::OnPlacementUpdated()
 	}
 }
 
-void RenderTargetPanel::OnDraw(RenderPipeline& renderPipeline) const
+void RenderTargetPanel::OnDraw(RenderData& renderData) const
 {
-	auto RE = renderPipeline.GetRE();
+	auto RE = renderData.GetRenderElement();
 	m_targetBillboard.PrepRender(*RE);
-	renderPipeline.QueueRE(std::move(RE));
+	renderData.QueueRenderElement(std::move(RE));
 }

@@ -34,7 +34,7 @@
 #include "entity/EntityModule.h"
 #include "scene/SceneEMAttachment.h"
 
-class RenderPipeline;
+class RenderData;
 class Time;
 
 typedef int AttachmentId;
@@ -53,7 +53,7 @@ public:
 	template<typename A>
 	A GetAttachment(AttachmentId id) const;
 
-	void PrepRender(RenderPipeline& renderPipeline) const;
+	void PrepRender(RenderData& renderData) const;
 	void Animate(const Time& time) const;
 	void SetVisibility(AttachmentId id, bool visible) const;
 	void ResetAnimation(AttachmentId id) const;

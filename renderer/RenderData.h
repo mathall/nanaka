@@ -23,65 +23,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_GUI_RENDERTARGETPANEL_H
-#define NANAKA_GUI_RENDERTARGETPANEL_H
+#ifndef NANAKA_RENDERER_RENDERDATA_H
+#define NANAKA_RENDERER_RENDERDATA_H
 
-#include "graphics/FrameBuffer.h"
-#include "graphics/Model.h"
-#include "gui/Panel.h"
-#include "utils/UUID.h"
+#include "renderer/RenderElement.h"
+#include "utils/ObjectPool.h"
 
-class RenderTargetPanelListener
+/**
+ * RenderData packs the information needed by a RenderContext for rendering a
+ * frame as instructed by the user of the renderer. Between StartRender and
+ * EndRender a user may get RenderElements in order to fill these out then queue
+ * them for rendering.
+ */
+class RenderData final
 {
 public:
 
-	virtual ~RenderTargetPanelListener(){}
-
-	virtual void OnNewSize(UUID panelId) = 0;
-};
-
-class RenderTargetPanel final : public Panel
-{
-public:
-
-	RenderTargetPanel();
-
-	void SetRenderTargetPanelListener(RenderTargetPanelListener* listener);
-	float GetAspectRatio() const;
-	UUID GetRenderContextId() const;
-
-protected:
-
-	/**
-	 * Widget implementation.
-	 */
-	void OnPlacementUpdated() override;
-	void OnDraw(RenderData& renderData) const override;
+	std::unique_ptr<RenderElement> GetRenderElement();
+	void QueueRenderElement(std::unique_ptr<RenderElement> renderElement);
 
 private:
 
-	UUID m_renderContextId;
-	RenderTargetPanelListener* m_listener;
-	Vec2f m_lastSize;
+	friend class RenderContext;
 
-	std::unique_ptr<FrameBuffer> m_frameBuffer;
-	Model m_targetBillboard;
+	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
+	std::vector<std::unique_ptr<RenderElement>> m_renderQueue;
 };
 
-inline float RenderTargetPanel::GetAspectRatio() const
+inline std::unique_ptr<RenderElement> RenderData::GetRenderElement()
 {
-	return m_size.y == 0.0f ? 1.0f : (m_size.x / m_size.y);
+	return m_renderElementPool.GetObject();
 }
 
-inline UUID RenderTargetPanel::GetRenderContextId() const
+inline void RenderData::QueueRenderElement(
+	std::unique_ptr<RenderElement> renderElement)
 {
-	return m_renderContextId;
+	m_renderQueue.push_back(std::move(renderElement));
 }
 
-inline void RenderTargetPanel::SetRenderTargetPanelListener(
-	RenderTargetPanelListener* listener)
-{
-	m_listener = listener;
-}
-
-#endif // NANAKA_GUI_RENDERTARGETPANEL_H
+#endif // NANAKA_RENDERER_RENDERDATA_H

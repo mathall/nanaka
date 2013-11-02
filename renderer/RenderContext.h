@@ -27,6 +27,7 @@
 #define NANAKA_RENDERER_RENDERCONTEXT_H
 
 #include "renderer/Projection.h"
+#include "renderer/RenderData.h"
 #include "renderer/RenderTarget.h"
 #include "renderer/RenderPipeline.h"
 #include "utils/Sem.h"
@@ -45,11 +46,17 @@ public:
 	Sem& GetRenderPermit();
 	UUID GetId() const;
 
+	std::unique_ptr<RenderData> GetRenderData();
+	void CommitRenderData(std::unique_ptr<RenderData> renderData);
+	void CompileRenderLists();
+	void ClearRenderQueue();
+
 private:
 
 	UUID m_Id;
 	RenderTarget m_renderTarget;
 	Projection m_projection;
+	std::unique_ptr<RenderData> m_renderData;
 	RenderPipeline m_pipeline;
 	Sem m_renderPermit;
 };
@@ -57,6 +64,7 @@ private:
 inline RenderContext::RenderContext(RenderTargetType renderTargetType)
 	: m_Id(UUID::New())
 	, m_renderTarget(renderTargetType)
+	, m_renderData(new RenderData())
 	, m_renderPermit(1)
 {
 }
@@ -89,6 +97,22 @@ inline Sem& RenderContext::GetRenderPermit()
 inline UUID RenderContext::GetId() const
 {
 	return m_Id;
+}
+
+inline std::unique_ptr<RenderData> RenderContext::GetRenderData()
+{
+	return std::move(m_renderData);
+}
+
+inline void RenderContext::CommitRenderData(
+	std::unique_ptr<RenderData> renderData)
+{
+	m_renderData = std::move(renderData);
+}
+
+inline void RenderContext::CompileRenderLists()
+{
+	m_pipeline.CompileRenderLists(m_renderData->m_renderQueue);
 }
 
 #endif // NANAKA_RENDERER_RENDERCONTEXT_H

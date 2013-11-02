@@ -42,7 +42,7 @@ RenderPipeline::RenderPipeline()
 
 void RenderPipeline::ProcessAllRenderLists(
 	const Projection& projection,
-	const RenderResourceManager& renderResourceManager)
+	const RenderResourceManager& renderResourceManager) const
 {
 	ProcessRenderList(RenderListGeneral, projection, renderResourceManager);
 	ProcessRenderList(RenderListTransparent, projection, renderResourceManager);
@@ -51,7 +51,7 @@ void RenderPipeline::ProcessAllRenderLists(
 void RenderPipeline::ProcessRenderList(
 	RenderList renderList,
 	const Projection& projection,
-	const RenderResourceManager& renderResourceManager)
+	const RenderResourceManager& renderResourceManager) const
 {
 	for (auto& renderElement : m_renderLists[renderList])
 	{
@@ -74,7 +74,7 @@ void RenderPipeline::ProcessRenderList(
 
 		glUseProgram(shaderProgram->m_program);
 
-		for (auto uniform : renderElement->m_uniforms)
+		for (auto& uniform : renderElement->m_uniforms)
 		{
 			auto location = shaderProgram->GetUniformLocation(
 				uniform.m_desc.m_identifier);
@@ -110,7 +110,7 @@ void RenderPipeline::ProcessRenderList(
 			}
 		}
 
-		for (auto attribute : renderElement->m_attributes)
+		for (auto& attribute : renderElement->m_attributes)
 		{
 			auto location = shaderProgram->GetAttributeLocation(
 				attribute.m_desc.m_identifier);
@@ -124,41 +124,38 @@ void RenderPipeline::ProcessRenderList(
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_EBO);
 		glDrawElements(
 			GL_TRIANGLES, mesh->m_indexBufferSize, GL_UNSIGNED_SHORT, 0);
-
-		m_renderElementPool.PutObject(std::move(renderElement));
 	}
-
-	m_renderLists[renderList].clear();
 }
 
-void RenderPipeline::QueueRE(std::unique_ptr<RenderElement> renderElement)
+void RenderPipeline::CompileRenderLists(
+	const std::vector<std::unique_ptr<RenderElement>>& renderQueue)
 {
-	if (renderElement->m_renderList == RenderListTransparent)
+	m_renderLists[RenderListGeneral].clear();
+	m_renderLists[RenderListTransparent].clear();
+
+	for (auto& renderElement : renderQueue)
 	{
-		auto& renderList = m_renderLists[RenderListTransparent];
-
-		auto transpElementOrderCmp = [&](
-			const std::unique_ptr<RenderElement>& e1,
-			const std::unique_ptr<RenderElement>& e2)
-		{
-			return e1->m_modelTransform[3][m_depthSortAxis]
-				> e2->m_modelTransform[3][m_depthSortAxis];
-		};
-
-		auto pos = std::lower_bound(renderList.begin(), renderList.end(),
-			renderElement, transpElementOrderCmp);
-
-		renderList.insert(pos, std::move(renderElement));
+		m_renderLists[renderElement->m_renderList].push_back(
+			renderElement.get());
 	}
-	else
+
+	auto transpElementOrderCmp = [&](
+		const RenderElement* e1,
+		const RenderElement* e2)
 	{
-		m_renderLists[RenderListGeneral].push_back(std::move(renderElement));
-	}
+		return e1->m_modelTransform[3][m_depthSortAxis]
+			> e2->m_modelTransform[3][m_depthSortAxis];
+	};
+
+	std::sort(
+		m_renderLists[RenderListTransparent].begin(),
+		m_renderLists[RenderListTransparent].end(),
+		transpElementOrderCmp);
 }
 
 GLuint RenderPipeline::GetGLHandle(
 	RenderResourceHandle renderResourceHandle,
-	const RenderResourceManager& renderResourceManager)
+	const RenderResourceManager& renderResourceManager) const
 {
 	GLuint handle = 0;
 

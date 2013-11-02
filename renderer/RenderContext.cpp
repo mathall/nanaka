@@ -23,65 +23,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NANAKA_GUI_RENDERTARGETPANEL_H
-#define NANAKA_GUI_RENDERTARGETPANEL_H
+#include "renderer/RenderContext.h"
 
-#include "graphics/FrameBuffer.h"
-#include "graphics/Model.h"
-#include "gui/Panel.h"
-#include "utils/UUID.h"
-
-class RenderTargetPanelListener
+void RenderContext::ClearRenderQueue()
 {
-public:
-
-	virtual ~RenderTargetPanelListener(){}
-
-	virtual void OnNewSize(UUID panelId) = 0;
-};
-
-class RenderTargetPanel final : public Panel
-{
-public:
-
-	RenderTargetPanel();
-
-	void SetRenderTargetPanelListener(RenderTargetPanelListener* listener);
-	float GetAspectRatio() const;
-	UUID GetRenderContextId() const;
-
-protected:
-
-	/**
-	 * Widget implementation.
-	 */
-	void OnPlacementUpdated() override;
-	void OnDraw(RenderData& renderData) const override;
-
-private:
-
-	UUID m_renderContextId;
-	RenderTargetPanelListener* m_listener;
-	Vec2f m_lastSize;
-
-	std::unique_ptr<FrameBuffer> m_frameBuffer;
-	Model m_targetBillboard;
-};
-
-inline float RenderTargetPanel::GetAspectRatio() const
-{
-	return m_size.y == 0.0f ? 1.0f : (m_size.x / m_size.y);
+	for (auto& renderElement : m_renderData->m_renderQueue)
+	{
+		m_renderData->m_renderElementPool.PutObject(std::move(renderElement));
+	}
+	m_renderData->m_renderQueue.clear();
 }
-
-inline UUID RenderTargetPanel::GetRenderContextId() const
-{
-	return m_renderContextId;
-}
-
-inline void RenderTargetPanel::SetRenderTargetPanelListener(
-	RenderTargetPanelListener* listener)
-{
-	m_listener = listener;
-}
-
-#endif // NANAKA_GUI_RENDERTARGETPANEL_H

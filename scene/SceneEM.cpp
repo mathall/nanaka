@@ -26,10 +26,10 @@
 #include "scene/SceneEM.h"
 
 #include "entity/Entity.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 #include "utils/Time.h"
 
-void SceneEM::PrepRender(RenderPipeline& renderPipeline) const
+void SceneEM::PrepRender(RenderData& renderData) const
 {
 	const auto entityTransform = Mat44::MakeTransform(
 		GetEntity().GetPosition(), GetEntity().GetRotation(), Vec3f(1.0f));
@@ -38,10 +38,10 @@ void SceneEM::PrepRender(RenderPipeline& renderPipeline) const
 	{
 		if (attachment->IsVisible())
 		{
-			auto RE = renderPipeline.GetRE();
+			auto RE = renderData.GetRenderElement();
 			attachment->PrepRender(*RE);
 			RE->m_modelTransform = entityTransform * RE->m_modelTransform;
-			renderPipeline.QueueRE(std::move(RE));
+			renderData.QueueRenderElement(std::move(RE));
 		}
 	}
 }

@@ -38,7 +38,7 @@
 #include "math/Vec4f.h"
 #include "utils/UUID.h"
 
-class RenderPipeline;
+class RenderData;
 
 enum LayoutDirtyMode
 {
@@ -69,7 +69,7 @@ protected:
 
 	virtual void OnPlacementUpdated(){}
 	virtual void OnAlphaUpdated(float totalAlpha){}
-	virtual void OnDraw(RenderPipeline& renderPipeline) const{}
+	virtual void OnDraw(RenderData& renderData) const{}
 	virtual void OnReset(){}
 
 	virtual void OnPointerLost(int pointerId){}
@@ -110,7 +110,7 @@ private:
 	void SetAlphaRecursively(float alpha, float ancestorAlpha);
 	void SetVisibleRecursively(bool visible, bool ancestorsVisible);
 	void PointerLostRecursively(int pointerId);
-	void DrawRecursively(RenderPipeline& renderPipeline) const;
+	void DrawRecursively(RenderData& renderData) const;
 	void ResetRecursively();
 
 	void RecalculateLayoutPropertiesIfNeeded(

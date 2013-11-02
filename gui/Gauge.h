@@ -58,7 +58,7 @@ protected:
 	 * Widget implementation.
 	 */
 	void OnPlacementUpdated() override;
-	void OnDraw(RenderPipeline& renderPipeline) const override;
+	void OnDraw(RenderData& renderData) const override;
 	void OnAlphaUpdated(float totalAlpha) override;
 
 private:

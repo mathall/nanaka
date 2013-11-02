@@ -29,7 +29,7 @@
 
 #include "gui/Font.h"
 #include "math/Vec3f.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 
 Counter::Counter(
 	const Font& font,
@@ -92,24 +92,24 @@ void Counter::UpdateDigitFields()
 	}
 }
 
-void Counter::OnDraw(RenderPipeline& renderPipeline) const
+void Counter::OnDraw(RenderData& renderData) const
 {
 	if (m_printSub)
 	{
-		auto RE = renderPipeline.GetRE();
+		auto RE = renderData.GetRenderElement();
 		m_subChar.PrepRender(*RE);
-		renderPipeline.QueueRE(std::move(RE));
+		renderData.QueueRenderElement(std::move(RE));
 	}
 
-	m_NPart.Draw(renderPipeline);
+	m_NPart.Draw(renderData);
 
 	if (m_hasFPart)
 	{
-		auto RE = renderPipeline.GetRE();
+		auto RE = renderData.GetRenderElement();
 		m_dotChar.PrepRender(*RE);
-		renderPipeline.QueueRE(std::move(RE));
+		renderData.QueueRenderElement(std::move(RE));
 
-		m_FPart.Draw(renderPipeline);
+		m_FPart.Draw(renderData);
 	}
 }
 

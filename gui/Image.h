@@ -51,7 +51,7 @@ protected:
 	 * Widget implementation.
 	 */
 	void OnPlacementUpdated() override;
-	void OnDraw(RenderPipeline& renderPipeline) const override;
+	void OnDraw(RenderData& renderData) const override;
 	void OnAlphaUpdated(float totalAlpha) override;
 
 private:
@@ -64,9 +64,9 @@ inline void Image::OnPlacementUpdated()
 	m_image.SetPlacement(m_position, m_size, m_depth);
 }
 
-inline void Image::OnDraw(RenderPipeline& renderPipeline) const
+inline void Image::OnDraw(RenderData& renderData) const
 {
-	m_image.Draw(renderPipeline);
+	m_image.Draw(renderData);
 }
 
 inline void Image::OnAlphaUpdated(float totalAlpha)

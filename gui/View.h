@@ -35,7 +35,7 @@
 #include "input/InputEvent.h"
 #include "utils/UUID.h"
 
-class RenderPipeline;
+class RenderData;
 
 class View final
 {
@@ -45,7 +45,7 @@ public:
 
 	void SetContent(std::shared_ptr<Widget> content);
 	void EnsureLayout(DisplayProperties displayProps);
-	void Draw(RenderPipeline& renderPipeline) const;
+	void Draw(RenderData& renderData) const;
 	void HandleEvent(const InputEvent& event);
 	void Reset();
 	UUID GetId() const;
@@ -70,9 +70,9 @@ private:
 	std::vector<Widget*> m_touchMoveWidgets;
 };
 
-inline void View::Draw(RenderPipeline& renderPipeline) const
+inline void View::Draw(RenderData& renderData) const
 {
-	m_content.DrawRecursively(renderPipeline);
+	m_content.DrawRecursively(renderData);
 }
 
 inline UUID View::GetId() const

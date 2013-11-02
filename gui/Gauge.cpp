@@ -94,10 +94,10 @@ Gauge::Gauge(
 	SetLoad(0.0f);
 }
 
-void Gauge::OnDraw(RenderPipeline& renderPipeline) const
+void Gauge::OnDraw(RenderData& renderData) const
 {
-	m_middleFull.Draw(renderPipeline);
-	m_middleEmpty.Draw(renderPipeline);
+	m_middleFull.Draw(renderData);
+	m_middleEmpty.Draw(renderData);
 }
 
 void Gauge::OnAlphaUpdated(float totalAlpha)

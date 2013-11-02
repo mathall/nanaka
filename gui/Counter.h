@@ -31,7 +31,7 @@
 #include "gui/StaticChar.h"
 
 class Font;
-class RenderPipeline;
+class RenderData;
 
 class Counter final : public Widget
 {
@@ -54,7 +54,7 @@ protected:
 	 * Widget implementation
 	 */
 	void OnPlacementUpdated() override;
-	void OnDraw(RenderPipeline& renderPipeline) const override;
+	void OnDraw(RenderData& renderData) const override;
 
 private:
 

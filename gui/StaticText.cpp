@@ -29,7 +29,7 @@
 
 #include "gui/Font.h"
 #include "gui/StaticChar.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 
 StaticText::StaticText(
 	std::string text,
@@ -95,15 +95,15 @@ void StaticText::OnPlacementUpdated()
 	}
 }
 
-void StaticText::OnDraw(RenderPipeline& renderPipeline) const
+void StaticText::OnDraw(RenderData& renderData) const
 {
 	for (auto line : m_lines)
 	{
 		for (auto character : line)
 		{
-			auto RE = renderPipeline.GetRE();
+			auto RE = renderData.GetRenderElement();
 			character->PrepRender(*RE);
-			renderPipeline.QueueRE(std::move(RE));
+			renderData.QueueRenderElement(std::move(RE));
 		}
 	}
 }

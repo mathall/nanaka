@@ -27,7 +27,6 @@
 
 #include "math/Vec3f.h"
 #include "math/Quat.h"
-#include "renderer/RenderPipeline.h"
 
 Image::Image(
 	std::string textureFilePath,

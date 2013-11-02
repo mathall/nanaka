@@ -139,11 +139,11 @@ void Frame::SetAlpha(float alpha)
 	m_background.SetAlpha(alpha);
 }
 
-void Frame::Draw(RenderPipeline& renderPipeline) const
+void Frame::Draw(RenderData& renderData) const
 {
 	if (m_hasBackground)
 	{
-		m_background.Draw(renderPipeline);
+		m_background.Draw(renderData);
 	}
 
 	if (m_edges == NoEdges)
@@ -155,39 +155,39 @@ void Frame::Draw(RenderPipeline& renderPipeline) const
 	{
 		if (m_edges & LeftEdge)
 		{
-			m_topLeft.Draw(renderPipeline);
+			m_topLeft.Draw(renderData);
 		}
 
-		m_top.Draw(renderPipeline);
+		m_top.Draw(renderData);
 
 		if (m_edges & RightEdge)
 		{
-			m_topRight.Draw(renderPipeline);
+			m_topRight.Draw(renderData);
 		}
 	}
 
 	if (m_edges & LeftEdge)
 	{
-		m_left.Draw(renderPipeline);
+		m_left.Draw(renderData);
 	}
 
 	if (m_edges & RightEdge)
 	{
-		m_right.Draw(renderPipeline);
+		m_right.Draw(renderData);
 	}
 
 	if (m_edges & BottomEdge)
 	{
 		if (m_edges & LeftEdge)
 		{
-			m_bottomLeft.Draw(renderPipeline);
+			m_bottomLeft.Draw(renderData);
 		}
 
-		m_bottom.Draw(renderPipeline);
+		m_bottom.Draw(renderData);
 
 		if (m_edges & RightEdge)
 		{
-			m_bottomRight.Draw(renderPipeline);
+			m_bottomRight.Draw(renderData);
 		}
 	}
 }

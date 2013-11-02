@@ -31,7 +31,6 @@
 
 #include "renderer/RenderElement.h"
 #include "renderer/RenderList.h"
-#include "utils/ObjectPool.h"
 
 class Projection;
 class RenderResourceManager;
@@ -49,33 +48,28 @@ public:
 
 	RenderPipeline();
 
+	void CompileRenderLists(
+		const std::vector<std::unique_ptr<RenderElement>>& renderQueue);
+
 	void ProcessAllRenderLists(
 		const Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+		const RenderResourceManager& renderResourceManager) const;
 	void ProcessRenderList(
 		RenderList renderList,
 		const Projection& projection,
-		const RenderResourceManager& renderResourceManager);
+		const RenderResourceManager& renderResourceManager) const;
 
 	void SetDepthSortAxis(DepthSortAxis axis);
-	std::unique_ptr<RenderElement> GetRE();
-	void QueueRE(std::unique_ptr<RenderElement> renderElement);
 
 private:
 
 	GLuint GetGLHandle(
 		RenderResourceHandle renderResourceHandle,
-		const RenderResourceManager& renderResourceManager);
+		const RenderResourceManager& renderResourceManager) const;
 
-	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
-	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
+	std::vector<RenderElement*> m_renderLists[RenderListNum];
 	DepthSortAxis m_depthSortAxis;
 };
-
-inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
-{
-	return m_renderElementPool.GetObject();
-}
 
 inline void RenderPipeline::SetDepthSortAxis(DepthSortAxis axis)
 {

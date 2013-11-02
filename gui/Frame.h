@@ -64,7 +64,7 @@ public:
 		FrameBorderEdges edges);
 	void SetDPI(float dpi);
 
-	void Draw(RenderPipeline& renderPipeline) const;
+	void Draw(RenderData& renderData) const;
 
 	float TopEdgeSize() const;
 	float BottomEdgeSize() const;

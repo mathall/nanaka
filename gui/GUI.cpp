@@ -26,7 +26,6 @@
 #include "gui/GUI.h"
 
 #include "renderer/Renderer.h"
-#include "renderer/RenderPipeline.h"
 #include "renderer/RenderTarget.h"
 
 GUI::GUI()
@@ -65,16 +64,17 @@ void GUI::SetDisplayProperties(DisplayProperties displayProps)
 
 void GUI::Draw()
 {
-	if (!g_renderer->StartRender(m_renderContextId))
+	auto renderData = g_renderer->StartRender(m_renderContextId);
+
+	if (!renderData)
 	{
 		return;
 	}
 
-	auto& renderPipeline = g_renderer->GetRenderPipeline(m_renderContextId);
 	m_activeView->EnsureLayout(m_displayProperties);
-	m_activeView->Draw(renderPipeline);
+	m_activeView->Draw(*renderData.get());
 
-	g_renderer->EndRender(m_renderContextId);
+	g_renderer->EndRender(m_renderContextId, std::move(renderData));
 }
 
 void GUI::HandleEvent(const InputEvent& event)

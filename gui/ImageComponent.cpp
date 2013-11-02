@@ -26,7 +26,7 @@
 #include "gui/ImageComponent.h"
 
 #include "math/Quat.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 
 ImageComponent::ImageComponent(
 	std::string textureFilePath,
@@ -102,11 +102,11 @@ void ImageComponent::SetPlacement(Vec2f position, Vec2f size, float depth)
 	}
 }
 
-void ImageComponent::Draw(RenderPipeline& renderPipeline) const
+void ImageComponent::Draw(RenderData& renderData) const
 {
-	auto RE = renderPipeline.GetRE();
+	auto RE = renderData.GetRenderElement();
 	m_billboard.PrepRender(*RE);
-	renderPipeline.QueueRE(std::move(RE));
+	renderData.QueueRenderElement(std::move(RE));
 }
 
 void ImageComponent::SetAlpha(float totalAlpha)

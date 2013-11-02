@@ -30,7 +30,7 @@
 
 #include "gui/Font.h"
 #include "gui/StaticChar.h"
-#include "renderer/RenderPipeline.h"
+#include "renderer/RenderData.h"
 
 DigitField::DigitField(const Font& font, unsigned int maxDigits, char fillChar)
 {
@@ -84,13 +84,13 @@ float DigitField::Place(Vec2f position, float depth, float textSize)
 	return nextX;
 }
 
-void DigitField::Draw(RenderPipeline& renderPipeline) const
+void DigitField::Draw(RenderData& renderData) const
 {
 	for (size_t i = 0; i < m_number.size(); ++i)
 	{
-		auto RE = renderPipeline.GetRE();
+		auto RE = renderData.GetRenderElement();
 		m_digitLookups[i][m_number[i]]->PrepRender(*RE);
-		renderPipeline.QueueRE(std::move(RE));
+		renderData.QueueRenderElement(std::move(RE));
 	}
 }
 

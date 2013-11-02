@@ -133,19 +133,19 @@ void Widget::SetPlacement(WidgetPlacement placement)
 	OnPlacementUpdated();
 }
 
-void Widget::DrawRecursively(RenderPipeline& renderPipeline) const
+void Widget::DrawRecursively(RenderData& renderData) const
 {
 	if (!IsVisible())
 	{
 		return;
 	}
 
-	m_frame.Draw(renderPipeline);
-	OnDraw(renderPipeline);
+	m_frame.Draw(renderData);
+	OnDraw(renderData);
 
 	for (auto child : m_children)
 	{
-		child->DrawRecursively(renderPipeline);
+		child->DrawRecursively(renderData);
 	}
 }
 

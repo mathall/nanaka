@@ -110,7 +110,7 @@ void Renderer::SetProjection(UUID renderContextId, Projection projection)
 	renderContext->SetProjection(projection);
 }
 
-bool Renderer::StartRender(UUID renderContextId)
+std::unique_ptr<RenderData> Renderer::StartRender(UUID renderContextId)
 {
 	ScopedMonitorLock lock(this);
 
@@ -118,14 +118,18 @@ bool Renderer::StartRender(UUID renderContextId)
 	if (renderContext->GetRenderTarget().IsValid(m_renderResourceManager))
 	{
 		WaitFor(renderContext->GetRenderPermit());
-		return true;
+		return m_renderContexts[renderContextId]->GetRenderData();
 	}
-	return false;
+	return nullptr;
 }
 
-void Renderer::EndRender(UUID renderContextId)
+void Renderer::EndRender(
+	UUID renderContextId,
+	std::unique_ptr<RenderData> renderData)
 {
 	ScopedMonitorLock lock(this);
+
+	m_renderContexts[renderContextId]->CommitRenderData(std::move(renderData));
 
 	m_endRenderRequests.push_back(renderContextId);
 	if (m_endRenderRequests.size() == 1)
@@ -281,8 +285,12 @@ void Renderer::Render(UUID renderContextId)
 
 	renderTarget.Setup(m_renderResourceManager);
 
+	renderContext->CompileRenderLists();
+
 	renderContext->GetRenderPipeline().ProcessAllRenderLists(
 		renderContext->GetProjection(), m_renderResourceManager);
+
+	renderContext->ClearRenderQueue();
 
 	renderTarget.Finalize();
 

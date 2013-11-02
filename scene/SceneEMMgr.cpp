@@ -26,14 +26,15 @@
 #include "scene/SceneEMMgr.h"
 
 #include "renderer/Renderer.h"
-#include "renderer/RenderPipeline.h"
 #include "scene/Camera.h"
 
 void SceneEMMgr::DrawScene(const Camera& camera) const
 {
 	UUID renderContextId = camera.GetRenderContextId();
 
-	if (!g_renderer->StartRender(renderContextId))
+	auto renderData = g_renderer->StartRender(renderContextId);
+
+	if (!renderData)
 	{
 		return;
 	}
@@ -44,10 +45,10 @@ void SceneEMMgr::DrawScene(const Camera& camera) const
 
 	for (auto module : m_modules)
 	{
-		module.second->PrepRender(g_renderer->GetRenderPipeline(renderContextId));
+		module.second->PrepRender(*renderData.get());
 	}
 
-	g_renderer->EndRender(renderContextId);
+	g_renderer->EndRender(renderContextId, std::move(renderData));
 }
 
 void SceneEMMgr::Animate(const Time& time) const
