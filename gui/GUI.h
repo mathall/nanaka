@@ -49,6 +49,10 @@ class GUI final : public InputListener
 public:
 
 	GUI();
+	~GUI();
+
+	GUI(GUI&) = delete;
+	GUI& operator=(const GUI&) = delete;
 
 	void Initialize();
 	void SetDisplayProperties(DisplayProperties displayProps);
@@ -75,6 +79,14 @@ private:
 	View* m_activeView;
 	DisplayProperties m_displayProperties;
 };
+
+inline GUI::~GUI()
+{
+	if (g_renderer)
+	{
+		g_renderer->DestroyRenderContext(m_renderContextId);
+	}
+}
 
 inline const Font* GUI::GetFont(UUID fontId) const
 {

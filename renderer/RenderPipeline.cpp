@@ -41,16 +41,14 @@ RenderPipeline::RenderPipeline()
 }
 
 void RenderPipeline::ProcessAllRenderLists(
-	const Projection& projection,
 	const RenderResourceManager& renderResourceManager) const
 {
-	ProcessRenderList(RenderListGeneral, projection, renderResourceManager);
-	ProcessRenderList(RenderListTransparent, projection, renderResourceManager);
+	ProcessRenderList(RenderListGeneral, renderResourceManager);
+	ProcessRenderList(RenderListTransparent, renderResourceManager);
 }
 
 void RenderPipeline::ProcessRenderList(
 	RenderList renderList,
-	const Projection& projection,
 	const RenderResourceManager& renderResourceManager) const
 {
 	for (auto& renderElement : m_renderLists[renderList])
@@ -86,11 +84,11 @@ void RenderPipeline::ProcessRenderList(
 				break;
 			case ViewUniformType:
 				glUniformMatrix4fv(
-					location, 1, GL_FALSE, projection.GetView().data());
+					location, 1, GL_FALSE, m_projection.GetView().data());
 				break;
 			case ProjUniformType:
 				glUniformMatrix4fv(
-					location, 1, GL_FALSE, projection.GetProj().data());
+					location, 1, GL_FALSE, m_projection.GetProj().data());
 				break;
 			case TexUniformType:
 				glActiveTexture(GL_TEXTURE0 + uniform.m_value.m_tex.m_unit);

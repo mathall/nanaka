@@ -25,11 +25,18 @@
 
 #include "renderer/RenderContext.h"
 
-void RenderContext::ClearRenderQueue()
+void RenderContext::Render(const RenderResourceManager& renderResourceManager)
 {
+	m_renderTarget.Setup(renderResourceManager);
+
+	m_pipeline.CompileRenderLists(m_renderData->m_renderQueue);
+	m_pipeline.ProcessAllRenderLists(renderResourceManager);
+
 	for (auto& renderElement : m_renderData->m_renderQueue)
 	{
 		m_renderData->m_renderElementPool.PutObject(std::move(renderElement));
 	}
 	m_renderData->m_renderQueue.clear();
+
+	m_renderTarget.Finalize();
 }

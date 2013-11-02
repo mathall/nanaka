@@ -80,16 +80,18 @@ void Renderer::SetDepthSortAxis(UUID renderContextId, DepthSortAxis axis)
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	auto& renderContext = m_renderContexts[renderContextId];
-	renderContext->GetRenderPipeline().SetDepthSortAxis(axis);
+	renderContext->SetDepthSortAxis(axis);
 }
 
 void Renderer::SetViewportRect(UUID renderContextId, Rect viewportRect)
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	auto& renderContext = m_renderContexts[renderContextId];
-	renderContext->GetRenderTarget().SetViewportRect(viewportRect);
+	renderContext->SetViewportRect(viewportRect);
 }
 
 void Renderer::SetFrameBufferHandle(
@@ -98,14 +100,16 @@ void Renderer::SetFrameBufferHandle(
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	auto& renderContext = m_renderContexts[renderContextId];
-	renderContext->GetRenderTarget().SetFrameBufferHandle(frameBufferHandle);
+	renderContext->SetFrameBufferHandle(frameBufferHandle);
 }
 
 void Renderer::SetProjection(UUID renderContextId, Projection projection)
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	auto& renderContext = m_renderContexts[renderContextId];
 	renderContext->SetProjection(projection);
 }
@@ -114,8 +118,9 @@ std::unique_ptr<RenderData> Renderer::StartRender(UUID renderContextId)
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	auto& renderContext = m_renderContexts[renderContextId];
-	if (renderContext->GetRenderTarget().IsValid(m_renderResourceManager))
+	if (renderContext->CanRender(m_renderResourceManager))
 	{
 		WaitFor(renderContext->GetRenderPermit());
 		return m_renderContexts[renderContextId]->GetRenderData();
@@ -129,6 +134,7 @@ void Renderer::EndRender(
 {
 	ScopedMonitorLock lock(this);
 
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
 	m_renderContexts[renderContextId]->CommitRenderData(std::move(renderData));
 
 	m_endRenderRequests.push_back(renderContextId);
@@ -136,6 +142,14 @@ void Renderer::EndRender(
 	{
 		Signal(m_runPermit);
 	}
+}
+
+void Renderer::DestroyRenderContext(UUID renderContextId)
+{
+	ScopedMonitorLock lock(this);
+
+	assert(m_renderContexts.find(renderContextId) != m_renderContexts.end());
+	m_renderContexts.erase(renderContextId);
 }
 
 UUID Renderer::GenerateRenderContext(RenderTargetType renderTargetType)
@@ -244,7 +258,14 @@ void Renderer::RunThread()
 		ExitCriticalSection();
 		for (auto renderContextId : endRenderRequests)
 		{
-			Render(renderContextId);
+			auto& renderContext = m_renderContexts[renderContextId];
+			renderContext->Render(m_renderResourceManager);
+
+			if (renderContext->DoesRenderOnScreen())
+			{
+				assert(m_nativeWindow);
+				m_GLContextManager->Swap(*m_nativeWindow);
+			}
 		}
 		EnterCriticalSection();
 		for (auto ended : endRenderRequests)
@@ -276,27 +297,4 @@ void Renderer::OnKillThread()
 	m_killThreadRequested = true;
 	Signal(m_contextLock);
 	Signal(m_runPermit);
-}
-
-void Renderer::Render(UUID renderContextId)
-{
-	auto& renderContext = m_renderContexts[renderContextId];
-	auto& renderTarget = renderContext->GetRenderTarget();
-
-	renderTarget.Setup(m_renderResourceManager);
-
-	renderContext->CompileRenderLists();
-
-	renderContext->GetRenderPipeline().ProcessAllRenderLists(
-		renderContext->GetProjection(), m_renderResourceManager);
-
-	renderContext->ClearRenderQueue();
-
-	renderTarget.Finalize();
-
-	if (renderTarget.IsOnScreen())
-	{
-		assert(m_nativeWindow);
-		m_GLContextManager->Swap(*m_nativeWindow);
-	}
 }

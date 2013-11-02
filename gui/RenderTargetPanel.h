@@ -45,6 +45,10 @@ class RenderTargetPanel final : public Panel
 public:
 
 	RenderTargetPanel();
+	~RenderTargetPanel();
+
+	RenderTargetPanel(RenderTargetPanel&) = delete;
+	RenderTargetPanel& operator=(const RenderTargetPanel&) = delete;
 
 	void SetRenderTargetPanelListener(RenderTargetPanelListener* listener);
 	float GetAspectRatio() const;
@@ -67,6 +71,14 @@ private:
 	std::unique_ptr<FrameBuffer> m_frameBuffer;
 	Model m_targetBillboard;
 };
+
+inline RenderTargetPanel::~RenderTargetPanel()
+{
+	if (g_renderer)
+	{
+		g_renderer->DestroyRenderContext(m_renderContextId);
+	}
+}
 
 inline float RenderTargetPanel::GetAspectRatio() const
 {

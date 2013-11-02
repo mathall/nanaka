@@ -26,12 +26,13 @@
 #ifndef NANAKA_RENDERER_RENDERCONTEXT_H
 #define NANAKA_RENDERER_RENDERCONTEXT_H
 
-#include "renderer/Projection.h"
 #include "renderer/RenderData.h"
 #include "renderer/RenderTarget.h"
 #include "renderer/RenderPipeline.h"
 #include "utils/Sem.h"
 #include "utils/UUID.h"
+
+class RenderResourceManager;
 
 class RenderContext final
 {
@@ -39,23 +40,26 @@ public:
 
 	explicit RenderContext(RenderTargetType renderTargetType);
 
-	RenderTarget& GetRenderTarget();
-	const Projection& GetProjection() const;
-	void SetProjection(Projection projection);
-	RenderPipeline& GetRenderPipeline();
 	Sem& GetRenderPermit();
 	UUID GetId() const;
 
+	bool CanRender(const RenderResourceManager& renderResourceManager) const;
+	bool DoesRenderOnScreen() const;
+
+	void SetDepthSortAxis(DepthSortAxis axis);
+	void SetViewportRect(Rect viewportRect);
+	void SetFrameBufferHandle(RenderResourceHandle frameBufferHandle);
+	void SetProjection(Projection projection);
+
 	std::unique_ptr<RenderData> GetRenderData();
 	void CommitRenderData(std::unique_ptr<RenderData> renderData);
-	void CompileRenderLists();
-	void ClearRenderQueue();
+
+	void Render(const RenderResourceManager& renderResourceManager);
 
 private:
 
 	UUID m_Id;
 	RenderTarget m_renderTarget;
-	Projection m_projection;
 	std::unique_ptr<RenderData> m_renderData;
 	RenderPipeline m_pipeline;
 	Sem m_renderPermit;
@@ -69,24 +73,25 @@ inline RenderContext::RenderContext(RenderTargetType renderTargetType)
 {
 }
 
-inline RenderTarget& RenderContext::GetRenderTarget()
+inline void RenderContext::SetDepthSortAxis(DepthSortAxis axis)
 {
-	return m_renderTarget;
+	m_pipeline.SetDepthSortAxis(axis);
 }
 
-inline const Projection& RenderContext::GetProjection() const
+inline void RenderContext::SetViewportRect(Rect viewportRect)
 {
-	return m_projection;
+	m_renderTarget.SetViewportRect(viewportRect);
+}
+
+inline void RenderContext::SetFrameBufferHandle(
+	RenderResourceHandle frameBufferHandle)
+{
+	m_renderTarget.SetFrameBufferHandle(frameBufferHandle);
 }
 
 inline void RenderContext::SetProjection(Projection projection)
 {
-	m_projection = projection;
-}
-
-inline RenderPipeline& RenderContext::GetRenderPipeline()
-{
-	return m_pipeline;
+	m_pipeline.SetProjection(projection);
 }
 
 inline Sem& RenderContext::GetRenderPermit()
@@ -110,9 +115,15 @@ inline void RenderContext::CommitRenderData(
 	m_renderData = std::move(renderData);
 }
 
-inline void RenderContext::CompileRenderLists()
+inline bool RenderContext::CanRender(
+	const RenderResourceManager& renderResourceManager) const
 {
-	m_pipeline.CompileRenderLists(m_renderData->m_renderQueue);
+	return m_renderTarget.IsValid(renderResourceManager);
+}
+
+inline bool RenderContext::DoesRenderOnScreen() const
+{
+	return m_renderTarget.IsOnScreen();
 }
 
 #endif // NANAKA_RENDERER_RENDERCONTEXT_H

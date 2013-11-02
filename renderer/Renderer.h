@@ -65,6 +65,7 @@ public:
 	void EndRender(
 		UUID renderContextId,
 		std::unique_ptr<RenderData> renderData);
+	void DestroyRenderContext(UUID renderContextId);
 
 	RenderResourceHandle GenerateTexture(
 		int width,
@@ -86,7 +87,6 @@ public:
 	RenderResourceHandle GenerateShaderProgram(
 		RenderResourceHandle vertexShaderHandle,
 		RenderResourceHandle fragmentShaderHandle);
-
 	void DestroyRenderResource(RenderResourceHandle renderResourceHandle);
 
 protected:
@@ -98,8 +98,6 @@ protected:
 	void OnKillThread() override;
 
 private:
-
-	void Render(UUID renderContextId);
 
 	bool m_killThreadRequested;
 	bool m_contextLost;

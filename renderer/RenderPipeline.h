@@ -29,10 +29,10 @@
 #include <memory>
 #include <vector>
 
+#include "renderer/Projection.h"
 #include "renderer/RenderElement.h"
 #include "renderer/RenderList.h"
 
-class Projection;
 class RenderResourceManager;
 
 enum DepthSortAxis
@@ -52,14 +52,13 @@ public:
 		const std::vector<std::unique_ptr<RenderElement>>& renderQueue);
 
 	void ProcessAllRenderLists(
-		const Projection& projection,
 		const RenderResourceManager& renderResourceManager) const;
 	void ProcessRenderList(
 		RenderList renderList,
-		const Projection& projection,
 		const RenderResourceManager& renderResourceManager) const;
 
 	void SetDepthSortAxis(DepthSortAxis axis);
+	void SetProjection(Projection projection);
 
 private:
 
@@ -69,11 +68,17 @@ private:
 
 	std::vector<RenderElement*> m_renderLists[RenderListNum];
 	DepthSortAxis m_depthSortAxis;
+	Projection m_projection;
 };
 
 inline void RenderPipeline::SetDepthSortAxis(DepthSortAxis axis)
 {
 	m_depthSortAxis = axis;
+}
+
+inline void RenderPipeline::SetProjection(Projection projection)
+{
+	m_projection = projection;
 }
 
 #endif // NANAKA_RENDERER_RENDERPIPELINE_H
