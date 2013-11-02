@@ -76,6 +76,14 @@ void Renderer::DestroyRenderResource(RenderResourceHandle renderResourceHandle)
 	m_renderResourceManager.DestroyResource(renderResourceHandle);
 }
 
+void Renderer::SetDepthSortAxis(UUID renderContextId, DepthSortAxis axis)
+{
+	ScopedMonitorLock lock(this);
+
+	auto& renderContext = m_renderContexts[renderContextId];
+	renderContext->GetRenderPipeline().SetDepthSortAxis(axis);
+}
+
 void Renderer::SetViewportRect(UUID renderContextId, Rect viewportRect)
 {
 	ScopedMonitorLock lock(this);

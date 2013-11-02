@@ -35,13 +35,13 @@
 #include "pi/GLContextManager.h"
 #include "pi/NanakaNativeWindow.h"
 #include "renderer/RenderContext.h"
+#include "renderer/RenderPipeline.h"
 #include "renderer/RenderResourceManager.h"
 #include "renderer/RenderTarget.h"
 #include "utils/Monitor.h"
 #include "utils/Thread.h"
 #include "utils/YOLO.h"
 
-class RenderPipeline;
 class Projection;
 
 class Renderer final : public Thread, public Monitor, public YOLO<Renderer>
@@ -55,6 +55,7 @@ public:
 	void OnWindowChanged();
 
 	UUID GenerateRenderContext(RenderTargetType renderTargetType);
+	void SetDepthSortAxis(UUID renderContextId, DepthSortAxis axis);
 	void SetViewportRect(UUID renderContextId, Rect viewportRect);
 	void SetFrameBufferHandle(
 		UUID renderContextId,

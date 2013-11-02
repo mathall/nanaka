@@ -41,6 +41,8 @@ void GUI::Initialize()
 
 	m_renderContextId =
 		g_renderer->GenerateRenderContext(OnScreenRenderTargetType);
+
+	g_renderer->SetDepthSortAxis(m_renderContextId, DepthSortAxisZ);
 }
 
 void GUI::SetDisplayProperties(DisplayProperties displayProps)
@@ -69,7 +71,6 @@ void GUI::Draw()
 	}
 
 	auto& renderPipeline = g_renderer->GetRenderPipeline(m_renderContextId);
-	renderPipeline.SetDepthSortAxis(DepthSortAxisZ);
 	m_activeView->EnsureLayout(m_displayProperties);
 	m_activeView->Draw(renderPipeline);
 

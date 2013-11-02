@@ -36,7 +36,7 @@
 class Projection;
 class RenderResourceManager;
 
-enum DepthSorthAxis
+enum DepthSortAxis
 {
 	DepthSortAxisX,
 	DepthSortAxisY,
@@ -57,7 +57,7 @@ public:
 		const Projection& projection,
 		const RenderResourceManager& renderResourceManager);
 
-	void SetDepthSortAxis(DepthSorthAxis axis);
+	void SetDepthSortAxis(DepthSortAxis axis);
 	std::unique_ptr<RenderElement> GetRE();
 	void QueueRE(std::unique_ptr<RenderElement> renderElement);
 
@@ -69,7 +69,7 @@ private:
 
 	ObjectPool<RenderElement, RenderElement::Clear> m_renderElementPool;
 	std::vector<std::unique_ptr<RenderElement>> m_renderLists[RenderListNum];
-	size_t m_depthSortAxis;
+	DepthSortAxis m_depthSortAxis;
 };
 
 inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
@@ -77,7 +77,7 @@ inline std::unique_ptr<RenderElement> RenderPipeline::GetRE()
 	return m_renderElementPool.GetObject();
 }
 
-inline void RenderPipeline::SetDepthSortAxis(DepthSorthAxis axis)
+inline void RenderPipeline::SetDepthSortAxis(DepthSortAxis axis)
 {
 	m_depthSortAxis = axis;
 }
