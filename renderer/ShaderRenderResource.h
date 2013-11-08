@@ -27,6 +27,7 @@
 #define NANAKA_RENDERER_SHADERRERENDERRESOURCE_H
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "renderer/GL.h"

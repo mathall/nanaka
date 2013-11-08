@@ -70,7 +70,7 @@ public:
 	RenderResourceHandle GenerateTexture(
 		int width,
 		int height,
-		std::unique_ptr<GLvoid> pixels);
+		std::unique_ptr<unsigned char[]> pixels);
 	RenderResourceHandle GenerateFrameBuffer(Vec2f size);
 	RenderResourceHandle GenerateVertexBuffer(
 		std::unique_ptr<GLfloat[]> bufferData,

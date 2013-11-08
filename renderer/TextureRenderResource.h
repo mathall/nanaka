@@ -40,7 +40,7 @@ public:
 	TextureRenderResource(
 		int width,
 		int height,
-		std::unique_ptr<GLvoid> pixels);
+		std::unique_ptr<unsigned char[]> pixels);
 
 	/**
 	 * RenderResource implementation.
@@ -50,7 +50,7 @@ public:
 
 	const int m_width;
 	const int m_height;
-	std::unique_ptr<GLvoid> m_pixels;
+	std::unique_ptr<unsigned char[]> m_pixels;
 
 	GLuint m_texHandle;
 };

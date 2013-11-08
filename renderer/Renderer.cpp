@@ -169,7 +169,7 @@ UUID Renderer::GenerateRenderContext(RenderTargetType renderTargetType)
 RenderResourceHandle Renderer::GenerateTexture(
 	int width,
 	int height,
-	std::unique_ptr<GLvoid> pixels)
+	std::unique_ptr<unsigned char[]> pixels)
 {
 	ScopedMonitorLock lock(this);
 
