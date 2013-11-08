@@ -76,6 +76,10 @@
         'android_libstd_libs%': '<(android_libstd_root)/libs/<(android_app_abi)',
         'android_toolchain%': '<(android_toolchain)',
       }],
+      ['OS=="web"', {
+        'release_optimization_level%': '2',
+        'library_type%': 'none',
+      }],
     ],
   },
 
@@ -100,7 +104,7 @@
       },
     },
     'conditions': [
-      ['OS=="linux" or OS=="android"', {
+      ['OS=="linux" or OS=="android" or OS=="web"', {
         'cflags': [
           '-Wall',
           '-Wextra',
@@ -128,6 +132,11 @@
               '-fPIC',
             ],
           }],
+        ],
+      }],
+      ['OS=="web"', {
+        'defines': [
+          'SINGLE_THREADED',
         ],
       }],
       ['OS=="android"', {
@@ -214,6 +223,13 @@
             ['LINK', '<(android_toolchain)/*-gcc'],
           ],
         }],
+      ],
+    }],
+    ['OS=="web"', {
+      'make_global_settings': [
+        ['CC', '<(emscripten_sdk_root)/emcc'],
+        ['CXX', '<(emscripten_sdk_root)/em++'],
+        ['LINK', '<(emscripten_sdk_root)/em++'],
       ],
     }],
   ],

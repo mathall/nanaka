@@ -47,6 +47,11 @@
             },
           },
         }],
+        ['OS=="web"', {
+          'dependencies': [
+            '../../zlib/build/zlib.gyp:nanaka_zlib',
+          ],
+        }],
       ],
     },
   ],

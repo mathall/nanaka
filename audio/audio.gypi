@@ -16,7 +16,7 @@
         'OpenSLES/OpenSLES.gypi',
       ],
     }],
-    ['OS=="linux"', {
+    ['OS=="linux" or OS=="web"', {
       'includes': [
         'OpenAL/OpenAL.gypi',
       ],
