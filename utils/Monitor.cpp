@@ -27,6 +27,7 @@
 
 bool Monitor::EnterCriticalSection()
 {
+#if !defined(SINGLE_THREADED)
 	std::unique_lock<std::mutex> lock(m_mutex);
 
 	const auto thisThreadId = std::this_thread::get_id();
@@ -41,20 +42,24 @@ bool Monitor::EnterCriticalSection()
 
 	m_criticalRunnerThreadId = thisThreadId;
 	m_criticalRunner = true;
+#endif // !defined(SINGLE_THREADED)
 	return false;
 }
 
 void Monitor::ExitCriticalSection()
 {
+#if !defined(SINGLE_THREADED)
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_headTicket = NextTicket(m_headTicket);
 	m_queue[m_headTicket].notify_one();
 
 	m_criticalRunner = false;
+#endif // !defined(SINGLE_THREADED)
 }
 
 void Monitor::Yield()
 {
+#if !defined(SINGLE_THREADED)
 	auto someoneWaiting = [&]()
 	{
 		std::unique_lock<std::mutex> lock(m_mutex);
@@ -66,14 +71,17 @@ void Monitor::Yield()
 		ExitCriticalSection();
 		EnterCriticalSection();
 	}
+#endif // !defined(SINGLE_THREADED)
 }
 
 void Monitor::WaitFor(Sem& sem)
 {
+#if !defined(SINGLE_THREADED)
 	if (sem.TryWait() == -1)
 	{
 		ExitCriticalSection();
 		sem.Wait();
 		EnterCriticalSection();
 	}
+#endif // !defined(SINGLE_THREADED)
 }

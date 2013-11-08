@@ -27,4 +27,8 @@
 
 const UUID UUID::Invalid = {0};
 
+#if defined(SINGLE_THREADED)
+int UUID::s_nextId;
+#else
 std::atomic<int> UUID::s_nextId;
+#endif // defined(SINGLE_THREADED)

@@ -28,34 +28,45 @@
 
 #include <thread>
 
-class Thread
+#include "utils/Monitor.h"
+
+class Thread : public Monitor
 {
 public:
 
+	Thread();
 	virtual ~Thread(){}
 
 	void StartThread();
 	void KillThread();
 
+	bool IsRunning() const;
+
+	virtual void ThreadLoop() = 0;
+
 protected:
 
-	virtual void RunThread() = 0;
+	virtual void ThreadInitialize(){}
+	virtual void ThreadFinalize(){}
 	virtual void OnKillThread(){}
 
 private:
 
+	void RunThread();
+
 	std::thread m_thread;
+
+	bool m_running;
 };
 
-inline void Thread::StartThread()
+inline Thread::Thread()
+	: m_running(false)
 {
-	m_thread = std::thread(&Thread::RunThread, this);
 }
 
-inline void Thread::KillThread()
+inline bool Thread::IsRunning() const
 {
-	OnKillThread();
-	m_thread.join();
+	return m_running;
 }
 
 #endif // NANAKA_UTILS_THREAD_H

@@ -35,8 +35,7 @@
 #include "renderer/VertexBufferRenderResource.h"
 
 Renderer::Renderer()
-	: m_killThreadRequested(false)
-	, m_contextLost(true)
+	: m_contextLost(true)
 	, m_contextChanged(true)
 	, m_GLContextManager(GLContextManager::Create())
 	, m_nativeWindow(NULL)
@@ -228,67 +227,65 @@ RenderResourceHandle Renderer::GenerateShaderProgram(
 			vertexShaderHandle, fragmentShaderHandle);
 }
 
-void Renderer::RunThread()
+void Renderer::ThreadLoop()
 {
-	while (!m_killThreadRequested)
+	WaitFor(m_runPermit);
+	WaitFor(m_contextLock);
+
+	if (!IsRunning())
 	{
-		EnterCriticalSection();
-		WaitFor(m_runPermit);
-		WaitFor(m_contextLock);
-
-		if (m_killThreadRequested)
-		{
-			Signal(m_contextLock);
-			break;
-		}
-
-		if (m_contextLost)
-		{
-			assert(m_nativeWindow);
-			m_GLContextManager->CreateContext(*m_nativeWindow);
-			m_renderResourceManager.QueueBuiltResourcesForRebuild();
-			m_contextLost = false;
-		}
-
-		if (m_contextChanged)
-		{
-			assert(m_nativeWindow);
-			m_GLContextManager->CreateSurface(*m_nativeWindow);
-			m_contextChanged = false;
-		}
-
-		m_renderResourceManager.ProcessQueues();
-
-		auto endRenderRequests = m_endRenderRequests;
-		ExitCriticalSection();
-		for (auto renderContextId : endRenderRequests)
-		{
-			auto& renderContext = m_renderContexts[renderContextId];
-			renderContext->Render(m_renderResourceManager);
-
-			if (renderContext->DoesRenderOnScreen())
-			{
-				assert(m_nativeWindow);
-				m_GLContextManager->Swap(*m_nativeWindow);
-			}
-		}
-		EnterCriticalSection();
-		for (auto ended : endRenderRequests)
-		{
-			Signal(m_renderContexts[ended]->GetRenderPermit());
-			m_endRenderRequests.erase(std::remove(
-				m_endRenderRequests.begin(), m_endRenderRequests.end(), ended),
-				m_endRenderRequests.end());
-		}
-		if (m_endRenderRequests.size() > 0)
-		{
-			Signal(m_runPermit);
-		}
-
 		Signal(m_contextLock);
-		ExitCriticalSection();
+		return;
 	}
 
+	if (m_contextLost)
+	{
+		assert(m_nativeWindow);
+		m_GLContextManager->CreateContext(*m_nativeWindow);
+		m_renderResourceManager.QueueBuiltResourcesForRebuild();
+		m_contextLost = false;
+	}
+
+	if (m_contextChanged)
+	{
+		assert(m_nativeWindow);
+		m_GLContextManager->CreateSurface(*m_nativeWindow);
+		m_contextChanged = false;
+	}
+
+	m_renderResourceManager.ProcessQueues();
+
+	auto endRenderRequests = m_endRenderRequests;
+	ExitCriticalSection();
+	for (auto renderContextId : endRenderRequests)
+	{
+		auto& renderContext = m_renderContexts[renderContextId];
+		renderContext->Render(m_renderResourceManager);
+
+		if (renderContext->DoesRenderOnScreen())
+		{
+			assert(m_nativeWindow);
+			m_GLContextManager->Swap(*m_nativeWindow);
+		}
+	}
+	EnterCriticalSection();
+	for (auto ended : endRenderRequests)
+	{
+		Signal(m_renderContexts[ended]->GetRenderPermit());
+		m_endRenderRequests.erase(std::remove(
+			m_endRenderRequests.begin(), m_endRenderRequests.end(), ended),
+			m_endRenderRequests.end());
+	}
+	if (m_endRenderRequests.size() > 0)
+	{
+		Signal(m_runPermit);
+	}
+
+	Signal(m_contextLock);
+}
+
+void Renderer::ThreadFinalize()
+{
 	if (m_nativeWindow)
 	{
 		m_GLContextManager->DestroyContext(*m_nativeWindow);
@@ -297,9 +294,6 @@ void Renderer::RunThread()
 
 void Renderer::OnKillThread()
 {
-	ScopedMonitorLock lock(this);
-
-	m_killThreadRequested = true;
 	Signal(m_contextLock);
 	Signal(m_runPermit);
 }

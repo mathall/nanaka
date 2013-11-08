@@ -57,27 +57,34 @@ private:
 
 	int NextTicket(int ticket) const;
 
+	static const int s_maxTickets = 5;
+
+#if !defined(SINGLE_THREADED)
 	std::mutex m_mutex;
 
-	static const int s_maxTickets = 5;
 	std::array<std::condition_variable, s_maxTickets> m_queue;
 	int m_headTicket;
 	int m_tailTicket;
 
 	std::thread::id m_criticalRunnerThreadId;
 	bool m_criticalRunner;
+#endif // !defined(SINGLE_THREADED)
 };
 
 inline Monitor::Monitor()
+#if !defined(SINGLE_THREADED)
 	: m_headTicket(0)
 	, m_tailTicket(0)
 	, m_criticalRunner(false)
+#endif // !defined(SINGLE_THREADED)
 {
 }
 
 inline void Monitor::Signal(Sem& sem) const
 {
+#if !defined(SINGLE_THREADED)
 	sem.Post();
+#endif // !defined(SINGLE_THREADED)
 }
 
 inline int Monitor::NextTicket(int ticket) const

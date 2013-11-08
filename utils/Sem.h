@@ -42,8 +42,10 @@ public:
 private:
 
 	int m_count;
+#if !defined(SINGLE_THREADED)
 	std::mutex m_mutex;
 	std::condition_variable m_waiters;
+#endif // !defined(SINGLE_THREADED)
 };
 
 inline Sem::Sem(int count)

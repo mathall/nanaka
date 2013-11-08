@@ -74,35 +74,43 @@ Nanaka::Nanaka(Application& application)
 	m_entitySystem.RegisterEntityModuleFactory<PhysicsEM>();
 }
 
-void Nanaka::RunThread()
+void Nanaka::ThreadInitialize()
 {
-	ScopedMonitorLock lock(this);
-
 	m_game->Initialize(this);
+}
 
-	m_running = true;
-	while (m_running)
+void Nanaka::ThreadLoop()
+{
+	WaitFor(m_runPermit);
+
+	if (!IsRunning())
 	{
-		Yield();
-		WaitFor(m_runPermit);
-
-		if (!m_running)
-		{
-			break;
-		}
-
-		g_clock->Tick();
-		g_clock->UpdateFPS();
-
-		m_inputHandler.ProcessEvents();
-		m_game->GameLoop();
-		g_audioEngine->Update();
-		m_GUI.Draw();
-
-		Signal(m_runPermit);
+		return;
 	}
 
+	g_clock->Tick();
+	g_clock->UpdateFPS();
+
+	m_inputHandler.ProcessEvents();
+	m_game->GameLoop();
+	g_audioEngine->Update();
+	m_GUI.Draw();
+
+#if defined(SINGLE_THREADED)
+	g_renderer->ThreadLoop();
+#endif // defined(SINGLE_THREADED)
+
+	Signal(m_runPermit);
+}
+
+void Nanaka::ThreadFinalize()
+{
 	Exit();
+}
+
+void Nanaka::OnKillThread()
+{
+	Signal(m_runPermit);
 }
 
 void Nanaka::OnResume()
@@ -129,13 +137,6 @@ void Nanaka::SetDisplayProperties(DisplayProperties displayProps)
 {
 	ScopedMonitorLock lock(this);
 	m_GUI.SetDisplayProperties(displayProps);
-}
-
-void Nanaka::OnKillThread()
-{
-	ScopedMonitorLock lock(this);
-	m_running = false;
-	Signal(m_runPermit);
 }
 
 void Nanaka::Exit()

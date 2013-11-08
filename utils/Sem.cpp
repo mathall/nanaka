@@ -27,20 +27,26 @@
 
 void Sem::Post()
 {
+#if !defined(SINGLE_THREADED)
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_count++;
 	m_waiters.notify_all();
+#endif // !defined(SINGLE_THREADED)
 }
 
 int Sem::TryWait()
 {
+#if !defined(SINGLE_THREADED)
 	std::unique_lock<std::mutex> lock(m_mutex);
+#endif // !defined(SINGLE_THREADED)
 	return m_count == 0 ? -1 : m_count--;
 }
 
 void Sem::Wait()
 {
+#if !defined(SINGLE_THREADED)
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_waiters.wait(lock, [&]{ return m_count > 0; });
 	m_count--;
+#endif // !defined(SINGLE_THREADED)
 }

@@ -9,6 +9,7 @@
     '../utils/Sem.cpp',
     '../utils/Sem.h',
     '../utils/TemporaryChange.h',
+    '../utils/Thread.cpp',
     '../utils/Thread.h',
     '../utils/Time.cpp',
     '../utils/Time.h',

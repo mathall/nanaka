@@ -26,7 +26,9 @@
 #ifndef NANAKA_UTILS_UUID_H
 #define NANAKA_UTILS_UUID_H
 
+#if !defined(SINGLE_THREADED)
 #include <atomic>
+#endif // !defined(SINGLE_THREADED)
 #include <functional>
 
 /**
@@ -56,24 +58,44 @@ private:
 
 	UUID(int priv);
 
+#if defined(SINGLE_THREADED)
+	int m_private;
+#else
 	std::atomic<int> m_private;
+#endif // defined(SINGLE_THREADED)
 
+#if defined(SINGLE_THREADED)
+	static int s_nextId;
+#else
 	static std::atomic<int> s_nextId;
+#endif // defined(SINGLE_THREADED)
 };
 
 inline UUID::UUID()
 {
+#if defined(SINGLE_THREADED)
+	m_private = Invalid.m_private;
+#else
 	m_private = Invalid.m_private.load();
+#endif // defined(SINGLE_THREADED)
 }
 
 inline UUID::UUID(int priv)
 {
+#if defined(SINGLE_THREADED)
+	m_private = priv;
+#else
 	m_private = {priv};
+#endif // defined(SINGLE_THREADED)
 }
 
 inline UUID::UUID(const UUID& uuid)
 {
+#if defined(SINGLE_THREADED)
+	m_private = uuid.m_private;
+#else
 	m_private = uuid.m_private.load();
+#endif // defined(SINGLE_THREADED)
 }
 
 inline bool UUID::operator==(const UUID& uuid) const
@@ -83,13 +105,21 @@ inline bool UUID::operator==(const UUID& uuid) const
 
 inline UUID& UUID::operator=(const UUID& uuid)
 {
+#if defined(SINGLE_THREADED)
+	m_private = uuid.m_private;
+#else
 	m_private = uuid.m_private.load();
+#endif // defined(SINGLE_THREADED)
 	return *this;
 }
 
 inline void UUID::Initialize()
 {
+#if defined(SINGLE_THREADED)
+	s_nextId = 1;
+#else
 	s_nextId = {1};
+#endif // defined(SINGLE_THREADED)
 }
 
 inline UUID UUID::New()
@@ -108,7 +138,11 @@ struct hash<UUID> {
 public:
 	size_t operator()(const UUID& uuid) const
 	{
+#if defined(SINGLE_THREADED)
+		return std::hash<int>()(uuid.m_private);
+#else
 		return std::hash<int>()(uuid.m_private.load());
+#endif // defined(SINGLE_THREADED)
 	}
 };
 } // namespace std

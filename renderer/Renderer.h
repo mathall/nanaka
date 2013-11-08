@@ -44,7 +44,7 @@
 
 class Projection;
 
-class Renderer final : public Thread, public Monitor, public YOLO<Renderer>
+class Renderer final : public Thread, public YOLO<Renderer>
 {
 public:
 
@@ -88,17 +88,21 @@ public:
 		RenderResourceHandle fragmentShaderHandle);
 	void DestroyRenderResource(RenderResourceHandle renderResourceHandle);
 
+	/**
+	 * Thread implementation.
+	 */
+	void ThreadLoop() override;
+
 protected:
 
 	/**
 	 * Thread implementation.
 	 */
-	void RunThread() override;
+	void ThreadFinalize() override;
 	void OnKillThread() override;
 
 private:
 
-	bool m_killThreadRequested;
 	bool m_contextLost;
 	bool m_contextChanged;
 

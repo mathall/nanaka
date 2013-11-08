@@ -44,7 +44,7 @@ class Application;
  * over execution of Nanaka and the game and is then expected to inform of
  * platform events.
  */
-class Nanaka final : public Thread, public Monitor, public INanaka
+class Nanaka final : public Thread, public INanaka
 {
 public:
 
@@ -63,12 +63,18 @@ public:
 	GUI& GetGUI() override;
 	EntitySystem& GetEntitySystem() override;
 
+	/**
+	 * Thread implementation
+	 */
+	void ThreadLoop() override;
+
 protected:
 
 	/**
 	 * Thread implementation
 	 */
-	void RunThread() override;
+	void ThreadInitialize() override;
+	void ThreadFinalize() override;
 	void OnKillThread() override;
 
 private:
@@ -82,7 +88,6 @@ private:
 	InputHandler m_inputHandler;
 	EntitySystem m_entitySystem;
 
-	bool m_running;
 	Sem m_runPermit;
 };
 
