@@ -29,7 +29,11 @@
 #include <cassert>
 
 Widget::Widget()
-	: m_Id(UUID::New())
+	: m_position(0.0f)
+	, m_size(0.0f)
+	, m_depthRange(0.0f)
+	, m_depth(0.0f)
+	, m_Id(UUID::New())
 	, m_parent(NULL)
 	, m_needLayout(true)
 	, m_needRecalcLayoutProperties(true)
