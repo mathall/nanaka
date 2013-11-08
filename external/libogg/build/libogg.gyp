@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka_ogg',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'sources': [
         '../src/bitwise.c',
         '../src/framing.c',

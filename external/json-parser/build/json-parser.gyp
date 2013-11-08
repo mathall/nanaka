@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka_json_parser',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'sources': [
         '../src/json.h',
         '../src/json.c',

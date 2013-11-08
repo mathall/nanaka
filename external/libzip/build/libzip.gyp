@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka_zip',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'sources': [
         '../src/config.h',
         '../src/mkstemp.c',

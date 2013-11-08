@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'dependencies': [
         '../external/libpng/build/libpng.gyp:nanaka_png',
         '../external/json-parser/build/json-parser.gyp:nanaka_json_parser',

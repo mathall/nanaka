@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka_png',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'sources': [
         '../src/png.c',
         '../src/png.h',

@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'nanaka_tremor',
-      'type': 'static_library',
+      'type': '<(library_type)',
       'dependencies': [
         '../../libogg/build/libogg.gyp:nanaka_ogg',
       ],

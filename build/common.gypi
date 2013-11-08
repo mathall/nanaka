@@ -15,6 +15,7 @@
     'release_optimization_level%': '3',
     'use_clang%': 0,
     'target_arch%': '<(target_arch)',
+    'library_type%': 'static_library',
 
     'conditions': [
       ['target_arch=="arm" and arm_version==5', {
@@ -113,6 +114,18 @@
           ['use_clang==1', {
             'cflags': [
               '-fcolor-diagnostics',
+            ],
+          }],
+        ],
+      }],
+      ['OS=="linux" or OS=="android"', {
+        'target_conditions': [
+          ['_type=="shared_library"', {
+            'cflags': [
+              '-fPIC',
+            ],
+            'ldflags': [
+              '-fPIC',
             ],
           }],
         ],
