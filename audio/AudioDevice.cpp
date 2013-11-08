@@ -40,7 +40,7 @@ void AudioDevice::CalculateStreamBufferNumAndSize(
 	const size_t minimumFPS = 10;
 	const float totBufferLengthInSeconds = 1.0f / minimumFPS;
 	const size_t totBufferSize = totBufferLengthInSeconds * bytesPerSecond;
-	const float minBufferLengthInSeconds = 0.02f;
+	const float minBufferLengthInSeconds = 0.05f;
 	const size_t minBufferSize = minBufferLengthInSeconds * bytesPerSecond;
 
 	bufferSize = 2;
