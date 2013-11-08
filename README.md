@@ -1,7 +1,7 @@
 Nanaka
 ======
 
-Nanaka is a cross platform game engine with no real goal or purpose beyond practice/learning, it's just something I enjoy working on and experimenting with.
+Nanaka is a cross platform game engine with no real goal or purpose beyond practice/learning, it's just something I enjoy working on and experimenting with. Currently supported platforms include android, linux, and the web.
 
 Design
 ------
@@ -50,19 +50,26 @@ To build a project using Nanaka, the following dependencies are required:
 * json-parser (included)
 * libogg (included)
 * tremor (included)
-* glew (non-android) and GLES2
+* zlib (included)
+* glew (non-android)
 * OpenAL (non-android)
+* OpenGL ES2
 
-And optionally:
+Optional dependencies for platform integration:
 
 * glfw3
 * libzip (included, android)
 
-Other prerequisites are:
+Platform specific prerequisites:
+
+* Linux: gcc >=4.7 or clang >=3.2
+* Android: Android SDK/NDK - some version
+* Web: Emscripten - some version
+
+Other prerequisites:
 
 * GYP
 * ninja (optional)
-* gcc >=4.7 or clang >=3.2
 
 Projects using Nanaka
 ---------------------
