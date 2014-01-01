@@ -45,6 +45,17 @@
             },
           },
         }],
+        ['OS=="osx"', {
+          'all_dependent_settings': {
+            'link_settings': {
+              'libraries': [
+                '-framework OpenAL',
+                '-framework OpenGL',
+                '-lpthread',
+              ],
+            },
+          },
+        }],
       ],
     },
   ],

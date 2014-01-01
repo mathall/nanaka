@@ -86,17 +86,41 @@
   'target_defaults': {
     'configurations': {
       'Debug': {
-        'cflags': [
-          '-O<(debug_optimization_level)',
-          '-g',
+        'conditions': [
+          ['OS=="linux" or OS=="android" or OS=="web"', {
+            'cflags': [
+              '-O<(debug_optimization_level)',
+              '-g',
+            ],
+          }],
+          ['OS=="osx"', {
+            'xcode_settings': {
+              'GCC_OPTIMIZATION_LEVEL': '<(debug_optimization_level)',
+              'OTHER_CFLAGS': [
+                '-g',
+              ],
+              'OTHER_CPLUSPLUSFLAGS': [
+                '-g',
+              ],
+            },
+          }],
         ],
       },
       'Release': {
         'defines': [
           'NDEBUG',
         ],
-        'cflags': [
-          '-O<(release_optimization_level)',
+        'conditions': [
+          ['OS=="linux" or OS=="android" or OS=="web"', {
+            'cflags': [
+              '-O<(release_optimization_level)',
+            ],
+          }],
+          ['OS=="osx"', {
+            'xcode_settings': {
+              'GCC_OPTIMIZATION_LEVEL': '<(release_optimization_level)',
+            },
+          }],
         ],
         'ldflags': [
           '-Wl,-s',
@@ -121,6 +145,25 @@
             ],
           }],
         ],
+      }],
+      ['OS=="osx"', {
+        'defines': [
+          'OS_OSX',
+        ],
+        'xcode_settings': {
+          'WARNING_CFLAGS': [
+            '-Wall',
+            '-Wextra',
+            '-pedantic',
+            '-Wno-unused-parameter',
+          ],
+          'OTHER_CFLAGS': [
+            '-fcolor-diagnostics',
+          ],
+          'OTHER_CPLUSPLUSFLAGS': [
+            '-std=c++11',
+          ],
+        },
       }],
       ['OS=="linux" or OS=="android"', {
         'target_conditions': [

@@ -67,13 +67,24 @@
           '../src',
         ],
       },
-      'cflags!': [
-        '-Wall',
-        '-Wextra',
-        '-pedantic',
-      ],
       'conditions': [
-        ['OS=="linux" or OS=="android"', {
+        ['OS=="linux" or OS=="android" or OS=="web"', {
+          'cflags!': [
+            '-Wall',
+            '-Wextra',
+            '-pedantic',
+          ],
+        }],
+        ['OS=="osx"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS!': [
+              '-Wall',
+              '-Wextra',
+              '-pedantic',
+            ],
+          },
+        }],
+        ['OS=="linux" or OS=="android" or OS=="osx"', {
           'all_dependent_settings': {
             'link_settings': {
               'libraries': [

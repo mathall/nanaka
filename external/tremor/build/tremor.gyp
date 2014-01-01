@@ -42,16 +42,30 @@
           '../src',
         ],
       },
-      'cflags': [
-        '-Wno-duplicate-decl-specifier',
-      ],
-      'cflags!': [
-        '-Wall',
-        '-Wextra',
-        '-pedantic',
-        '-mthumb',
-      ],
       'conditions': [
+        ['OS=="linux" or OS=="android" or OS=="web"', {
+          'cflags': [
+            '-Wno-duplicate-decl-specifier',
+          ],
+          'cflags!': [
+            '-Wall',
+            '-Wextra',
+            '-pedantic',
+            '-mthumb',
+          ],
+        }],
+        ['OS=="osx"', {
+          'xcode_settings': {
+            'OTHER_CFLAGS': [
+              '-Wno-duplicate-decl-specifier',
+            ],
+            'WARNING_CFLAGS!': [
+              '-Wall',
+              '-Wextra',
+              '-pedantic',
+            ],
+          },
+        }],
         ['target_arch=="arm"', {
           'defines': [
             '_ARM_ASSEM_',

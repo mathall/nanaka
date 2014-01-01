@@ -26,8 +26,13 @@
 #ifndef NANAKA_AUDIO_OPENAL_ALAUDIODEVICE_H
 #define NANAKA_AUDIO_OPENAL_ALAUDIODEVICE_H
 
+#if defined(OS_OSX)
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
+#endif
 
 #include "audio/AudioDevice.h"
 

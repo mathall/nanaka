@@ -25,7 +25,11 @@
 
 #include "FileManagerImpl.h"
 
+#if defined(OS_OSX)
+#include <mach-o/dyld.h>
+#else
 #include <unistd.h>
+#endif
 
 FileManager* FileManager::Create()
 {
@@ -55,7 +59,12 @@ void FileManagerImpl::Open(const std::string& filePath, File& file) const
 std::string FileManagerImpl::MakeAssetsFilePath() const
 {
 	char buf[1024];
-	size_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+	uint32_t len = sizeof(buf);
+#if defined(OS_OSX)
+	_NSGetExecutablePath(buf, &len);
+#else
+	len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+#endif
 	buf[len] = '\0';
 	std::string binPath(buf);
 	return binPath.substr(0, binPath.find_last_of('/') + 1).append("assets/");

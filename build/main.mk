@@ -4,7 +4,11 @@ DEBUG ?= 1
 VERBOSE ?= 0
 USE_CLANG ?= $(shell command -v clang > /dev/null && echo 1)
 USE_NINJA ?= $(shell command -v ninja > /dev/null && echo 1)
+ifeq ($(OS), osx)
+PARALLELISM ?= $(shell sysctl -n hw.ncpu)
+else
 PARALLELISM ?= $(shell grep -ic 'processor.*:' /proc/cpuinfo)
+endif
 
 ifeq ($(VERBOSE), 1)
 ifeq ($(USE_NINJA), 1)

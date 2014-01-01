@@ -28,7 +28,11 @@
 
 #include <vector>
 
+#if defined(OS_OSX)
+#include <OpenAL/al.h>
+#else
 #include <AL/al.h>
+#endif
 
 #include "audio/AudioStream.h"
 
