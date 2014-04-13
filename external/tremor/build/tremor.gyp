@@ -42,15 +42,15 @@
           '../src',
         ],
       },
+      'includes': [
+        '../../../build/external_common.gypi',
+      ],
       'conditions': [
         ['OS=="linux" or OS=="android" or OS=="web"', {
           'cflags': [
             '-Wno-duplicate-decl-specifier',
           ],
           'cflags!': [
-            '-Wall',
-            '-Wextra',
-            '-pedantic',
             '-mthumb',
           ],
         }],
@@ -58,11 +58,6 @@
           'xcode_settings': {
             'OTHER_CFLAGS': [
               '-Wno-duplicate-decl-specifier',
-            ],
-            'WARNING_CFLAGS!': [
-              '-Wall',
-              '-Wextra',
-              '-pedantic',
             ],
           },
         }],

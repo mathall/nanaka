@@ -36,15 +36,15 @@
           '../src',
         ],
       },
+      'includes': [
+        '../../../build/external_common.gypi',
+      ],
       'conditions': [
         ['OS=="linux" or OS=="android" or OS=="web"', {
           'cflags': [
             '-Wno-unused-value',
           ],
           'cflags!': [
-            '-Wall',
-            '-Wextra',
-            '-pedantic',
             '-mthumb',
           ],
         }],
@@ -52,11 +52,6 @@
           'xcode_settings': {
             'OTHER_CFLAGS': [
               '-Wno-unused-value',
-            ],
-            'WARNING_CFLAGS!': [
-              '-Wall',
-              '-Wextra',
-              '-pedantic',
             ],
           },
         }],
