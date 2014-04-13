@@ -37,7 +37,6 @@ public:
 	virtual ~GLContextManager(){}
 
 	virtual void CreateContext(NanakaNativeWindow& nativeWindow) = 0;
-	virtual void DestroyContext(NanakaNativeWindow& nativeWindow) = 0;
 	virtual void CreateSurface(NanakaNativeWindow& nativeWindow) = 0;
 	virtual void Swap(NanakaNativeWindow& nativeWindow) = 0;
 };

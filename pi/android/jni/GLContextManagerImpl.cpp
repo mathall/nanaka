@@ -34,7 +34,7 @@ GLContextManager* GLContextManager::Create()
 
 void GLContextManagerImpl::CreateContext(NanakaNativeWindow& nativeWindow)
 {
-	DestroyContext(nativeWindow);
+	DestroyContext();
 
 	m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	eglInitialize(m_display, 0, 0);
@@ -60,7 +60,7 @@ void GLContextManagerImpl::CreateSurface(NanakaNativeWindow& nativeWindow)
 	eglSwapInterval(m_display, 0);
 }
 
-void GLContextManagerImpl::DestroyContext(NanakaNativeWindow& nativeWindow)
+void GLContextManagerImpl::DestroyContext()
 {
 	if (m_display == EGL_NO_DISPLAY)
 	{

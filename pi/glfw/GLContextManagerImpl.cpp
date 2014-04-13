@@ -44,11 +44,6 @@ void GLContextManagerImpl::CreateSurface(NanakaNativeWindow& nativeWindow)
 {
 }
 
-void GLContextManagerImpl::DestroyContext(NanakaNativeWindow& nativeWindow)
-{
-	glfwTerminate();
-}
-
 void GLContextManagerImpl::Swap(NanakaNativeWindow& nativeWindow)
 {
 	glfwSwapBuffers(

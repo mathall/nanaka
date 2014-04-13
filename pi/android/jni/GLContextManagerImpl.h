@@ -40,13 +40,13 @@ public:
 	 * GLContextManager implementation.
 	 */
 	void CreateContext(NanakaNativeWindow& nativeWindow) override;
-	void DestroyContext(NanakaNativeWindow& nativeWindow) override;
 	void CreateSurface(NanakaNativeWindow& nativeWindow) override;
 	void Swap(NanakaNativeWindow& nativeWindow) override;
 
 private:
 
 	void ChooseConfig();
+	void DestroyContext();
 	void DestroySurface();
 
 	EGLDisplay m_display;

@@ -98,7 +98,6 @@ protected:
 	/**
 	 * Thread implementation.
 	 */
-	void ThreadFinalize() override;
 	void OnKillThread() override;
 
 private:

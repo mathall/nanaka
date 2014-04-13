@@ -284,14 +284,6 @@ void Renderer::ThreadLoop()
 	Signal(m_contextLock);
 }
 
-void Renderer::ThreadFinalize()
-{
-	if (m_nativeWindow)
-	{
-		m_GLContextManager->DestroyContext(*m_nativeWindow);
-	}
-}
-
 void Renderer::OnKillThread()
 {
 	Signal(m_contextLock);
