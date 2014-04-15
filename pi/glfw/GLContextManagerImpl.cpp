@@ -27,6 +27,11 @@
 
 #include "NanakaNativeWindowImpl.h"
 
+void GLAPIENTRY ClearDepthf(GLfloat depth)
+{
+	glClearDepth(depth);
+}
+
 GLContextManager* GLContextManager::Create()
 {
 	return new GLContextManagerImpl();
@@ -38,6 +43,11 @@ void GLContextManagerImpl::CreateContext(NanakaNativeWindow& nativeWindow)
 		&static_cast<NanakaNativeWindowImpl&>(nativeWindow).m_window);
 	glfwSwapInterval(0);
 	glewInit();
+
+	if (!GLEW_ARB_ES2_compatibility)
+	{
+		glClearDepthf = ClearDepthf;
+	}
 }
 
 void GLContextManagerImpl::CreateSurface(NanakaNativeWindow& nativeWindow)
