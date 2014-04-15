@@ -44,9 +44,6 @@
           'cflags': [
             '-Wno-unused-value',
           ],
-          'cflags!': [
-            '-mthumb',
-          ],
         }],
         ['OS=="osx"', {
           'xcode_settings': {
