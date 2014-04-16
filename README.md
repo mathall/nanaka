@@ -1,7 +1,7 @@
 Nanaka
 ======
 
-Nanaka is a cross platform game engine with no real goal or purpose beyond practice/learning, it's just something I enjoy working on and experimenting with. Currently supported platforms include android, linux, and the web.
+Nanaka is a cross platform game engine with no real goal or purpose beyond practice/learning, it's just something I enjoy working on and experimenting with. Currently supported platforms include android, linux, osx, and the web.
 
 Design
 ------
@@ -63,6 +63,7 @@ Optional dependencies for platform integration:
 Platform specific prerequisites:
 
 * Linux: gcc >=4.7 or clang >=3.2
+* OSX: clang >=3.2
 * Android: Android SDK/NDK - some version
 * Web: Emscripten - some version
 
