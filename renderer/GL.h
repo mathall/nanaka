@@ -24,9 +24,26 @@
  */
 
 #if defined(ANDROID)
-#include <GLES/gl.h>
-#include <GLES2/gl2.h>
-#else
+#define USE_GLEW 0
+#define USE_GLES 1
+#endif // defined(ANDROID)
+
+#if defined(OS_WEB)
+#define USE_GLES 1
+#endif // defined(OS_WEB)
+
+#if !defined(USE_GLEW)
+#define USE_GLEW 1
+#endif // !defined(USE_GLEW)
+
+#if !defined(USE_GLES)
+#define USE_GLES 0
+#endif // !defined(USE_GLES)
+
+#if USE_GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
-#endif // defined(ANDROID)
+#else
+#include <GLES/gl.h>
+#include <GLES2/gl2.h>
+#endif // USE_GLEW

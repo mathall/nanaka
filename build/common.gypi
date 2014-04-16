@@ -179,6 +179,7 @@
       }],
       ['OS=="web"', {
         'defines': [
+          'OS_WEB',
           'SINGLE_THREADED',
         ],
       }],

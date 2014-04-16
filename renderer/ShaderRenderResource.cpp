@@ -36,6 +36,14 @@ ShaderRenderResource::ShaderRenderResource(
 	, m_uniformNames(uniformNames)
 	, m_attributeNames(attributeNames)
 {
+	if (USE_GLES)
+	{
+		m_source.insert(0, "#version 100\n");
+	}
+	else
+	{
+		m_source.insert(0, "#version 120\n");
+	}
 }
 
 bool ShaderRenderResource::Build(

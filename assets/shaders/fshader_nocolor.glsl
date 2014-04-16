@@ -1,4 +1,3 @@
-#version 100
 precision mediump float;
 varying vec2 Texcoord;
 varying vec4 outColor;
